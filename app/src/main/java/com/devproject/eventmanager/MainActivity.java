@@ -170,3 +170,6 @@ public class MainActivity extends AppCompatActivity implements OnDatabaseCallbac
         return result;
     }
 }
+//Construct database using SQLite.
+//Inflate recyclerview on InputFragment.
+//My next object is that that make delete and modify database
