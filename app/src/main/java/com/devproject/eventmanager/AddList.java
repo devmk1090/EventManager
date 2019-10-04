@@ -8,6 +8,14 @@ public class AddList {
     String relation;
     String money;
 
+    public AddList(String name, String date, String category, String relation, String money) {
+        this.name = name;
+        this.date = date;
+        this.category = category;
+        this.relation = relation;
+        this.money = money;
+    }
+
     public String getName() {
         return name;
     }
@@ -19,7 +27,6 @@ public class AddList {
     public String getDate() {
         return date;
     }
-
     public void setDate(String date) {
         this.date = date;
     }
@@ -48,11 +55,16 @@ public class AddList {
         this.money = money;
     }
 
-    public AddList(String name, String date, String category, String relation, String money) {
-        this.name = name;
-        this.date = date;
-        this.category = category;
-        this.relation = relation;
-        this.money = money;
+
+    @Override
+    public String toString() {
+        return "AddList{" +
+                "name='" + name + '\'' +
+                ", date='" + date + '\'' +
+                ", category='" + category + '\'' +
+                ", relation='" + relation + '\'' +
+                ", money='" + money + '\'' +
+                '}';
+
     }
 }

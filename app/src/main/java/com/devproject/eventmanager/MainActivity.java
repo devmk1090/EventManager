@@ -5,23 +5,44 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
 
-    private String TAG = "MAINACTIVITY";
+public class MainActivity extends AppCompatActivity implements OnDatabaseCallback{
+
+    private static final String TAG = "MAINACTIVITY";
     private TextView getCalendarData, getNameData, getCategoryData, getRelationData, getMoneyData;
     private Button inputButton, outputButton, compareButton, settingButton;
+    private Button button;
+
+    AddDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        // open database
+        if(database != null) {
+            database.close();
+            database = null;
+        }
+
+        database = AddDatabase.getInstance(this);
+        boolean isOpen = database.open();
+        if(isOpen) {
+            Log.d(TAG, "Book database is open");
+        } else {
+            Log.d(TAG, "Book database is not open");
+        }
 
         final LinearLayout mainFrame = (LinearLayout) findViewById(R.id.mainFrame);
         final RelativeLayout main = (RelativeLayout) findViewById(R.id.main);
@@ -35,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         outputButton = (Button) findViewById(R.id.outputButton);
         compareButton = (Button) findViewById(R.id.compareButton);
         settingButton = (Button) findViewById(R.id.settingButton);
+        button =(Button) findViewById(R.id.save);
 
         Intent intent = getIntent();
         final String name = intent.getStringExtra("name");
@@ -44,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
         final String money = intent.getStringExtra("money");
 
         mainFrame.setVisibility(View.GONE);
-
 
 //        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //        InputFragment inputFragment = new InputFragment();
@@ -61,16 +82,17 @@ public class MainActivity extends AppCompatActivity {
         inputButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 InputFragment inputFragment = new InputFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("name", name);
-                bundle.putString("date", date);
-                bundle.putString("category", category);
-                bundle.putString("relation", relation);
-                bundle.putString("money", money);
-                inputFragment.setArguments(bundle);
-                setTitle("인풋");
+//                Bundle bundle = new Bundle();
+//                bundle.putString("name", name);
+//                bundle.putString("date", date);
+//                bundle.putString("category", category);
+//                bundle.putString("relation", relation);
+//                bundle.putString("money", money);
+//                inputFragment.setArguments(bundle);
+//                setTitle("인풋");
                 transaction.replace(R.id.main, inputFragment);
                 transaction.commit();
             }
@@ -81,14 +103,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 OutputFragment outputFragment = new OutputFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("name", name);
-                bundle.putString("date", date);
-                bundle.putString("category", category);
-                bundle.putString("relation", relation);
-                bundle.putString("money", money);
-                outputFragment.setArguments(bundle);
-                setTitle("아웃풋");
+//                Bundle bundle = new Bundle();
+//                bundle.putString("name", name);
+//                bundle.putString("date", date);
+//                bundle.putString("category", category);
+//                bundle.putString("relation", relation);
+//                bundle.putString("money", money);
+//                outputFragment.setArguments(bundle);
+//                setTitle("아웃풋");
                 transaction.replace(R.id.main, outputFragment);
                 transaction.commit();
             }
@@ -99,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 CompareFragment compareFragment = new CompareFragment();
-                setTitle("비교");
                 transaction.replace(R.id.main, compareFragment);
                 transaction.commit();
             }
@@ -110,10 +131,42 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 SettingFragment settingFragment = new SettingFragment();
-                setTitle("세팅");
                 transaction.replace(R.id.main, settingFragment);
                 transaction.commit();
             }
         });
+
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                insert(name, date, category, relation, money);
+//                Log.d(TAG, name);
+//                Log.d(TAG, date);
+//                Log.d(TAG, category);
+//                Log.d(TAG, relation);
+//                Log.d(TAG, money);
+
+            }
+        });
+    }
+
+    // close database
+    protected void onDestroy(){
+        if (database != null) {
+            database.close();
+            database = null;
+        }
+        super.onDestroy();
+    }
+    public void insert(String name, String date, String category, String relation, String money) {
+        database.insertRecord(name, date, category, relation, money);
+        Toast.makeText(getApplicationContext(), "정보를 추가했습니다.", Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public ArrayList<AddList> selectAll() {
+        ArrayList<AddList> result = database.selectAll();
+        Toast.makeText(getApplicationContext(), "정보를 조회했습니다.", Toast.LENGTH_SHORT).show();
+        return result;
     }
 }

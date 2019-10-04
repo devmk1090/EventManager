@@ -1,10 +1,12 @@
 package com.devproject.eventmanager;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -25,15 +27,11 @@ public class AddActivity extends AppCompatActivity {
     private EditText moneyData, nameData;
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
-
-    static boolean running;
-
+    private AlertDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
-        setTitle("Add input money");
-
 
         calendarButton = (Button) findViewById(R.id.calendarButton);
         calendarData = (TextView) findViewById(R.id.calendarData);
@@ -41,10 +39,10 @@ public class AddActivity extends AppCompatActivity {
         nameData = (EditText) findViewById(R.id.nameData);
 
         categorySpinner = (Spinner) findViewById(R.id.categorySpinner);
-        categoryData =(TextView) findViewById(R.id.categoryData);
+        categoryData = (TextView) findViewById(R.id.categoryData);
 
         relationSpinner = (Spinner) findViewById(R.id.relationSpinner);
-        relationData =(TextView) findViewById(R.id.relationData);
+        relationData = (TextView) findViewById(R.id.relationData);
 
         moneyData = (EditText) findViewById(R.id.moneyData);
         tenButton = (Button) findViewById(R.id.tenButton);
@@ -112,21 +110,25 @@ public class AddActivity extends AppCompatActivity {
             }
         });
 
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+         saveButton.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
 
-                running = true;
+                 final String name = nameData.getText().toString();
+                 final String date = calendarData.getText().toString();
+                 final String category = categoryData.getText().toString();
+                 final String relation = relationData.getText().toString();
+                 final String money = moneyData.getText().toString();
 
-                Intent intent = new Intent(AddActivity.this, MainActivity.class);
-                intent.putExtra("name", nameData.getText().toString());
-                intent.putExtra("date", calendarData.getText().toString());
-                intent.putExtra("category", categoryData.getText().toString());
-                intent.putExtra("relation", relationData.getText().toString());
-                intent.putExtra("money", moneyData.getText().toString());
-                startActivity(intent);
-            }
-        });
+                 Intent intent = new Intent(AddActivity.this, MainActivity.class);
+                 intent.putExtra("name", name);
+                 intent.putExtra("date", date);
+                 intent.putExtra("category", category);
+                 intent.putExtra("relation", relation);
+                 intent.putExtra("money", money);
+                 startActivity(intent);
+             }
+         });
     }
     public void calendarListener() {
         dateSetListener = new DatePickerDialog.OnDateSetListener() {

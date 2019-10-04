@@ -99,21 +99,22 @@ public class OutputFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_output, container, false);
 
-        Bundle bundle = getArguments();
-        String name = bundle.getString("name");
-        String date = bundle.getString("date");
-        String category = bundle.getString("category");
-        String relation = bundle.getString("relation");
-        String money = bundle.getString("money");
+//        Bundle bundle = getArguments();
+//        String name = bundle.getString("name");
+//        String date = bundle.getString("date");
+//        String category = bundle.getString("category");
+//        String relation = bundle.getString("relation");
+//        String money = bundle.getString("money");
 
-        if(running == true) {
-            SubList subList = new SubList(name, date, category, relation, money);
-            subArrayList.add(subList);
-            running = false;
-            return v;
-        } else {
-            return v;
-        }
+//        if(running == true) {
+//            SubList subList = new SubList(name, date, category, relation, money);
+//            subArrayList.add(subList);
+//            running = false;
+//            return v;
+//        } else {
+//            return v;
+//        }
+        return v;
     }
 
     @Override
