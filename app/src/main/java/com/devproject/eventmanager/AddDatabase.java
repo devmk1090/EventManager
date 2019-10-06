@@ -1,5 +1,6 @@
 package com.devproject.eventmanager;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -86,11 +87,34 @@ public class AddDatabase {
         return true;
     }
 
+    // Delete column
+    public boolean deleteData (long id) {
+        return db.delete(TABLE_ADD_INFO, " _id = " + (id + 1), null) > 0;
+    }
+
+    public void resetData(long id) {
+        ContentValues contentValues = new ContentValues();
+
+        for(long i = (id+1); i < getCount() + 1; i++ ) {
+            contentValues.put("_id =", i);
+            db.update(TABLE_ADD_INFO, contentValues, "_id =" + (i + 1), null);
+        }
+    }
+    public int getCount(){
+        Cursor cursor = db.rawQuery("select * from " + TABLE_ADD_INFO, null);
+        if(cursor == null)
+            return 0;
+        else return cursor.getCount();
+    }
+//    public Cursor getId(){
+//        Cursor cursor = db.rawQuery("select _id from " + TABLE_ADD_INFO, null);
+//        return cursor;
+//    }
+
     private class DatabaseHelper extends SQLiteOpenHelper {
         public DatabaseHelper (Context context){
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
-
         public void onCreate(SQLiteDatabase _db) {
             // TABLE_ADD_INFO
             println("creating table [" + TABLE_ADD_INFO + "].");
@@ -120,7 +144,7 @@ public class AddDatabase {
             }
 
             // insert records (example)
-            insertRecord(_db, "최민규", "2019/10/02", "결혼식", "친구", "300000");
+            //insertRecord(_db, "최민규", "2019/10/02", "결혼식", "친구", "300000");
         }
 
         public void onOpen(SQLiteDatabase db) {

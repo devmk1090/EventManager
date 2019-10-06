@@ -1,5 +1,6 @@
 package com.devproject.eventmanager;
 
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +65,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
         TextView getCategoryData;
         TextView getRelationData;
         TextView getMoneyData;
-
+        AddDatabase database;
         public ViewHolder(View itemView, final OnAddItemClickListener listener) {
             super(itemView);
             getNameData = itemView.findViewById(R.id.getNameData);
@@ -77,7 +78,6 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
-
                     if(listener != null){
                         listener.onItemClick(ViewHolder.this, view, position);
                     }

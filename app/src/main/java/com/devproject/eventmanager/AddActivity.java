@@ -14,7 +14,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-
+import android.widget.Toast;
 
 
 
@@ -28,10 +28,27 @@ public class AddActivity extends AppCompatActivity {
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
     private AlertDialog dialog;
+
+    AddDatabase database;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
+
+        // open database
+        if(database != null) {
+            database.close();
+            database = null;
+        }
+
+        database = AddDatabase.getInstance(this);
+        boolean isOpen = database.open();
+        if(isOpen) {
+            Log.d(TAG, "Book database is open");
+        } else {
+            Log.d(TAG, "Book database is not open");
+        }
 
         calendarButton = (Button) findViewById(R.id.calendarButton);
         calendarData = (TextView) findViewById(R.id.calendarData);
@@ -113,19 +130,13 @@ public class AddActivity extends AppCompatActivity {
          saveButton.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
-
                  final String name = nameData.getText().toString();
                  final String date = calendarData.getText().toString();
                  final String category = categoryData.getText().toString();
                  final String relation = relationData.getText().toString();
                  final String money = moneyData.getText().toString();
-
+                 insert(name, date, category, relation, money);
                  Intent intent = new Intent(AddActivity.this, MainActivity.class);
-                 intent.putExtra("name", name);
-                 intent.putExtra("date", date);
-                 intent.putExtra("category", category);
-                 intent.putExtra("relation", relation);
-                 intent.putExtra("money", money);
                  startActivity(intent);
              }
          });
@@ -141,5 +152,17 @@ public class AddActivity extends AppCompatActivity {
     public void OnClickHandler(View view){
         DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, 2019, 10, 01);
         dialog.show();
+    }
+    // close database
+    protected void onDestroy(){
+        if (database != null) {
+            database.close();
+            database = null;
+        }
+        super.onDestroy();
+    }
+    public void insert(String name, String date, String category, String relation, String money) {
+        database.insertRecord(name, date, category, relation, money);
+        Toast.makeText(getApplicationContext(), "정보를 추가했습니다.", Toast.LENGTH_SHORT).show();
     }
 }

@@ -1,7 +1,9 @@
 package com.devproject.eventmanager;
 
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -9,11 +11,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -26,8 +27,10 @@ public class InputFragment extends Fragment {
     RecyclerView recyclerView;
     AddAdapter adapter;
 
-    OnDatabaseCallback callback;
+//    OnDatabaseCallback callback;
     String TAG = "InputFragment";
+
+    AddDatabase database;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -43,15 +46,28 @@ public class InputFragment extends Fragment {
         });
 
     }
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        callback = (OnDatabaseCallback) getActivity();
-    }
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//
+//        callback = (OnDatabaseCallback) getActivity();
+//    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_input, container, false);
+
+        if(database != null) {
+            database.close();
+            database = null;
+        }
+
+        database = AddDatabase.getInstance(getActivity());
+        boolean isOpen = database.open();
+        if(isOpen) {
+            Log.d(TAG, "Book database is open");
+        } else {
+            Log.d(TAG, "Book database is not open");
+        }
 
         recyclerView = (RecyclerView) v.findViewById(R.id.addRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -59,8 +75,7 @@ public class InputFragment extends Fragment {
 
         adapter = new AddAdapter();
         recyclerView.setAdapter(adapter);
-
-        ArrayList<AddList> result = callback.selectAll();
+        ArrayList<AddList> result = database.selectAll();
         adapter.setItems(result);
 //        Bundle bundle = getArguments();
 //        String name = bundle.getString("name");
@@ -77,12 +92,40 @@ public class InputFragment extends Fragment {
 //        } else {
 //            return v;
 //        }
+        // open database
+
         adapter.setOnitemClickListener(new OnAddItemClickListener() {
             @Override
-            public void onItemClick(AddAdapter.ViewHolder holder, View view, int position) {
-                AddList item = adapter.getItem(position);
+            public void onItemClick(AddAdapter.ViewHolder holder, View view, final int position) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Choice ?");
+                builder.setMessage("Delete or Revise");
+                builder.setIcon(android.R.drawable.ic_dialog_alert);
 
-                Toast.makeText(getContext(), "아이템 선택됨 : " + item.getName(), Toast.LENGTH_LONG).show();
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, String.valueOf(position));
+                        database.deleteData(position);
+                        database.resetData();
+                    }
+                });
+                builder.setNeutralButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.setNegativeButton("Revise", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+//                AddList item = adapter.getItem(position);
+//                Toast.makeText(getContext(), "아이템 선택됨 : " + item.getName(), Toast.LENGTH_LONG).show();
             }
         });
 //        Button button = v.findViewById(R.id.button);
