@@ -4,41 +4,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MAINACTIVITY";
     private TextView getCalendarData, getNameData, getCategoryData, getRelationData, getMoneyData;
     private Button inputButton, outputButton, compareButton, settingButton;
-    AddDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-//        // open database
-//        if(database != null) {
-//            database.close();
-//            database = null;
-//        }
-//        database = AddDatabase.getInstance(this);
-//        boolean isOpen = database.open();
-//        if(isOpen) {
-//            Log.d(TAG, "Book database is open");
-//        } else {
-//            Log.d(TAG, "Book database is not open");
-//        }
 
         final LinearLayout mainFrame = (LinearLayout) findViewById(R.id.mainFrame);
         final RelativeLayout main = (RelativeLayout) findViewById(R.id.main);
@@ -54,18 +36,6 @@ public class MainActivity extends AppCompatActivity {
         settingButton = (Button) findViewById(R.id.settingButton);
 
         mainFrame.setVisibility(View.GONE);
-
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        InputFragment inputFragment = new InputFragment();
-//        final Bundle bundle = new Bundle();
-//        bundle.putString("name", name);
-//        bundle.putString("date", date);
-//        bundle.putString("category", category);
-//        bundle.putString("relation", relation);
-//        bundle.putString("money", money);
-//        inputFragment.setArguments(bundle);
-//        transaction.add(R.id.main, inputFragment);
-//        transaction.commit();
 
         inputButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,22 +78,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-    // close database
-    protected void onDestroy(){
-        if (database != null) {
-            database.close();
-            database = null;
-        }
-        super.onDestroy();
-    }
-//    @Override
-//    public ArrayList<AddList> selectAll() {
-//        ArrayList<AddList> result = database.selectAll();
-//        return result;
-//    }
-//    @Override
-//    public void deleteData (int id) {
-//
-//    }
 }

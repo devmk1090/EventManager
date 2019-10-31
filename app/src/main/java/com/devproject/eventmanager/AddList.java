@@ -1,19 +1,19 @@
 package com.devproject.eventmanager;
 
+import android.database.Cursor;
+
 public class AddList {
 
-    String name;
-    String date;
-    String category;
-    String relation;
-    String money;
+    private String name, date, category, relation, money;
+    private int id;
 
-    public AddList(String name, String date, String category, String relation, String money) {
+    public AddList(String name, String date, String category, String relation, String money, int id) {
         this.name = name;
         this.date = date;
         this.category = category;
         this.relation = relation;
         this.money = money;
+        this.id = id;
     }
 
     public String getName() {
@@ -54,16 +54,23 @@ public class AddList {
         this.money = money;
     }
 
-
-    @Override
-    public String toString() {
-        return "AddList{" +
-                "name='" + name + '\'' +
-                ", date='" + date + '\'' +
-                ", category='" + category + '\'' +
-                ", relation='" + relation + '\'' +
-                ", money='" + money + '\'' +
-                '}';
-
+    public int getId() {
+        return id;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+//    @Override
+//    public String toString() {
+//        return "AddList{" +
+//                "name='" + name + '\'' +
+//                ", date='" + date + '\'' +
+//                ", category='" + category + '\'' +
+//                ", relation='" + relation + '\'' +
+//                ", money='" + money + '\'' +
+//                '}';
+//
+//    }
 }

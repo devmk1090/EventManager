@@ -1,14 +1,10 @@
 package com.devproject.eventmanager;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -16,31 +12,39 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
+public class DetailActivity extends AppCompatActivity {
 
-
-public class AddActivity extends AppCompatActivity {
-
-    private String TAG = "AddActivity";
+    private String TAG = "DetailActivity";
     private TextView calendarData, categoryData, relationData;
-    private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, saveButton;
+    private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, reviseButton, deleteButton;
     private Spinner categorySpinner, relationSpinner;
     private EditText moneyData, nameData;
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
 
-    ArrayList<AddList> addLists = new ArrayList<>();
-    MyAdapter adapter;
-    RecyclerView rv;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add);
+        setContentView(R.layout.activity_detail);
+
+        //RECEIVE DATA
+        Intent i = getIntent();
+
+        final String name = i.getExtras().getString("NAME");
+        final String date = i.getExtras().getString("DATE");
+        final String category = i.getExtras().getString("CATEGORY");
+        final String relation = i.getExtras().getString("RELATION");
+        final String money = i.getExtras().getString("MONEY");
+        final int id = i.getExtras().getInt("ID");
+
+        nameData.setText(name);
+        calendarData.setText(date);
+        categoryData.setText(category);
+        relationData.setText(relation);
+        moneyData.setText(money);
 
         calendarButton = (Button) findViewById(R.id.calendarButton);
         calendarData = (TextView) findViewById(R.id.calendarData);
@@ -59,7 +63,8 @@ public class AddActivity extends AppCompatActivity {
         hundredButton = (Button) findViewById(R.id.hundredButton);
         resetButton = (Button) findViewById(R.id.resetButton);
 
-        saveButton = (Button) findViewById(R.id.saveButton);
+        reviseButton = (Button) findViewById(R.id.reviseButton);
+        deleteButton = (Button) findViewById(R.id.deleteButton);
 
         this.calendarListener();
 
@@ -118,20 +123,19 @@ public class AddActivity extends AppCompatActivity {
                 moneyData.setText(moneyTotal + "원");
             }
         });
-        saveButton.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 final String name = nameData.getText().toString();
-                 final String date = calendarData.getText().toString();
-                 final String category = categoryData.getText().toString();
-                 final String relation = relationData.getText().toString();
-                 final String money = moneyData.getText().toString();
-                 save(name, date, category, relation, money);
-                 Intent intent = new Intent(AddActivity.this, MainActivity.class);
-                 startActivity(intent);
-
-             }
-         });
+        reviseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                update(id, nameData.getText().toString(), calendarData.getText().toString(),
+                        categoryData.getText().toString(), relationData.getText().toString(), moneyData.getText().toString());
+            }
+        });
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delete(id);
+            }
+        });
     }
     public void calendarListener() {
         dateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -146,33 +150,41 @@ public class AddActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void save(String name, String date, String category, String relation, String money){
+    private void update(int id, String newName, String newData, String newCategory, String newRelation, String newMoney){
         DBAdapter db = new DBAdapter(this);
-
-        //OPEN
         db.openDB();
-
-        //INSERT
-        long result = db.add(name, date, category, relation, money);
+        long result = db.UPDATE(id, newName, newData, newCategory, newRelation, newMoney);
 
         if(result > 0)
         {
-            nameData.setText("");
-            calendarData.setText("");
-            categoryData.setText("");
-            relationData.setText("");
-            moneyData.setText("");
-        } else
+            nameData.setText(newName);
+            calendarData.setText(newData);
+            categoryData.setText(newCategory);
+            relationData.setText(newRelation);
+            moneyData.setText(newMoney);
+            Snackbar.make(nameData, "Updated Successfully", Snackbar.LENGTH_SHORT).show();
+        }else
         {
-            Snackbar.make(nameData, "Unable To Insert", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(nameData, "Unable to Update", Snackbar.LENGTH_SHORT).show();
         }
 
-        //CLOSE
         db.close();
-
-        //REFRESH
     }
 
+    //DELETE
+    private void delete(int id){
+        DBAdapter db = new DBAdapter(this);
+        db.openDB();
+        long result = db.Delete(id);
 
+        if(result > 0)
+        {
+            this.finish();
+        }else
+        {
+            Snackbar.make(nameData, "Unable to Update", Snackbar.LENGTH_SHORT).show();
+        }
 
+        db.close();
+    }
 }
