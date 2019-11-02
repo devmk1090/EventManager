@@ -2,11 +2,9 @@ package com.devproject.eventmanager;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,9 +16,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
-
-import java.util.ArrayList;
 
 
 public class AddActivity extends AppCompatActivity {
@@ -32,15 +27,28 @@ public class AddActivity extends AppCompatActivity {
     private EditText moneyData, nameData;
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
+    private AlertDialog dialog;
 
-    ArrayList<AddList> addLists = new ArrayList<>();
-    MyAdapter adapter;
-    RecyclerView rv;
+    AddDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
+
+        // open database
+        if(database != null) {
+            database.close();
+            database = null;
+        }
+
+        database = AddDatabase.getInstance(this);
+        boolean isOpen = database.open();
+        if(isOpen) {
+            Log.d(TAG, "Book database is open");
+        } else {
+            Log.d(TAG, "Book database is not open");
+        }
 
         calendarButton = (Button) findViewById(R.id.calendarButton);
         calendarData = (TextView) findViewById(R.id.calendarData);
@@ -118,20 +126,20 @@ public class AddActivity extends AppCompatActivity {
                 moneyData.setText(moneyTotal + "원");
             }
         });
-        saveButton.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 final String name = nameData.getText().toString();
-                 final String date = calendarData.getText().toString();
-                 final String category = categoryData.getText().toString();
-                 final String relation = relationData.getText().toString();
-                 final String money = moneyData.getText().toString();
-                 save(name, date, category, relation, money);
-                 Intent intent = new Intent(AddActivity.this, MainActivity.class);
-                 startActivity(intent);
 
-             }
-         });
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String name = nameData.getText().toString();
+                final String date = calendarData.getText().toString();
+                final String category = categoryData.getText().toString();
+                final String relation = relationData.getText().toString();
+                final String money = moneyData.getText().toString();
+                insert(name, date, category, relation, money);
+                Intent intent = new Intent(AddActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
     public void calendarListener() {
         dateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -145,34 +153,16 @@ public class AddActivity extends AppCompatActivity {
         DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, 2019, 10, 01);
         dialog.show();
     }
-
-    private void save(String name, String date, String category, String relation, String money){
-        DBAdapter db = new DBAdapter(this);
-
-        //OPEN
-        db.openDB();
-
-        //INSERT
-        long result = db.add(name, date, category, relation, money);
-
-        if(result > 0)
-        {
-            nameData.setText("");
-            calendarData.setText("");
-            categoryData.setText("");
-            relationData.setText("");
-            moneyData.setText("");
-        } else
-        {
-            Snackbar.make(nameData, "Unable To Insert", Snackbar.LENGTH_SHORT).show();
+    // close database
+    protected void onDestroy(){
+        if (database != null) {
+            database.close();
+            database = null;
         }
-
-        //CLOSE
-        db.close();
-
-        //REFRESH
+        super.onDestroy();
     }
-
-
-
+    public void insert(String name, String date, String category, String relation, String money) {
+        database.insertRecord(name, date, category, relation, money);
+        Toast.makeText(getApplicationContext(), "정보를 추가했습니다.", Toast.LENGTH_SHORT).show();
+    }
 }

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -12,8 +13,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -24,27 +25,26 @@ public class DetailActivity extends AppCompatActivity {
     private EditText moneyData, nameData;
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
+    AddDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        //RECEIVE DATA
-        Intent i = getIntent();
+        // open database
+        if(database != null) {
+            database.close();
+            database = null;
+        }
 
-        final String name = i.getExtras().getString("NAME");
-        final String date = i.getExtras().getString("DATE");
-        final String category = i.getExtras().getString("CATEGORY");
-        final String relation = i.getExtras().getString("RELATION");
-        final String money = i.getExtras().getString("MONEY");
-        final int id = i.getExtras().getInt("ID");
-
-        nameData.setText(name);
-        calendarData.setText(date);
-        categoryData.setText(category);
-        relationData.setText(relation);
-        moneyData.setText(money);
+        database = AddDatabase.getInstance(this);
+        boolean isOpen = database.open();
+        if(isOpen) {
+            Log.d(TAG, "Book database is open");
+        } else {
+            Log.d(TAG, "Book database is not open");
+        }
 
         calendarButton = (Button) findViewById(R.id.calendarButton);
         calendarData = (TextView) findViewById(R.id.calendarData);
@@ -67,6 +67,23 @@ public class DetailActivity extends AppCompatActivity {
         deleteButton = (Button) findViewById(R.id.deleteButton);
 
         this.calendarListener();
+
+        //RECEIVE DATA
+        Intent intent = getIntent();
+
+        final int id = intent.getExtras().getInt("ID");
+        final String name = intent.getExtras().getString("NAME");
+        final String date = intent.getExtras().getString("DATE");
+        final String category = intent.getExtras().getString("CATEGORY");
+        final String relation = intent.getExtras().getString("RELATION");
+        final String money = intent.getExtras().getString("MONEY");
+
+        nameData.setText(name);
+        calendarData.setText(date);
+        categoryData.setText(category);
+        relationData.setText(relation);
+        moneyData.setText(money);
+
 
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -126,14 +143,20 @@ public class DetailActivity extends AppCompatActivity {
         reviseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                update(id, nameData.getText().toString(), calendarData.getText().toString(),
-                        categoryData.getText().toString(), relationData.getText().toString(), moneyData.getText().toString());
+                final String nameR = nameData.getText().toString();
+                final String dateR = calendarData.getText().toString();
+                final String categoryR = categoryData.getText().toString();
+                final String relationR = relationData.getText().toString();
+                final String moneyR = moneyData.getText().toString();
+                database.update(id, nameR, dateR, categoryR, relationR, moneyR);
+                Intent intent = new Intent(DetailActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                delete(id);
+
             }
         });
     }
@@ -149,42 +172,12 @@ public class DetailActivity extends AppCompatActivity {
         DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, 2019, 10, 01);
         dialog.show();
     }
-
-    private void update(int id, String newName, String newData, String newCategory, String newRelation, String newMoney){
-        DBAdapter db = new DBAdapter(this);
-        db.openDB();
-        long result = db.UPDATE(id, newName, newData, newCategory, newRelation, newMoney);
-
-        if(result > 0)
-        {
-            nameData.setText(newName);
-            calendarData.setText(newData);
-            categoryData.setText(newCategory);
-            relationData.setText(newRelation);
-            moneyData.setText(newMoney);
-            Snackbar.make(nameData, "Updated Successfully", Snackbar.LENGTH_SHORT).show();
-        }else
-        {
-            Snackbar.make(nameData, "Unable to Update", Snackbar.LENGTH_SHORT).show();
+    // close database
+    protected void onDestroy(){
+        if (database != null) {
+            database.close();
+            database = null;
         }
-
-        db.close();
-    }
-
-    //DELETE
-    private void delete(int id){
-        DBAdapter db = new DBAdapter(this);
-        db.openDB();
-        long result = db.Delete(id);
-
-        if(result > 0)
-        {
-            this.finish();
-        }else
-        {
-            Snackbar.make(nameData, "Unable to Update", Snackbar.LENGTH_SHORT).show();
-        }
-
-        db.close();
+        super.onDestroy();
     }
 }

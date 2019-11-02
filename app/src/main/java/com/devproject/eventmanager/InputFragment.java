@@ -1,15 +1,17 @@
 package com.devproject.eventmanager;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +24,13 @@ import java.util.ArrayList;
 
 public class InputFragment extends Fragment {
 
-    RecyclerView rv;
-    MyAdapter adapter;
-    ArrayList<AddList> addLists = new ArrayList<>();
+    RecyclerView recyclerView;
+    AddAdapter adapter;
 
-//    OnDatabaseCallback callback;
+    //    OnDatabaseCallback callback;
     String TAG = "InputFragment";
+
+    AddDatabase database;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -48,50 +51,68 @@ public class InputFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_input, container, false);
 
-        //RECYCLER
-        rv = (RecyclerView) v.findViewById(R.id.addRecyclerView);
+        if(database != null) {
+            database.close();
+            database = null;
+        }
 
-        //SET ITS PROPS
-        rv.setLayoutManager(new LinearLayoutManager(getContext()));
+        database = AddDatabase.getInstance(getActivity());
+        boolean isOpen = database.open();
+        if(isOpen) {
+            Log.d(TAG, "Book database is open");
+        } else {
+            Log.d(TAG, "Book database is not open");
+        }
 
-        //ADAPTER
-        adapter = new MyAdapter(getContext(), addLists);
-        retrieve();
+        recyclerView = (RecyclerView) v.findViewById(R.id.addRecyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
 
+        adapter = new AddAdapter();
+        recyclerView.setAdapter(adapter);
+        ArrayList<AddList> result = database.selectAll();
+        adapter.setItems(result);
+
+        adapter.setOnitemClickListener(new OnAddItemClickListener() {
+            @Override
+            public void onItemClick(AddAdapter.ViewHolder holder, View view, final int position) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Choice ?");
+                builder.setMessage("Delete or Revise");
+                builder.setIcon(android.R.drawable.ic_dialog_alert);
+
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int i = database.getItemId(position);
+                        Log.d(TAG, String.valueOf(i));
+                        database.deleteData(i);
+                    }
+                });
+                builder.setNeutralButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.setNegativeButton("Revise", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        int i = database.getItemId(position);
+                        intent.putExtra("ID", i);
+                        intent.putExtra("NAME", database.getName(position));
+                        intent.putExtra("DATE", database.getDate(position));
+                        intent.putExtra("CATEGORY", database.getCategory(position));
+                        intent.putExtra("RELATION", database.getRelation(position));
+                        intent.putExtra("MONEY", database.getMoney(position));
+                        startActivity(intent);
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
         return v;
-    }
-
-    //RETRIEVE
-    private void retrieve() {
-        DBAdapter db = new DBAdapter(getContext());
-
-        //OPEN
-        db.openDB();
-        addLists.clear();
-
-        //SELECT
-        Cursor c = db.getAllList();
-
-        //LOOP THRU THE DATA ADDING TO ARRAYLIST
-        while (c.moveToNext()) {
-            int id = c.getInt(0);
-            String name = c.getString(1);
-            String date = c.getString(2);
-            String category = c.getString(3);
-            String relation = c.getString(4);
-            String money = c.getString(5);
-
-            //CREATE LISTS
-            AddList a = new AddList(name, date, category, relation, money, id);
-
-            //ADD TO LISTS
-            addLists.add(a);
-        }
-
-        //SET ADAPTER TO RV
-        if(!(addLists.size()<1))
-        {
-            rv.setAdapter(adapter);
-        }
     }
 }
