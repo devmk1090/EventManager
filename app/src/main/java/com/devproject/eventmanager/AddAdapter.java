@@ -1,6 +1,5 @@
 package com.devproject.eventmanager;
 
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         View itemView = inflater.inflate(R.layout.asform, viewGroup, false);
-
         return new ViewHolder(itemView, this);
     }
 
@@ -51,6 +49,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
     public void setOnitemClickListener(OnAddItemClickListener listener){
         this.listener = listener;
     }
+
     @Override
     public void onItemClick(ViewHolder holder, View view, int position) {
         if (listener != null) {
@@ -87,5 +86,13 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
             getRelationData.setText(item.getRelation());
             getMoneyData.setText(item.getMoney());
         }
+    }
+    public void removeData(int position) {
+        items.remove(position);
+        notifyItemRemoved(position);
+    }
+    public void insertData(AddList item, int position) {
+        items.add(position, item);
+        notifyItemInserted(position);
     }
 }

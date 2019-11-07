@@ -40,9 +40,8 @@ public class MainActivity extends AppCompatActivity {
         inputButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 InputFragment inputFragment = new InputFragment();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.main, inputFragment);
                 transaction.commit();
             }

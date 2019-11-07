@@ -2,9 +2,11 @@ package com.devproject.eventmanager;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,8 +16,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import java.util.ArrayList;
 
 
 public class AddActivity extends AppCompatActivity {
@@ -28,13 +30,17 @@ public class AddActivity extends AppCompatActivity {
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
     private AlertDialog dialog;
-
     AddDatabase database;
+    AddAdapter adapter;
+    AddList items;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
+
+        adapter = new AddAdapter();
 
         // open database
         if(database != null) {
@@ -94,7 +100,6 @@ public class AddActivity extends AppCompatActivity {
 
             }
         });
-
         tenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,9 +140,10 @@ public class AddActivity extends AppCompatActivity {
                 final String category = categoryData.getText().toString();
                 final String relation = relationData.getText().toString();
                 final String money = moneyData.getText().toString();
-                insert(name, date, category, relation, money);
-                Intent intent = new Intent(AddActivity.this, MainActivity.class);
-                startActivity(intent);
+                database.insertRecord(name, date, category, relation, money);
+                //adapter.addItem(new AddList(name, date, category, relation, money));
+                finish();
+
             }
         });
     }
@@ -160,9 +166,5 @@ public class AddActivity extends AppCompatActivity {
             database = null;
         }
         super.onDestroy();
-    }
-    public void insert(String name, String date, String category, String relation, String money) {
-        database.insertRecord(name, date, category, relation, money);
-        Toast.makeText(getApplicationContext(), "정보를 추가했습니다.", Toast.LENGTH_SHORT).show();
     }
 }

@@ -13,12 +13,11 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
-public class DetailActivity extends AppCompatActivity {
+public class AddDetailActivity extends AppCompatActivity {
 
-    private String TAG = "DetailActivity";
+    private String TAG = "AddDetailActivity";
     private TextView calendarData, categoryData, relationData;
     private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, reviseButton, deleteButton;
     private Spinner categorySpinner, relationSpinner;
@@ -26,6 +25,8 @@ public class DetailActivity extends AppCompatActivity {
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
     AddDatabase database;
+    AddAdapter adapter;
+    AddList items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,8 +150,9 @@ public class DetailActivity extends AppCompatActivity {
                 final String relationR = relationData.getText().toString();
                 final String moneyR = moneyData.getText().toString();
                 database.update(id, nameR, dateR, categoryR, relationR, moneyR);
-                Intent intent = new Intent(DetailActivity.this, MainActivity.class);
-                startActivity(intent);
+                adapter = new AddAdapter();
+                adapter.setItem(adapter.getItemCount(), items);
+                finish();
             }
         });
         deleteButton.setOnClickListener(new View.OnClickListener() {

@@ -1,5 +1,4 @@
 package com.devproject.eventmanager;
-import android.database.Cursor;
 import android.view.View;
 
 public interface OnAddItemClickListener {

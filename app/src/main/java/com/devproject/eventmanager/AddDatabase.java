@@ -3,7 +3,6 @@ package com.devproject.eventmanager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -89,35 +88,24 @@ public class AddDatabase {
         }
         return true;
     }
+    private static final String CREATE_TABLE_ADD_INFO = "create table " + TABLE_ADD_INFO + "("
+            + "  _id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
+            + "  NAME TEXT, "
+            + "  DATE TEXT, "
+            + "  CATEGORY TEXT, "
+            + "  RELATION TEXT, "
+            + "  MONEY TEXT, "
+            + "  CREATE_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP "
+            + ")";
 
     private class DatabaseHelper extends SQLiteOpenHelper {
         public DatabaseHelper (Context context){
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
+        @Override
         public void onCreate(SQLiteDatabase _db) {
-            // TABLE_ADD_INFO
-            println("creating table [" + TABLE_ADD_INFO + "].");
-
-            // drop existing table
-            String DROP_SQL = "drop table if exists " + TABLE_ADD_INFO;
-            try{
-                _db.execSQL(DROP_SQL);
-            } catch (Exception ex) {
-                Log.e(TAG, "Exception in DROP_SQL", ex);
-            }
-
-            // create table
-            String CREATE_SQL = "create table " + TABLE_ADD_INFO + "("
-                    + "  _id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
-                    + "  NAME TEXT, "
-                    + "  DATE TEXT, "
-                    + "  CATEGORY TEXT, "
-                    + "  RELATION TEXT, "
-                    + "  MONEY TEXT, "
-                    + "  CREATE_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP "
-                    + ")";
             try {
-                _db.execSQL(CREATE_SQL);
+                _db.execSQL(CREATE_TABLE_ADD_INFO);
             } catch (Exception ex) {
                 Log.e(TAG, "Exception in CREATE_SQL", ex);
             }
@@ -131,14 +119,6 @@ public class AddDatabase {
             println("Upgrading database from version " + oldVersion + " to " + newVersion + ".");
             if(oldVersion < 2) {
 
-            }
-        }
-
-        private void insertRecord(SQLiteDatabase _db, String name, String date, String category, String relation, String money) {
-            try {
-                _db.execSQL( "insert into " + TABLE_ADD_INFO + "(NAME, DATE, CATEGORY, RELATION, MONEY) values ('" + name + "','" + date + "','" + category +"','" + relation +"','" + money + "');" );
-            } catch (Exception ex){
-                Log.e(TAG, "Exception in executing insert SQL.", ex);
             }
         }
     }

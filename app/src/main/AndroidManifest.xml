@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".DetailActivity"></activity>
+        <activity android:name=".SubDetailActivity"/>
+        <activity android:name=".AddDetailActivity"/>
         <activity android:name=".SubActivity" />
         <activity android:name=".AddActivity" />
         <activity android:name=".MainActivity" />

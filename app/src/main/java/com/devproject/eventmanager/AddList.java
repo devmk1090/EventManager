@@ -53,15 +53,15 @@ public class AddList {
     public void setMoney(String money) {
         this.money = money;
     }
-    @Override
-    public String toString() {
-        return "AddList{" +
-                "name='" + name + '\'' +
-                ", date='" + date + '\'' +
-                ", category='" + category + '\'' +
-                ", relation='" + relation + '\'' +
-                ", money='" + money + '\'' +
-                '}';
-
-    }
+//    @Override
+//    public String toString() {
+//        return "AddList{" +
+//                "name='" + name + '\'' +
+//                ", date='" + date + '\'' +
+//                ", category='" + category + '\'' +
+//                ", relation='" + relation + '\'' +
+//                ", money='" + money + '\'' +
+//                '}';
+//
+//    }
 }

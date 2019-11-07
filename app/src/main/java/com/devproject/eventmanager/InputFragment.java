@@ -3,11 +3,11 @@ package com.devproject.eventmanager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,10 +26,7 @@ public class InputFragment extends Fragment {
 
     RecyclerView recyclerView;
     AddAdapter adapter;
-
-    //    OnDatabaseCallback callback;
     String TAG = "InputFragment";
-
     AddDatabase database;
 
     @Override
@@ -44,7 +41,6 @@ public class InputFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
     }
 
     @Override
@@ -63,6 +59,7 @@ public class InputFragment extends Fragment {
         } else {
             Log.d(TAG, "Book database is not open");
         }
+
 
         recyclerView = (RecyclerView) v.findViewById(R.id.addRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -86,7 +83,9 @@ public class InputFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         int i = database.getItemId(position);
                         Log.d(TAG, String.valueOf(i));
+                        Log.d(TAG, String.valueOf(position));
                         database.deleteData(i);
+                        adapter.removeData(position);
                     }
                 });
                 builder.setNeutralButton("No", new DialogInterface.OnClickListener() {
@@ -98,7 +97,7 @@ public class InputFragment extends Fragment {
                 builder.setNegativeButton("Revise", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        Intent intent = new Intent(getActivity(), AddDetailActivity.class);
                         int i = database.getItemId(position);
                         intent.putExtra("ID", i);
                         intent.putExtra("NAME", database.getName(position));
@@ -114,5 +113,6 @@ public class InputFragment extends Fragment {
             }
         });
         return v;
+
     }
 }
