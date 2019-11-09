@@ -1,7 +1,5 @@
 package com.devproject.eventmanager;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,8 +12,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 
-public class AddDetailActivity extends AppCompatActivity {
+
+public class SubDetailActivity extends AppCompatActivity {
 
     private String TAG = "AddDetailActivity";
     private TextView calendarData, categoryData, relationData;
@@ -24,9 +24,7 @@ public class AddDetailActivity extends AppCompatActivity {
     private EditText moneyData, nameData;
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
-    AddDatabase database;
-    AddAdapter adapter;
-    AddList items;
+    SubDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +37,7 @@ public class AddDetailActivity extends AppCompatActivity {
             database = null;
         }
 
-        database = AddDatabase.getInstance(this);
+        database = SubDatabase.getInstance(this);
         boolean isOpen = database.open();
         if(isOpen) {
             Log.d(TAG, "Book database is open");
@@ -150,7 +148,8 @@ public class AddDetailActivity extends AppCompatActivity {
                 final String relationR = relationData.getText().toString();
                 final String moneyR = moneyData.getText().toString();
                 database.update(id, nameR, dateR, categoryR, relationR, moneyR);
-                Intent intent = new Intent(AddDetailActivity.this, MainActivity.class);
+                Intent intent = new Intent(SubDetailActivity.this, MainActivity.class);
+                intent.putExtra("InOut", true);
                 startActivity(intent);
             }
         });

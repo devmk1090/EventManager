@@ -3,6 +3,7 @@ package com.devproject.eventmanager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -35,8 +36,16 @@ public class MainActivity extends AppCompatActivity {
         compareButton = (Button) findViewById(R.id.compareButton);
         settingButton = (Button) findViewById(R.id.settingButton);
 
-        mainFrame.setVisibility(View.GONE);
-
+        Intent intent = getIntent();
+        boolean InOut = intent.getBooleanExtra("InOut", false);
+        if(InOut == false) {
+            InputFragment inputFragment = new InputFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.main, inputFragment).commit();
+        }
+        else {
+            OutputFragment outputFragment = new OutputFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.main, outputFragment).commit();
+        }
         inputButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

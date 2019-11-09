@@ -25,9 +25,7 @@ public class OutputFragment extends Fragment {
 
     RecyclerView recyclerView;
     SubAdapter adapter;
-
     String TAG = "OutputFragment";
-
     SubDatabase database;
 
     @Override
@@ -84,7 +82,9 @@ public class OutputFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         int i = database.getItemId(position);
                         Log.d(TAG, String.valueOf(i));
+                        Log.d(TAG, String.valueOf(position));
                         database.deleteData(i);
+                        adapter.removeData(position);
                     }
                 });
                 builder.setNeutralButton("No", new DialogInterface.OnClickListener() {

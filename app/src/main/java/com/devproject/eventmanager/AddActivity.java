@@ -2,11 +2,9 @@ package com.devproject.eventmanager;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,15 +30,11 @@ public class AddActivity extends AppCompatActivity {
     private AlertDialog dialog;
     AddDatabase database;
     AddAdapter adapter;
-    AddList items;
-    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
-
-        adapter = new AddAdapter();
 
         // open database
         if(database != null) {
@@ -135,15 +129,14 @@ public class AddActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String name = nameData.getText().toString();
-                final String date = calendarData.getText().toString();
-                final String category = categoryData.getText().toString();
-                final String relation = relationData.getText().toString();
-                final String money = moneyData.getText().toString();
+                String name = nameData.getText().toString();
+                String date = calendarData.getText().toString();
+                String category = categoryData.getText().toString();
+                String relation = relationData.getText().toString();
+                String money = moneyData.getText().toString();
                 database.insertRecord(name, date, category, relation, money);
-                //adapter.addItem(new AddList(name, date, category, relation, money));
-                finish();
-
+                Intent intent = new Intent(AddActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
     }

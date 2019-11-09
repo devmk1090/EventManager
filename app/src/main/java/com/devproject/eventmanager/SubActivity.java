@@ -1,7 +1,5 @@
 package com.devproject.eventmanager;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,25 +11,29 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 
-public class AddDetailActivity extends AppCompatActivity {
+public class SubActivity extends AppCompatActivity {
 
-    private String TAG = "AddDetailActivity";
+    private String TAG = "AddActivity";
     private TextView calendarData, categoryData, relationData;
-    private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, reviseButton, deleteButton;
+    private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, saveButton;
     private Spinner categorySpinner, relationSpinner;
     private EditText moneyData, nameData;
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
-    AddDatabase database;
-    AddAdapter adapter;
-    AddList items;
+    private AlertDialog dialog;
+
+    SubDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        setContentView(R.layout.activity_sub);
 
         // open database
         if(database != null) {
@@ -39,7 +41,7 @@ public class AddDetailActivity extends AppCompatActivity {
             database = null;
         }
 
-        database = AddDatabase.getInstance(this);
+        database = SubDatabase.getInstance(this);
         boolean isOpen = database.open();
         if(isOpen) {
             Log.d(TAG, "Book database is open");
@@ -64,27 +66,9 @@ public class AddDetailActivity extends AppCompatActivity {
         hundredButton = (Button) findViewById(R.id.hundredButton);
         resetButton = (Button) findViewById(R.id.resetButton);
 
-        reviseButton = (Button) findViewById(R.id.reviseButton);
-        deleteButton = (Button) findViewById(R.id.deleteButton);
+        saveButton = (Button) findViewById(R.id.saveButton);
 
         this.calendarListener();
-
-        //RECEIVE DATA
-        Intent intent = getIntent();
-
-        final int id = intent.getExtras().getInt("ID");
-        final String name = intent.getExtras().getString("NAME");
-        final String date = intent.getExtras().getString("DATE");
-        final String category = intent.getExtras().getString("CATEGORY");
-        final String relation = intent.getExtras().getString("RELATION");
-        final String money = intent.getExtras().getString("MONEY");
-
-        nameData.setText(name);
-        calendarData.setText(date);
-        categoryData.setText(category);
-        relationData.setText(relation);
-        moneyData.setText(money);
-
 
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -109,7 +93,6 @@ public class AddDetailActivity extends AppCompatActivity {
 
             }
         });
-
         tenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,23 +124,19 @@ public class AddDetailActivity extends AppCompatActivity {
                 moneyData.setText(moneyTotal + "원");
             }
         });
-        reviseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String nameR = nameData.getText().toString();
-                final String dateR = calendarData.getText().toString();
-                final String categoryR = categoryData.getText().toString();
-                final String relationR = relationData.getText().toString();
-                final String moneyR = moneyData.getText().toString();
-                database.update(id, nameR, dateR, categoryR, relationR, moneyR);
-                Intent intent = new Intent(AddDetailActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String name = nameData.getText().toString();
+                final String date = calendarData.getText().toString();
+                final String category = categoryData.getText().toString();
+                final String relation = relationData.getText().toString();
+                final String money = moneyData.getText().toString();
+                database.insertRecord(name, date, category, relation, money);
+                Intent intent = new Intent(SubActivity.this, MainActivity.class);
+                intent.putExtra("InOut", true);
+                startActivity(intent);
             }
         });
     }
