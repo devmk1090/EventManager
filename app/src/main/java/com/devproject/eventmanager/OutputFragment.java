@@ -28,6 +28,8 @@ public class OutputFragment extends Fragment {
     String TAG = "OutputFragment";
     SubDatabase database;
 
+    public OutputFragment(){}
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

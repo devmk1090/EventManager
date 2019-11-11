@@ -149,7 +149,7 @@ public class SubDetailActivity extends AppCompatActivity {
                 final String moneyR = moneyData.getText().toString();
                 database.update(id, nameR, dateR, categoryR, relationR, moneyR);
                 Intent intent = new Intent(SubDetailActivity.this, MainActivity.class);
-                intent.putExtra("InOut", true);
+                intent.putExtra("Out", true);
                 startActivity(intent);
             }
         });

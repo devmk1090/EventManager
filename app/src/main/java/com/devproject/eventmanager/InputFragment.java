@@ -27,6 +27,8 @@ public class InputFragment extends Fragment {
     String TAG = "InputFragment";
     AddDatabase database;
 
+    public InputFragment (){}
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
