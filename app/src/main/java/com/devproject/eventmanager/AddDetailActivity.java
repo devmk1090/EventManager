@@ -19,7 +19,7 @@ public class AddDetailActivity extends AppCompatActivity {
 
     private String TAG = "AddDetailActivity";
     private TextView calendarData, categoryData, relationData;
-    private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, reviseButton, deleteButton;
+    private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, reviseButton;
     private Spinner categorySpinner, relationSpinner;
     private EditText moneyData, nameData;
     private int moneyTotal;
@@ -65,7 +65,6 @@ public class AddDetailActivity extends AppCompatActivity {
         resetButton = (Button) findViewById(R.id.resetButton);
 
         reviseButton = (Button) findViewById(R.id.reviseButton);
-        deleteButton = (Button) findViewById(R.id.deleteButton);
 
         this.calendarListener();
 
@@ -152,12 +151,6 @@ public class AddDetailActivity extends AppCompatActivity {
                 database.update(id, nameR, dateR, categoryR, relationR, moneyR);
                 Intent intent = new Intent(AddDetailActivity.this, MainActivity.class);
                 startActivity(intent);
-            }
-        });
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
             }
         });
     }

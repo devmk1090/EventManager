@@ -19,7 +19,7 @@ public class SubDetailActivity extends AppCompatActivity {
 
     private String TAG = "AddDetailActivity";
     private TextView calendarData, categoryData, relationData;
-    private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, reviseButton, deleteButton;
+    private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, reviseButton;
     private Spinner categorySpinner, relationSpinner;
     private EditText moneyData, nameData;
     private int moneyTotal;
@@ -63,7 +63,6 @@ public class SubDetailActivity extends AppCompatActivity {
         resetButton = (Button) findViewById(R.id.resetButton);
 
         reviseButton = (Button) findViewById(R.id.reviseButton);
-        deleteButton = (Button) findViewById(R.id.deleteButton);
 
         this.calendarListener();
 
@@ -151,12 +150,6 @@ public class SubDetailActivity extends AppCompatActivity {
                 Intent intent = new Intent(SubDetailActivity.this, MainActivity.class);
                 intent.putExtra("Out", true);
                 startActivity(intent);
-            }
-        });
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
             }
         });
     }
