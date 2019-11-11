@@ -11,10 +11,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 
 public class SubActivity extends AppCompatActivity {
@@ -26,7 +25,6 @@ public class SubActivity extends AppCompatActivity {
     private EditText moneyData, nameData;
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
-    private AlertDialog dialog;
 
     SubDatabase database;
 
@@ -135,7 +133,7 @@ public class SubActivity extends AppCompatActivity {
                 final String money = moneyData.getText().toString();
                 database.insertRecord(name, date, category, relation, money);
                 Intent intent = new Intent(SubActivity.this, MainActivity.class);
-                intent.putExtra("InOut", true);
+                intent.putExtra("Out", true);
                 startActivity(intent);
             }
         });
