@@ -1,21 +1,20 @@
 package com.devproject.eventmanager;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 
 
 public class AddActivity extends AppCompatActivity {
@@ -27,9 +26,7 @@ public class AddActivity extends AppCompatActivity {
     private EditText moneyData, nameData;
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
-    private AlertDialog dialog;
     AddDatabase database;
-    AddAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,29 +68,62 @@ public class AddActivity extends AppCompatActivity {
 
         this.calendarListener();
 
-        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        final CharSequence[] categoryItems = {" 결혼식 ", " 돌잔치 ", " 장례식 "};
+        categoryData.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                categoryData.setText("" + parent.getItemAtPosition(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(AddActivity.this);
+                builder.setTitle("경조사를 선택하세요")
+                        .setItems(categoryItems, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch(which) {
+                                    case 0:
+                                        categoryData.setText(categoryItems[0]);
+                                        break;
+                                    case 1:
+                                        categoryData.setText(categoryItems[1]);
+                                        break;
+                                    case 2:
+                                        categoryData.setText(categoryItems[2]);
+                                        break;
+                                    default:
+                                }
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 
-        relationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        final CharSequence[] relationItems = {" 친구 ", " 선후배 ", " 친척 "};
+        relationData.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                relationData.setText("" + parent.getItemAtPosition(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(AddActivity.this);
+                builder.setTitle("관계를 선택하세요")
+                        .setItems(relationItems, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch(which) {
+                                    case 0:
+                                        relationData.setText(relationItems[0]);
+                                        break;
+                                    case 1:
+                                        relationData.setText(relationItems[1]);
+                                        break;
+                                    case 2:
+                                        relationData.setText(relationItems[2]);
+                                        break;
+                                    default:
+                                }
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
+
         tenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,30 +156,42 @@ public class AddActivity extends AppCompatActivity {
             }
         });
 
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = nameData.getText().toString();
-                String date = calendarData.getText().toString();
-                String category = categoryData.getText().toString();
-                String relation = relationData.getText().toString();
-                String money = moneyData.getText().toString();
-                database.insertRecord(name, date, category, relation, money);
-                Intent intent = new Intent(AddActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
+//        if(categoryData != null) {
+//            AlertDialog.Builder builder = new AlertDialog.Builder(AddActivity.this);
+//            builder.setTitle("알림")
+//                    .setMessage("경조사를 선택해주세요")
+//                    .setPositiveButton("닫기", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//
+//                        }
+//                    });
+//        }
+//        else {
+            saveButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String name = nameData.getText().toString();
+                    String date = calendarData.getText().toString();
+                    String category = categoryData.getText().toString();
+                    String relation = relationData.getText().toString();
+                    String money = moneyData.getText().toString();
+                    database.insertRecord(name, date, category, relation, money);
+                    Intent intent = new Intent(AddActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
     public void calendarListener() {
         dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                calendarData.setText(year + "/" + month + "/" + dayOfMonth);
+                calendarData.setText(year + "/" + (month +1) + "/" + dayOfMonth);
             }
         };
     }
     public void OnClickHandler(View view){
-        DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, 2019, 10, 01);
+        DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, 2019, 12, 01);
         dialog.show();
     }
     // close database
