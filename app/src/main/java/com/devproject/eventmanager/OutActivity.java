@@ -17,21 +17,21 @@ import android.widget.TextView;
 
 
 
-public class AddActivity extends AppCompatActivity {
+public class OutActivity extends AppCompatActivity {
 
-    private String TAG = "AddActivity";
+    private String TAG = "OutActivity";
     private TextView calendarData, categoryData, relationData;
     private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, saveButton;
     private Spinner categorySpinner, relationSpinner;
     private EditText moneyData, nameData;
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
-    AddDatabase database;
+    InOutDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add);
+        setContentView(R.layout.activity_inout);
 
         // open database
         if(database != null) {
@@ -39,7 +39,7 @@ public class AddActivity extends AppCompatActivity {
             database = null;
         }
 
-        database = AddDatabase.getInstance(this);
+        database = InOutDatabase.getInstance(this);
         boolean isOpen = database.open();
         if(isOpen) {
             Log.d(TAG, "Book database is open");
@@ -72,7 +72,7 @@ public class AddActivity extends AppCompatActivity {
         categoryData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(AddActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(OutActivity.this);
                 builder.setTitle("경조사를 선택하세요")
                         .setItems(categoryItems, new DialogInterface.OnClickListener() {
                             @Override
@@ -100,7 +100,7 @@ public class AddActivity extends AppCompatActivity {
         relationData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(AddActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(OutActivity.this);
                 builder.setTitle("관계를 선택하세요")
                         .setItems(relationItems, new DialogInterface.OnClickListener() {
                             @Override
@@ -157,7 +157,7 @@ public class AddActivity extends AppCompatActivity {
         });
 
 //        if(categoryData != null) {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(AddActivity.this);
+//            AlertDialog.Builder builder = new AlertDialog.Builder(OutActivity.this);
 //            builder.setTitle("알림")
 //                    .setMessage("경조사를 선택해주세요")
 //                    .setPositiveButton("닫기", new DialogInterface.OnClickListener() {
@@ -176,8 +176,8 @@ public class AddActivity extends AppCompatActivity {
                     String category = categoryData.getText().toString();
                     String relation = relationData.getText().toString();
                     String money = moneyData.getText().toString();
-                    database.insertRecord(name, date, category, relation, money);
-                    Intent intent = new Intent(AddActivity.this, MainActivity.class);
+                    database.insertRecordOut(name, date, category, relation, money);
+                    Intent intent = new Intent(OutActivity.this, MainActivity.class);
                     startActivity(intent);
                 }
             });
@@ -194,12 +194,5 @@ public class AddActivity extends AppCompatActivity {
         DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, 2019, 12, 01);
         dialog.show();
     }
-    // close database
-    protected void onDestroy(){
-        if (database != null) {
-            database.close();
-            database = null;
-        }
-        super.onDestroy();
-    }
+
 }

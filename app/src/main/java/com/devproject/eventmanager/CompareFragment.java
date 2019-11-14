@@ -6,19 +6,22 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 public class CompareFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
     private String mParam1;
     private String mParam2;
+
+    InOutDatabase database;
+    String TAG = "OutFragment";
+
 
     public CompareFragment() {}
 
@@ -40,12 +43,29 @@ public class CompareFragment extends Fragment {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-       View v = inflater.inflate(R.layout.fragment_compare, container, false);
+       ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_compare, container, false);
+
+        if(database != null) {
+            database.close();
+            database = null;
+        }
+        database = InOutDatabase.getInstance(getActivity());
+        boolean isOpen = database.open();
+        if(isOpen) {
+            Log.d(TAG, "Book database is open");
+        } else {
+            Log.d(TAG, "Book database is not open");
+        }
 
         final TextView categoryText = (TextView) v.findViewById(R.id.categoryText);
+        final TextView outTotalMoney = (TextView) v.findViewById(R.id.outTotalMoney);
+        final TextView inTotalMoney = (TextView) v.findViewById(R.id.inTotalMoney);
+        final TextView inOutTotal = (TextView) v.findViewById(R.id.inOutTotal);
+
         final CharSequence[] items = {" 전체 ", " 결혼식 ", " 돌잔치 ", " 장례식 "};
         categoryText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +78,12 @@ public class CompareFragment extends Fragment {
                                 switch(which) {
                                     case 0:
                                         categoryText.setText(items[0]);
+                                        outTotalMoney.setText(String.valueOf(database.getAllMoneyOut()));
+                                        inTotalMoney.setText(String.valueOf(database.getAllMoneyIn()));
+                                        int i = Integer.parseInt(outTotalMoney.getText().toString());
+                                        int j = Integer.parseInt(inTotalMoney.getText().toString());
+                                        int total = i - j;
+                                        inOutTotal.setText(""+total);
                                         break;
                                     case 1:
                                         categoryText.setText(items[1]);
@@ -75,7 +101,7 @@ public class CompareFragment extends Fragment {
                 dialog.show();
             }
         });
-
         return v;
     }
 }
+

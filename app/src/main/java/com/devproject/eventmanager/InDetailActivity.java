@@ -15,16 +15,16 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-public class SubDetailActivity extends AppCompatActivity {
+public class InDetailActivity extends AppCompatActivity {
 
-    private String TAG = "AddDetailActivity";
+    private String TAG = "OutDetailActivity";
     private TextView calendarData, categoryData, relationData;
     private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, reviseButton;
     private Spinner categorySpinner, relationSpinner;
     private EditText moneyData, nameData;
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
-    SubDatabase database;
+    InOutDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,7 @@ public class SubDetailActivity extends AppCompatActivity {
             database = null;
         }
 
-        database = SubDatabase.getInstance(this);
+        database = InOutDatabase.getInstance(this);
         boolean isOpen = database.open();
         if(isOpen) {
             Log.d(TAG, "Book database is open");
@@ -146,8 +146,8 @@ public class SubDetailActivity extends AppCompatActivity {
                 final String categoryR = categoryData.getText().toString();
                 final String relationR = relationData.getText().toString();
                 final String moneyR = moneyData.getText().toString();
-                database.update(id, nameR, dateR, categoryR, relationR, moneyR);
-                Intent intent = new Intent(SubDetailActivity.this, MainActivity.class);
+                database.updateIn(id, nameR, dateR, categoryR, relationR, moneyR);
+                Intent intent = new Intent(InDetailActivity.this, MainActivity.class);
                 intent.putExtra("Out", true);
                 startActivity(intent);
             }
@@ -164,13 +164,5 @@ public class SubDetailActivity extends AppCompatActivity {
     public void OnClickHandler(View view){
         DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, 2019, 10, 01);
         dialog.show();
-    }
-    // close database
-    protected void onDestroy(){
-        if (database != null) {
-            database.close();
-            database = null;
-        }
-        super.onDestroy();
     }
 }

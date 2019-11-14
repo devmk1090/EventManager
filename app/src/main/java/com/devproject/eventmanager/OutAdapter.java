@@ -10,11 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
-        implements OnAddItemClickListener {
+public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
+        implements OutItemClickListener {
 
-    ArrayList<AddList> items;
-    OnAddItemClickListener listener;
+    ArrayList<OutList> items;
+    OutItemClickListener listener;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView getNameData;
@@ -22,7 +22,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
         public TextView getCategoryData;
         public TextView getRelationData;
         public TextView getMoneyData;
-        public ViewHolder(View itemView, final OnAddItemClickListener listener) {
+        public ViewHolder(View itemView, final OutItemClickListener listener) {
             super(itemView);
             getNameData = itemView.findViewById(R.id.getNameData);
             getCalendarData = itemView.findViewById(R.id.getCalendarData);
@@ -39,7 +39,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
                 }
             });
         }
-        public void setItem(AddList item) {
+        public void setItem(OutList item) {
             getNameData.setText(item.getName());
             getCalendarData.setText(item.getDate());
             getCategoryData.setText(item.getCategory());
@@ -57,7 +57,7 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        AddList item = items.get(position);
+        OutList item = items.get(position);
 //        viewHolder.getNameData.setText(item.getName());
 //        viewHolder.getCalendarData.setText(item.getDate());
 //        viewHolder.getCategoryData.setText(item.getCategory());
@@ -78,19 +78,19 @@ public class AddAdapter extends RecyclerView.Adapter<AddAdapter.ViewHolder>
         }
     }
 
-    public void addItem(AddList item) {
+    public void addItem(OutList item) {
         items.add(item);
     }
-    public void setItems(ArrayList<AddList> items) {
+    public void setItems(ArrayList<OutList> items) {
         this.items = items;
     }
-    public AddList getItem(int position) {
+    public OutList getItem(int position) {
         return items.get(position);
     }
-    public void setItem(int position, AddList item) {
+    public void setItem(int position, OutList item) {
         items.set(position, item);
     }
-    public void setOnitemClickListener(OnAddItemClickListener listener){
+    public void setOnitemClickListener(OutItemClickListener listener){
         this.listener = listener;
     }
 

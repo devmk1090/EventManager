@@ -21,24 +21,24 @@ import java.util.ArrayList;
 
 
 
-public class OutputFragment extends Fragment {
+public class InFragment extends Fragment {
 
     RecyclerView recyclerView;
-    SubAdapter adapter;
-    String TAG = "OutputFragment";
-    SubDatabase database;
+    InAdapter adapter;
+    String TAG = "InFragment";
+    InOutDatabase database;
 
-    public OutputFragment(){}
+    public InFragment(){}
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        FloatingActionButton floatingButton = (FloatingActionButton) getView().findViewById(R.id.subfab);
+        FloatingActionButton floatingButton = (FloatingActionButton) getView().findViewById(R.id.inFab);
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), SubActivity.class);
+                Intent intent = new Intent(getActivity(), InActivity.class);
                 startActivity(intent);
             }
         });
@@ -47,14 +47,14 @@ public class OutputFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_output, container, false);
+        ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_in, container, false);
 
         if(database != null) {
             database.close();
             database = null;
         }
 
-        database = SubDatabase.getInstance(getActivity());
+        database = InOutDatabase.getInstance(getActivity());
         boolean isOpen = database.open();
         if(isOpen) {
             Log.d(TAG, "Book database is open");
@@ -62,18 +62,18 @@ public class OutputFragment extends Fragment {
             Log.d(TAG, "Book database is not open");
         }
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.subRecyclerView);
+        recyclerView = (RecyclerView) v.findViewById(R.id.inRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
 
-        adapter = new SubAdapter();
+        adapter = new InAdapter();
         recyclerView.setAdapter(adapter);
-        ArrayList<SubList> result = database.selectAll();
+        ArrayList<InList> result = database.selectAllIn();
         adapter.setItems(result);
 
-        adapter.setOnitemClickListener(new OnSubItemClickListener() {
+        adapter.setOnitemClickListener(new InItemClickListener() {
             @Override
-            public void onItemClick(SubAdapter.ViewHolder holder, View view, final int position) {
+            public void onItemClick(InAdapter.ViewHolder holder, View view, final int position) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Choice ?");
                 builder.setMessage("Delete or Revise");
@@ -82,10 +82,10 @@ public class OutputFragment extends Fragment {
                 builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        int i = database.getItemId(position);
+                        int i = database.getItemIdIn(position);
                         Log.d(TAG, String.valueOf(i));
                         Log.d(TAG, String.valueOf(position));
-                        database.deleteData(i);
+                        database.deleteDataIn(i);
                         adapter.removeData(position);
                     }
                 });
@@ -98,14 +98,14 @@ public class OutputFragment extends Fragment {
                 builder.setNegativeButton("Revise", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(getActivity(), SubDetailActivity.class);
-                        int i = database.getItemId(position);
+                        Intent intent = new Intent(getActivity(), InDetailActivity.class);
+                        int i = database.getItemIdIn(position);
                         intent.putExtra("ID", i);
-                        intent.putExtra("NAME", database.getName(position));
-                        intent.putExtra("DATE", database.getDate(position));
-                        intent.putExtra("CATEGORY", database.getCategory(position));
-                        intent.putExtra("RELATION", database.getRelation(position));
-                        intent.putExtra("MONEY", database.getMoney(position));
+                        intent.putExtra("NAME", database.getNameIn(position));
+                        intent.putExtra("DATE", database.getDateIn(position));
+                        intent.putExtra("CATEGORY", database.getCategoryIn(position));
+                        intent.putExtra("RELATION", database.getRelationIn(position));
+                        intent.putExtra("MONEY", database.getMoneyIn(position));
                         startActivity(intent);
                     }
                 });

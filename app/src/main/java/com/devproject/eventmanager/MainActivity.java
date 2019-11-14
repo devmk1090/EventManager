@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         Intent intent = getIntent();
-        boolean Out = intent.getBooleanExtra("Out", false);
-        if(Out == true)
+        boolean In = intent.getBooleanExtra("In", false);
+        if(In == true)
         {
             viewPager.setCurrentItem(1);
         }

@@ -10,11 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class SubAdapter extends RecyclerView.Adapter<SubAdapter.ViewHolder>
-        implements OnSubItemClickListener {
+public class InAdapter extends RecyclerView.Adapter<InAdapter.ViewHolder>
+        implements InItemClickListener {
 
-    ArrayList<SubList> items = new ArrayList<SubList>();
-    OnSubItemClickListener listener;
+    ArrayList<InList> items = new ArrayList<InList>();
+    InItemClickListener listener;
 
     @NonNull
     @Override
@@ -27,7 +27,7 @@ public class SubAdapter extends RecyclerView.Adapter<SubAdapter.ViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        SubList item = items.get(position);
+        InList item = items.get(position);
         viewHolder.setItem(item);
     }
 
@@ -35,19 +35,19 @@ public class SubAdapter extends RecyclerView.Adapter<SubAdapter.ViewHolder>
     public int getItemCount() {
         return items.size();
     }
-    public void addItem(SubList item) {
+    public void addItem(InList item) {
         items.add(item);
     }
-    public void setItems(ArrayList<SubList> items) {
+    public void setItems(ArrayList<InList> items) {
         this.items = items;
     }
-    public SubList getItem(int position) {
+    public InList getItem(int position) {
         return items.get(position);
     }
-    public void setItem(int position, SubList item) {
+    public void setItem(int position, InList item) {
         items.set(position, item);
     }
-    public void setOnitemClickListener(OnSubItemClickListener listener){
+    public void setOnitemClickListener(InItemClickListener listener){
         this.listener = listener;
     }
     @Override
@@ -62,7 +62,7 @@ public class SubAdapter extends RecyclerView.Adapter<SubAdapter.ViewHolder>
         TextView getCategoryData;
         TextView getRelationData;
         TextView getMoneyData;
-        public ViewHolder(View itemView, final OnSubItemClickListener listener) {
+        public ViewHolder(View itemView, final InItemClickListener listener) {
             super(itemView);
             getNameData = itemView.findViewById(R.id.getNameData);
             getCalendarData = itemView.findViewById(R.id.getCalendarData);
@@ -79,7 +79,7 @@ public class SubAdapter extends RecyclerView.Adapter<SubAdapter.ViewHolder>
                 }
             });
         }
-        public void setItem(SubList item) {
+        public void setItem(InList item) {
             getNameData.setText(item.getName());
             getCalendarData.setText(item.getDate());
             getCategoryData.setText(item.getCategory());

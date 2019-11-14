@@ -6,18 +6,78 @@
     android:orientation="vertical"
     tools:context=".CompareFragment">
     <LinearLayout
-        android:layout_marginTop="10dp"
+        android:layout_margin="10dp"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="30dp">
+        android:layout_height="150dp">
         <TextView
+            android:layout_marginBottom="5dp"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:background="@drawable/custom_textview"
-            android:layout_marginLeft="10dp"
             android:textSize="20dp"
             android:id="@+id/categoryText"
             android:text=" 경조사로 비교 "
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_marginBottom="5dp"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:text="나간돈 총합"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:textSize="20dp"
+                android:text="asdasd"
+                android:id="@+id/outTotalMoney"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_marginBottom="5dp"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:text="들어온돈 총합"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:textSize="20dp"
+                android:text="asdasd"
+                android:id="@+id/inTotalMoney"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:text="(나간돈 - 들어온돈) 총합"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:textSize="20dp"
+                android:text=""
+                android:id="@+id/inOutTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     </LinearLayout>
 </LinearLayout>

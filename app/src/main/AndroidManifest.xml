@@ -9,10 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".SubDetailActivity" />
-        <activity android:name=".AddDetailActivity" />
-        <activity android:name=".SubActivity" />
-        <activity android:name=".AddActivity" />
+        <activity android:name=".InDetailActivity" />
+        <activity android:name=".OutDetailActivity" />
+        <activity android:name=".InActivity" />
+        <activity android:name=".OutActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".SplashScreen">
             <intent-filter>

@@ -16,11 +16,11 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                InputFragment inputFragment = new InputFragment();
-                return inputFragment;
+                OutFragment outFragment = new OutFragment();
+                return outFragment;
             case 1:
-                OutputFragment outputFragment = new OutputFragment();
-                return outputFragment;
+                InFragment inFragment = new InFragment();
+                return inFragment;
             case 2:
                 CompareFragment compareFragment = new CompareFragment();
                 return compareFragment;
@@ -44,13 +44,13 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position){
             case 0:
-                return "Input";
+                return "나간 돈";
             case 1:
-                return "Output";
+                return "들어온 돈";
             case 2:
-                return "Compare";
+                return "비교하기";
             case 3:
-                return "Setting";
+                return "설정";
 
             default:
                 return null;

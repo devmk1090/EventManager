@@ -15,9 +15,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class SubActivity extends AppCompatActivity {
+public class InActivity extends AppCompatActivity {
 
-    private String TAG = "AddActivity";
+    private String TAG = "InActivity";
     private TextView calendarData, categoryData, relationData;
     private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, saveButton;
     private Spinner categorySpinner, relationSpinner;
@@ -25,12 +25,12 @@ public class SubActivity extends AppCompatActivity {
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
 
-    SubDatabase database;
+    InOutDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add);
+        setContentView(R.layout.activity_inout);
 
         // open database
         if(database != null) {
@@ -38,7 +38,7 @@ public class SubActivity extends AppCompatActivity {
             database = null;
         }
 
-        database = SubDatabase.getInstance(this);
+        database = InOutDatabase.getInstance(this);
         boolean isOpen = database.open();
         if(isOpen) {
             Log.d(TAG, "Book database is open");
@@ -71,7 +71,7 @@ public class SubActivity extends AppCompatActivity {
         categoryData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(SubActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(InActivity.this);
                 builder.setTitle("경조사를 선택하세요")
                         .setItems(categoryItems, new DialogInterface.OnClickListener() {
                             @Override
@@ -99,7 +99,7 @@ public class SubActivity extends AppCompatActivity {
         relationData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(SubActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(InActivity.this);
                 builder.setTitle("관계를 선택하세요")
                         .setItems(relationItems, new DialogInterface.OnClickListener() {
                             @Override
@@ -163,9 +163,9 @@ public class SubActivity extends AppCompatActivity {
                 final String category = categoryData.getText().toString();
                 final String relation = relationData.getText().toString();
                 final String money = moneyData.getText().toString();
-                database.insertRecord(name, date, category, relation, money);
-                Intent intent = new Intent(SubActivity.this, MainActivity.class);
-                intent.putExtra("Out", true);
+                database.insertRecordIn(name, date, category, relation, money);
+                Intent intent = new Intent(InActivity.this, MainActivity.class);
+                intent.putExtra("In", true);
                 startActivity(intent);
             }
         });
@@ -182,12 +182,11 @@ public class SubActivity extends AppCompatActivity {
         DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, 2019, 12, 01);
         dialog.show();
     }
-    // close database
-    protected void onDestroy(){
-        if (database != null) {
-            database.close();
-            database = null;
-        }
-        super.onDestroy();
-    }
+//    protected void onDestroy(){
+//        if (database != null) {
+//            database.close();
+//            database = null;
+//        }
+//        super.onDestroy();
+//    }
 }

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".OutputFragment">
+    tools:context=".OutFragment">
 
     <LinearLayout
         android:orientation="vertical"
@@ -12,12 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/subRecyclerView"
+            android:id="@+id/outRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/subfab"
+        android:id="@+id/outFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"

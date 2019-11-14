@@ -1,6 +1,6 @@
 package com.devproject.eventmanager;
 
-public class SubList {
+public class InList {
 
     String name;
     String date;
@@ -8,7 +8,7 @@ public class SubList {
     String relation;
     String money;
 
-    public SubList(String name, String date, String category, String relation, String money) {
+    public InList(String name, String date, String category, String relation, String money) {
         this.name = name;
         this.date = date;
         this.category = category;

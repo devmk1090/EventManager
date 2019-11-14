@@ -1,6 +1,6 @@
 package com.devproject.eventmanager;
 
-public class AddList {
+public class OutList {
 
     String name;
     String date;
@@ -8,7 +8,7 @@ public class AddList {
     String relation;
     String money;
 
-    public AddList(String name, String date, String category, String relation, String money) {
+    public OutList(String name, String date, String category, String relation, String money) {
         this.name = name;
         this.date = date;
         this.category = category;
@@ -53,15 +53,4 @@ public class AddList {
     public void setMoney(String money) {
         this.money = money;
     }
-//    @Override
-//    public String toString() {
-//        return "AddList{" +
-//                "name='" + name + '\'' +
-//                ", date='" + date + '\'' +
-//                ", category='" + category + '\'' +
-//                ", relation='" + relation + '\'' +
-//                ", money='" + money + '\'' +
-//                '}';
-//
-//    }
 }
