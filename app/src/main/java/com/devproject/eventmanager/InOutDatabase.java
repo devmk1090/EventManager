@@ -279,6 +279,20 @@ public class InOutDatabase {
             total = cursor.getInt(0);
         return total;
     }
+    public int getCategoryOutMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 결혼식 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getCategoryInMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 결혼식 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
     public boolean deleteDataIn (long id) {
         return db.delete(TABLE_IN_INFO, " _id = " + id, null) > 0;
     }

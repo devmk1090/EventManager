@@ -15,6 +15,10 @@ public class InList {
         this.relation = relation;
         this.money = money;
     }
+//    public InList(String category, String money){
+//        this.category = category;
+//        this.money = money;
+//    }
 
     public String getName() {
         return name;

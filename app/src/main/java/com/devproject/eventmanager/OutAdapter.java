@@ -58,11 +58,6 @@ public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         OutList item = items.get(position);
-//        viewHolder.getNameData.setText(item.getName());
-//        viewHolder.getCalendarData.setText(item.getDate());
-//        viewHolder.getCategoryData.setText(item.getCategory());
-//        viewHolder.getRelationData.setText(item.getRelation());
-//        viewHolder.getMoneyData.setText(item.getMoney());
         viewHolder.setItem(item);
      }
 

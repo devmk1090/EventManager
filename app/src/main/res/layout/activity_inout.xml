@@ -79,6 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
+                android:text=""
                 android:gravity="center"
                 android:textColorHint="#ffffff"
                 android:textColor="#ffffff"
@@ -135,7 +136,7 @@
             <EditText
                 android:id="@+id/moneyData"
                 android:textStyle="bold"
-                android:hint="Input Money"
+                android:hint="직접 입력 or 선택해주세요"
                 android:inputType="number"
                 android:textSize="20dp"
                 android:layout_width="250dp"
