@@ -7,13 +7,15 @@ public class OutList {
     String category;
     String relation;
     String money;
+    String memo;
 
-    public OutList(String name, String date, String category, String relation, String money) {
+    public OutList(String name, String date, String category, String relation, String money, String memo) {
         this.name = name;
         this.date = date;
         this.category = category;
         this.relation = relation;
         this.money = money;
+        this.memo = memo;
     }
 
     public String getName() {
@@ -52,5 +54,13 @@ public class OutList {
 
     public void setMoney(String money) {
         this.money = money;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
     }
 }

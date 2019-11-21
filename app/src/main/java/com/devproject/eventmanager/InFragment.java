@@ -49,11 +49,6 @@ public class InFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_in, container, false);
 
-        if(database != null) {
-            database.close();
-            database = null;
-        }
-
         database = InOutDatabase.getInstance(getActivity());
         boolean isOpen = database.open();
         if(isOpen) {
@@ -79,7 +74,7 @@ public class InFragment extends Fragment {
                 builder.setMessage("Delete or Revise");
                 builder.setIcon(android.R.drawable.ic_dialog_alert);
 
-                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         int i = database.getItemIdIn(position);
@@ -89,13 +84,13 @@ public class InFragment extends Fragment {
                         adapter.removeData(position);
                     }
                 });
-                builder.setNeutralButton("No", new DialogInterface.OnClickListener() {
+                builder.setNeutralButton("취소", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
-                builder.setNegativeButton("Revise", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("수정", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(getActivity(), InDetailActivity.class);
@@ -106,6 +101,7 @@ public class InFragment extends Fragment {
                         intent.putExtra("CATEGORY", database.getCategoryIn(position));
                         intent.putExtra("RELATION", database.getRelationIn(position));
                         intent.putExtra("MONEY", database.getMoneyIn(position));
+                        intent.putExtra("MEMO", database.getMemoIn(position));
                         startActivity(intent);
                     }
                 });

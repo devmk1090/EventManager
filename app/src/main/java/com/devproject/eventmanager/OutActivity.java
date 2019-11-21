@@ -22,8 +22,7 @@ public class OutActivity extends AppCompatActivity {
     private String TAG = "OutActivity";
     private TextView calendarData, categoryData, relationData;
     private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, saveButton;
-    private Spinner categorySpinner, relationSpinner;
-    private EditText moneyData, nameData;
+    private EditText moneyData, nameData, memoData;
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
     InOutDatabase database;
@@ -32,12 +31,6 @@ public class OutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inout);
-
-        // open database
-        if (database != null) {
-            database.close();
-            database = null;
-        }
 
         database = InOutDatabase.getInstance(this);
         boolean isOpen = database.open();
@@ -51,11 +44,7 @@ public class OutActivity extends AppCompatActivity {
         calendarData = (TextView) findViewById(R.id.calendarData);
 
         nameData = (EditText) findViewById(R.id.nameData);
-
-        categorySpinner = (Spinner) findViewById(R.id.categorySpinner);
         categoryData = (TextView) findViewById(R.id.categoryData);
-
-        relationSpinner = (Spinner) findViewById(R.id.relationSpinner);
         relationData = (TextView) findViewById(R.id.relationData);
 
         moneyData = (EditText) findViewById(R.id.moneyData);
@@ -64,11 +53,12 @@ public class OutActivity extends AppCompatActivity {
         hundredButton = (Button) findViewById(R.id.hundredButton);
         resetButton = (Button) findViewById(R.id.resetButton);
 
+        memoData = (EditText) findViewById(R.id.memoData);
         saveButton = (Button) findViewById(R.id.saveButton);
 
         this.calendarListener();
 
-        final CharSequence[] categoryItems = {" 결혼식 ", " 돌잔치 ", " 장례식 "};
+        final CharSequence[] categoryItems = {" 결혼식 ", " 돌잔치 ", " 장례식 ", " 환갑 ", " 생일 ", " 기타 "};
         categoryData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,6 +77,15 @@ public class OutActivity extends AppCompatActivity {
                                     case 2:
                                         categoryData.setText(categoryItems[2]);
                                         break;
+                                    case 3:
+                                        categoryData.setText(categoryItems[3]);
+                                        break;
+                                    case 4:
+                                        categoryData.setText(categoryItems[4]);
+                                        break;
+                                    case 5:
+                                        categoryData.setText(categoryItems[5]);
+                                        break;
                                     default:
                                 }
                             }
@@ -96,7 +95,7 @@ public class OutActivity extends AppCompatActivity {
             }
         });
 
-        final CharSequence[] relationItems = {" 친구 ", " 선후배 ", " 친척 "};
+        final CharSequence[] relationItems = {" 친구 ", " 친척 ", " 직장동료 ", " 대학교 ", " 초중고 ", " 가족 ", " 지인 ", " 기타 "};
         relationData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,6 +113,21 @@ public class OutActivity extends AppCompatActivity {
                                         break;
                                     case 2:
                                         relationData.setText(relationItems[2]);
+                                        break;
+                                    case 3:
+                                        relationData.setText(relationItems[3]);
+                                        break;
+                                    case 4:
+                                        relationData.setText(relationItems[4]);
+                                        break;
+                                    case 5:
+                                        relationData.setText(relationItems[5]);
+                                        break;
+                                    case 6:
+                                        relationData.setText(relationItems[6]);
+                                        break;
+                                    case 7:
+                                        relationData.setText(relationItems[7]);
                                         break;
                                     default:
                                 }
@@ -164,7 +178,21 @@ public class OutActivity extends AppCompatActivity {
                 String category = categoryData.getText().toString();
                 String relation = relationData.getText().toString();
                 String money = moneyData.getText().toString();
-                if (category.equals("")) {
+                String memo = memoData.getText().toString();
+                if (name.equals("")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(OutActivity.this);
+                    builder.setTitle("알림")
+                            .setMessage("이름을 입력해주세요")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+                else if (category.equals("")) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(OutActivity.this);
                     builder.setTitle("알림")
                             .setMessage("경조사를 선택해주세요")
@@ -204,7 +232,7 @@ public class OutActivity extends AppCompatActivity {
                     dialog.show();
                 }
                 else{
-                    database.insertRecordOut(name, date, category, relation, money);
+                    database.insertRecordOut(name, date, category, relation, money, memo);
                     Intent intent = new Intent(OutActivity.this, MainActivity.class);
                     startActivity(intent);
                 }

@@ -20,8 +20,7 @@ public class InActivity extends AppCompatActivity {
     private String TAG = "InActivity";
     private TextView calendarData, categoryData, relationData;
     private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, saveButton;
-    private Spinner categorySpinner, relationSpinner;
-    private EditText moneyData, nameData;
+    private EditText moneyData, nameData, memoData;
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
 
@@ -31,12 +30,6 @@ public class InActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inout);
-
-        // open database
-        if(database != null) {
-            database.close();
-            database = null;
-        }
 
         database = InOutDatabase.getInstance(this);
         boolean isOpen = database.open();
@@ -50,11 +43,7 @@ public class InActivity extends AppCompatActivity {
         calendarData = (TextView) findViewById(R.id.calendarData);
 
         nameData = (EditText) findViewById(R.id.nameData);
-
-        categorySpinner = (Spinner) findViewById(R.id.categorySpinner);
         categoryData = (TextView) findViewById(R.id.categoryData);
-
-        relationSpinner = (Spinner) findViewById(R.id.relationSpinner);
         relationData = (TextView) findViewById(R.id.relationData);
 
         moneyData = (EditText) findViewById(R.id.moneyData);
@@ -63,11 +52,12 @@ public class InActivity extends AppCompatActivity {
         hundredButton = (Button) findViewById(R.id.hundredButton);
         resetButton = (Button) findViewById(R.id.resetButton);
 
+        memoData = (EditText) findViewById(R.id.memoData);
         saveButton = (Button) findViewById(R.id.saveButton);
 
         this.calendarListener();
 
-        final CharSequence[] categoryItems = {" 결혼식 ", " 돌잔치 ", " 장례식 "};
+        final CharSequence[] categoryItems = {" 결혼식 ", " 돌잔치 ", " 장례식 ", " 기타 "};
         categoryData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,7 +66,7 @@ public class InActivity extends AppCompatActivity {
                         .setItems(categoryItems, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                switch(which) {
+                                switch (which) {
                                     case 0:
                                         categoryData.setText(categoryItems[0]);
                                         break;
@@ -85,6 +75,9 @@ public class InActivity extends AppCompatActivity {
                                         break;
                                     case 2:
                                         categoryData.setText(categoryItems[2]);
+                                        break;
+                                    case 3:
+                                        categoryData.setText(categoryItems[3]);
                                         break;
                                     default:
                                 }
@@ -95,7 +88,7 @@ public class InActivity extends AppCompatActivity {
             }
         });
 
-        final CharSequence[] relationItems = {" 친구 ", " 선후배 ", " 친척 "};
+        final CharSequence[] relationItems = {" 동네친구 ", " 친척 ", " 직장동료 ", " 대학교 ", " 초중고 ", " 가족 ", " 기타 "};
         relationData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,7 +97,7 @@ public class InActivity extends AppCompatActivity {
                         .setItems(relationItems, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                switch(which) {
+                                switch (which) {
                                     case 0:
                                         relationData.setText(relationItems[0]);
                                         break;
@@ -113,6 +106,18 @@ public class InActivity extends AppCompatActivity {
                                         break;
                                     case 2:
                                         relationData.setText(relationItems[2]);
+                                        break;
+                                    case 3:
+                                        relationData.setText(relationItems[3]);
+                                        break;
+                                    case 4:
+                                        relationData.setText(relationItems[4]);
+                                        break;
+                                    case 5:
+                                        relationData.setText(relationItems[5]);
+                                        break;
+                                    case 6:
+                                        relationData.setText(relationItems[6]);
                                         break;
                                     default:
                                 }
@@ -163,7 +168,8 @@ public class InActivity extends AppCompatActivity {
                 final String category = categoryData.getText().toString();
                 final String relation = relationData.getText().toString();
                 final String money = moneyData.getText().toString();
-                database.insertRecordIn(name, date, category, relation, money);
+                final String memo = memoData.getText().toString();
+                database.insertRecordIn(name, date, category, relation, money, memo);
                 Intent intent = new Intent(InActivity.this, MainActivity.class);
                 intent.putExtra("In", true);
                 startActivity(intent);
@@ -182,11 +188,4 @@ public class InActivity extends AppCompatActivity {
         DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, 2019, 12, 01);
         dialog.show();
     }
-//    protected void onDestroy(){
-//        if (database != null) {
-//            database.close();
-//            database = null;
-//        }
-//        super.onDestroy();
-//    }
 }

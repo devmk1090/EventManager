@@ -22,6 +22,8 @@ public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
         public TextView getCategoryData;
         public TextView getRelationData;
         public TextView getMoneyData;
+        public TextView getMemoData;
+
         public ViewHolder(View itemView, final OutItemClickListener listener) {
             super(itemView);
             getNameData = itemView.findViewById(R.id.getNameData);
@@ -29,6 +31,7 @@ public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
             getCategoryData = itemView.findViewById(R.id.getCategoryData);
             getRelationData = itemView.findViewById(R.id.getRelationData);
             getMoneyData = itemView.findViewById(R.id.getMoneyData);
+            getMemoData = itemView.findViewById(R.id.getMemoData);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -45,6 +48,7 @@ public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
             getCategoryData.setText(item.getCategory());
             getRelationData.setText(item.getRelation());
             getMoneyData.setText(item.getMoney());
+            getMemoData.setText(item.getMemo());
         }
     }
 

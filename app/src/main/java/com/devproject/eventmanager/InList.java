@@ -7,18 +7,16 @@ public class InList {
     String category;
     String relation;
     String money;
+    String memo;
 
-    public InList(String name, String date, String category, String relation, String money) {
+    public InList(String name, String date, String category, String relation, String money, String memo) {
         this.name = name;
         this.date = date;
         this.category = category;
         this.relation = relation;
         this.money = money;
+        this.memo = memo;
     }
-//    public InList(String category, String money){
-//        this.category = category;
-//        this.money = money;
-//    }
 
     public String getName() {
         return name;
@@ -56,5 +54,12 @@ public class InList {
 
     public void setMoney(String money) {
         this.money = money;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+    public void setMemo(String memo) {
+        this.memo = memo;
     }
 }

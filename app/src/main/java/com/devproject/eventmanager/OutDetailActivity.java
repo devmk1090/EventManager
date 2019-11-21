@@ -2,12 +2,13 @@ package com.devproject.eventmanager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -19,9 +20,8 @@ public class OutDetailActivity extends AppCompatActivity {
 
     private String TAG = "OutDetailActivity";
     private TextView calendarData, categoryData, relationData;
-    private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, reviseButton;
-    private Spinner categorySpinner, relationSpinner;
-    private EditText moneyData, nameData;
+    private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, saveButton;
+    private EditText moneyData, nameData, memoData;
     private int moneyTotal;
     private DatePickerDialog.OnDateSetListener dateSetListener;
     InOutDatabase database;
@@ -29,17 +29,11 @@ public class OutDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
-
-        // open database
-        if(database != null) {
-            database.close();
-            database = null;
-        }
+        setContentView(R.layout.activity_inout);
 
         database = InOutDatabase.getInstance(this);
         boolean isOpen = database.open();
-        if(isOpen) {
+        if (isOpen) {
             Log.d(TAG, "Book database is open");
         } else {
             Log.d(TAG, "Book database is not open");
@@ -49,11 +43,7 @@ public class OutDetailActivity extends AppCompatActivity {
         calendarData = (TextView) findViewById(R.id.calendarData);
 
         nameData = (EditText) findViewById(R.id.nameData);
-
-        categorySpinner = (Spinner) findViewById(R.id.categorySpinner);
         categoryData = (TextView) findViewById(R.id.categoryData);
-
-        relationSpinner = (Spinner) findViewById(R.id.relationSpinner);
         relationData = (TextView) findViewById(R.id.relationData);
 
         moneyData = (EditText) findViewById(R.id.moneyData);
@@ -62,11 +52,11 @@ public class OutDetailActivity extends AppCompatActivity {
         hundredButton = (Button) findViewById(R.id.hundredButton);
         resetButton = (Button) findViewById(R.id.resetButton);
 
-        reviseButton = (Button) findViewById(R.id.reviseButton);
+        memoData = (EditText) findViewById(R.id.memoData);
+        saveButton = (Button) findViewById(R.id.saveButton);
 
         this.calendarListener();
 
-        //RECEIVE DATA
         Intent intent = getIntent();
 
         final int id = intent.getExtras().getInt("ID");
@@ -75,35 +65,83 @@ public class OutDetailActivity extends AppCompatActivity {
         final String category = intent.getExtras().getString("CATEGORY");
         final String relation = intent.getExtras().getString("RELATION");
         final String money = intent.getExtras().getString("MONEY");
+        final String memo = intent.getExtras().getString("MEMO");
 
         nameData.setText(name);
         calendarData.setText(date);
         categoryData.setText(category);
         relationData.setText(relation);
         moneyData.setText(money);
+        memoData.setText(memo);
 
-
-        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        final CharSequence[] categoryItems = {" 결혼식 ", " 돌잔치 ", " 장례식 ", " 기타 "};
+        categoryData.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                categoryData.setText("" + parent.getItemAtPosition(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(OutDetailActivity.this);
+                builder.setTitle("경조사를 선택하세요")
+                        .setItems(categoryItems, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case 0:
+                                        categoryData.setText(categoryItems[0]);
+                                        break;
+                                    case 1:
+                                        categoryData.setText(categoryItems[1]);
+                                        break;
+                                    case 2:
+                                        categoryData.setText(categoryItems[2]);
+                                        break;
+                                    case 3:
+                                        categoryData.setText(categoryItems[3]);
+                                        break;
+                                    default:
+                                }
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 
-        relationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        final CharSequence[] relationItems = {" 동네친구 ", " 친척 ", " 직장동료 ", " 대학교 ", " 초중고 ", " 가족 ", " 기타 "};
+        relationData.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                relationData.setText("" + parent.getItemAtPosition(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(OutDetailActivity.this);
+                builder.setTitle("관계를 선택하세요")
+                        .setItems(relationItems, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case 0:
+                                        relationData.setText(relationItems[0]);
+                                        break;
+                                    case 1:
+                                        relationData.setText(relationItems[1]);
+                                        break;
+                                    case 2:
+                                        relationData.setText(relationItems[2]);
+                                        break;
+                                    case 3:
+                                        relationData.setText(relationItems[3]);
+                                        break;
+                                    case 4:
+                                        relationData.setText(relationItems[4]);
+                                        break;
+                                    case 5:
+                                        relationData.setText(relationItems[5]);
+                                        break;
+                                    case 6:
+                                        relationData.setText(relationItems[6]);
+                                        break;
+                                    default:
+                                }
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 
@@ -111,7 +149,7 @@ public class OutDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 moneyTotal += 10000;
-                moneyData.setText(moneyTotal + "원");
+                moneyData.setText(String.valueOf(moneyTotal));
             }
         });
 
@@ -119,7 +157,7 @@ public class OutDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 moneyTotal += 50000;
-                moneyData.setText(moneyTotal + "원");
+                moneyData.setText(String.valueOf(moneyTotal));
             }
         });
 
@@ -127,7 +165,7 @@ public class OutDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 moneyTotal += 100000;
-                moneyData.setText(moneyTotal + "원");
+                moneyData.setText(String.valueOf(moneyTotal));
             }
         });
 
@@ -135,20 +173,63 @@ public class OutDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 moneyTotal = 0;
-                moneyData.setText(moneyTotal + "원");
+                moneyData.setText(String.valueOf(moneyTotal));
             }
         });
-        reviseButton.setOnClickListener(new View.OnClickListener() {
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String nameR = nameData.getText().toString();
-                final String dateR = calendarData.getText().toString();
-                final String categoryR = categoryData.getText().toString();
-                final String relationR = relationData.getText().toString();
-                final String moneyR = moneyData.getText().toString();
-                database.updateOut(id, nameR, dateR, categoryR, relationR, moneyR);
-                Intent intent = new Intent(OutDetailActivity.this, MainActivity.class);
-                startActivity(intent);
+                String name = nameData.getText().toString();
+                String date = calendarData.getText().toString();
+                String category = categoryData.getText().toString();
+                String relation = relationData.getText().toString();
+                String money = moneyData.getText().toString();
+                String memo = memoData.getText().toString();
+                if (category.equals("")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(OutDetailActivity.this);
+                    builder.setTitle("알림")
+                            .setMessage("경조사를 선택해주세요")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+                else if (relation.equals("")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(OutDetailActivity.this);
+                    builder.setTitle("알림")
+                            .setMessage("관계를 선택해주세요")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+                else if (money.equals("")){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(OutDetailActivity.this);
+                    builder.setTitle("알림")
+                            .setMessage("금액을 선택해주세요")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+                else{
+                    database.updateOut(id, name, date, category, relation, money, memo);
+                    Intent intent = new Intent(OutDetailActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -156,12 +237,12 @@ public class OutDetailActivity extends AppCompatActivity {
         dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                calendarData.setText(year + "/" + month + "/" + dayOfMonth);
+                calendarData.setText(year + "/" + (month +1) + "/" + dayOfMonth);
             }
         };
     }
     public void OnClickHandler(View view){
-        DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, 2019, 10, 01);
+        DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, 2019, 12, 01);
         dialog.show();
     }
 }

@@ -48,7 +48,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return "들어온 돈";
             case 2:
-                return "비교하기";
+                return "통계";
             case 3:
                 return "설정";
 
