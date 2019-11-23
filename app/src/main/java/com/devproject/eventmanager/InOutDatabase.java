@@ -198,7 +198,6 @@ public class InOutDatabase {
     private void println(String msg) {
         Log.d(TAG, msg);
     }
-
     public String getNameIn(int position) {
         Cursor cursor = db.rawQuery("select NAME from " + TABLE_IN_INFO, null);
         cursor.moveToPosition(position);

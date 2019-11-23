@@ -1,13 +1,9 @@
 package com.devproject.eventmanager;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,12 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
@@ -51,6 +44,7 @@ public class CompareFragment extends Fragment {
         } else {
             Log.d(TAG, "Book database is not open");
         }
+
         categoryLayout = (LinearLayout) v.findViewById(R.id.categoryLayout);
         categoryMarry = (TextView) v.findViewById(R.id.categoryMarry);
         categoryFuneral = (TextView) v.findViewById(R.id.categoryFuneral);
