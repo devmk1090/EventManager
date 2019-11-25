@@ -301,9 +301,23 @@ public class InOutDatabase {
             total = cursor.getInt(0);
         return total;
     }
+    public int getCategoryMarryInMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 결혼식 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
     public int getCategoryFirstBirthOutMoney(){
         int total = 0;
         Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 돌잔치 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getCategoryFirstBirthInMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 돌잔치 ' ", null);
         if(cursor.moveToFirst())
             total = cursor.getInt(0);
         return total;
@@ -315,16 +329,9 @@ public class InOutDatabase {
             total = cursor.getInt(0);
         return total;
     }
-    public int getCategoryBirthdayOutMoney(){
+    public int getCategoryFuneralInMoney(){
         int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 생일 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategoryETCOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 기타 ' ", null);
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 장례식 ' ", null);
         if(cursor.moveToFirst())
             total = cursor.getInt(0);
         return total;
@@ -336,9 +343,58 @@ public class InOutDatabase {
             total = cursor.getInt(0);
         return total;
     }
+    public int getCategorySixtyInMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 환갑 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getCategoryBirthdayOutMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 생일 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getCategoryBirthdayInMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 생일 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getCategoryETCOutMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 기타 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getCategoryETCInMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 기타 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getCategoryTestMoney(String test){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=" + test , null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
     public int getRelationFriendOutMoney(){
         int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 동네친구 ' ", null);
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 친구 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getRelationFriendInMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 친구 ' ", null);
         if(cursor.moveToFirst())
             total = cursor.getInt(0);
         return total;
@@ -350,9 +406,23 @@ public class InOutDatabase {
             total = cursor.getInt(0);
         return total;
     }
+    public int getRelationRelativeInMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 친척 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
     public int getRelationJobOutMoney(){
         int total = 0;
         Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 직장동료 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getRelationJobInMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 직장동료 ' ", null);
         if(cursor.moveToFirst())
             total = cursor.getInt(0);
         return total;
@@ -364,9 +434,51 @@ public class InOutDatabase {
             total = cursor.getInt(0);
         return total;
     }
-    public int getRelationSchoolOutMoney(){
+    public int getRelationUniversityInMoney(){
         int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 초중고 ' ", null);
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 대학교 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getRelationFamilyOutMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 가족 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getRelationFamilyInMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 가족 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getRelationKnowingOutMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 지인 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getRelationKnowingInMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 지인 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getRelationETCOutMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 기타 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getRelationETCInMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 기타 ' ", null);
         if(cursor.moveToFirst())
             total = cursor.getInt(0);
         return total;

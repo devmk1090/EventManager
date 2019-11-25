@@ -4,10 +4,10 @@
     android:orientation="vertical"
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
-    android:background="@drawable/linearborder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <LinearLayout
+        android:background="@drawable/linearborder2"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
     <LinearLayout
+        android:background="@drawable/linearborder2"
         android:layout_marginTop="1dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -72,6 +73,7 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
     <LinearLayout
+        android:background="@drawable/linearborder2"
         android:layout_marginTop="1dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"

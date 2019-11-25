@@ -6,17 +6,14 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.icu.util.Output;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.io.OutputStream;
 
 
 public class OutActivity extends AppCompatActivity {
@@ -97,7 +94,7 @@ public class OutActivity extends AppCompatActivity {
             }
         });
 
-        final CharSequence[] relationItems = {" 친구 ", " 친척 ", " 직장동료 ", " 대학교 ", " 초중고 ", " 가족 ", " 지인 ", " 기타 "};
+        final CharSequence[] relationItems = {" 친구 ", " 친척 ", " 직장동료 ", " 대학교 ", " 가족 ", " 지인 ", " 기타 "};
         relationData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,9 +124,6 @@ public class OutActivity extends AppCompatActivity {
                                         break;
                                     case 6:
                                         relationData.setText(relationItems[6]);
-                                        break;
-                                    case 7:
-                                        relationData.setText(relationItems[7]);
                                         break;
                                     default:
                                 }

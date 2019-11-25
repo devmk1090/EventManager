@@ -70,7 +70,7 @@ public class OutFragment extends Fragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Choice ?");
                 builder.setMessage("Delete or Revise");
-                builder.setIcon(android.R.drawable.ic_dialog_alert);
+                builder.setIcon(R.drawable.ic_announcement_black_24dp);
 
                 builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                     @Override

@@ -1,14 +1,17 @@
 package com.devproject.eventmanager;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +25,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -31,7 +33,7 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class SettingFragment extends Fragment{
 
-    Button excelButton;
+    Button helpButton, excelButton, linkButton;
     InOutDatabase database;
 
     public SettingFragment() {}
@@ -50,6 +52,28 @@ public class SettingFragment extends Fragment{
         }
 
         excelButton = (Button) v.findViewById(R.id.excelButton);
+        helpButton = (Button) v.findViewById(R.id.helpButton);
+        linkButton = (Button) v.findViewById(R.id.linkButton);
+
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("도움말");
+                builder.setIcon(R.drawable.ic_help_black_24dp);
+                builder.setMessage("'나간 돈' '들어온 돈' 탭 오른쪽 아래에 있는 파란 십자 아이콘을 터치하여 정보를 입력할 수 있습니다.\n\n" +
+                        "등록된 정보를 터치하면 '수정' '삭제' 할 수 있습니다.\n\n" +
+                        "'설정' 탭의 '엑셀 파일 만들기' 버튼을 터치하면 등록된 정보를 엑셀 파일로 만들어 보관할 수 있습니다.");
+
+                builder.setNegativeButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
 
         excelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,7 +113,7 @@ public class SettingFragment extends Fragment{
                 cell = row2.createCell(4);
                 cell.setCellValue("금액");
                 cell = row2.createCell(5);
-                cell.setCellValue("메모장이다");
+                cell.setCellValue("메모장");
 
                 Cursor cursor = database.rawQuery("SELECT * FROM " + database.TABLE_OUT_INFO);
                 for(int i = 0; i < cursor.getCount(); i++) {
@@ -142,6 +166,15 @@ public class SettingFragment extends Fragment{
                 Toast.makeText(getActivity(), fileName + " 저장되었습니다", Toast.LENGTH_SHORT).show();
             }
         });
+
+        linkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/"));
+                startActivity(intent);
+            }
+        });
+
         return v;
     }
 }

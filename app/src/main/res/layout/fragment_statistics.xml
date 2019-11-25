@@ -4,9 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".CompareFragment">
+    tools:context=".StatisticsFragment">
     <LinearLayout
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -16,7 +18,7 @@
             android:background="@drawable/custom_textview"
             android:textSize="20dp"
             android:id="@+id/categoryText"
-            android:text=" 경조사별 나간 돈 통계 "
+            android:text=" 경조사별 통계 "
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
@@ -26,12 +28,12 @@
             android:background="@drawable/custom_textview"
             android:textSize="20dp"
             android:id="@+id/relationText"
-            android:text=" 관계별 나간 돈 통계 "
+            android:text=" 관계별 통계 "
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
     <LinearLayout
-        android:background="@drawable/linearborder"
+        android:background="@drawable/linearborder2"
         android:layout_margin="5dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -130,128 +132,21 @@
         android:id="@+id/categoryLayout"
         android:background="@drawable/totalborder"
         android:layout_margin="5dp"
-        android:orientation="horizontal"
+        android:padding="5dp"
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <LinearLayout
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/categoryMarry"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/categoryFirstBirth"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/categoryFuneral"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-        <LinearLayout
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/categorySixty"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/categoryBirthday"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/categoryETC"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/relationLayout"
         android:background="@drawable/totalborder"
         android:layout_margin="5dp"
-        android:orientation="horizontal"
+        android:padding="5dp"
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <LinearLayout
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/relationFriend"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/relationRelative"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/relationJob"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-        <LinearLayout
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/relationUniversity"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/relationSchool"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/relationFamily"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
     </LinearLayout>
-    <LinearLayout
-        android:orientation="vertical"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <com.github.mikephil.charting.charts.PieChart
@@ -264,6 +159,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         </com.github.mikephil.charting.charts.PieChart>
-    </LinearLayout>
-
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/categoryInPieChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </com.github.mikephil.charting.charts.PieChart>
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/relationInPieChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </com.github.mikephil.charting.charts.PieChart>
+    </RelativeLayout>
 </LinearLayout>

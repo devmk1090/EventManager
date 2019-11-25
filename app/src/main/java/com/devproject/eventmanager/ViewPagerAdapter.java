@@ -22,8 +22,8 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
                 InFragment inFragment = new InFragment();
                 return inFragment;
             case 2:
-                CompareFragment compareFragment = new CompareFragment();
-                return compareFragment;
+                StatisticsFragment statisticsFragment = new StatisticsFragment();
+                return statisticsFragment;
             case 3:
                 SettingFragment settingFragment = new SettingFragment();
                 return settingFragment;
@@ -46,7 +46,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return "나간 돈";
             case 1:
-                return "들어온 돈";
+                return "받은 돈";
             case 2:
                 return "통계";
             case 3:
