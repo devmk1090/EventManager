@@ -69,27 +69,10 @@ public class InFragment extends Fragment {
         adapter.setOnitemClickListener(new InItemClickListener() {
             @Override
             public void onItemClick(InAdapter.ViewHolder holder, View view, final int position) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Choice ?");
-                builder.setMessage("Delete or Revise");
-                builder.setIcon(R.drawable.ic_announcement_black_24dp);
-
-                builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        int i = database.getItemIdIn(position);
-                        Log.d(TAG, String.valueOf(i));
-                        Log.d(TAG, String.valueOf(position));
-                        database.deleteDataIn(i);
-                        adapter.removeData(position);
-                    }
-                });
-                builder.setNeutralButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), 3);
+                builder.setTitle("알림.");
+                builder.setMessage("수정하거나 삭제할 수 있습니다.");
+                builder.setIcon(R.drawable.ic_info_black_24dp);
                 builder.setNegativeButton("수정", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -103,6 +86,39 @@ public class InFragment extends Fragment {
                         intent.putExtra("MONEY", database.getMoneyIn(position));
                         intent.putExtra("MEMO", database.getMemoIn(position));
                         startActivity(intent);
+                    }
+                });
+                builder.setNeutralButton("삭제", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), 3);
+                        builder.setTitle("알림");
+                        builder.setMessage("정말 삭제하시겠습니까 ?");
+                        builder.setIcon(R.drawable.ic_warning_black_24dp);
+                        builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                int i = database.getItemIdIn(position);
+                                Log.d(TAG, String.valueOf(i));
+                                Log.d(TAG, String.valueOf(position));
+                                database.deleteDataIn(i);
+                                adapter.removeData(position);
+                            }
+                        });
+                        builder.setPositiveButton("아니오", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        AlertDialog dialog2 = builder.create();
+                        dialog2.show();
+                    }
+                });
+                builder.setPositiveButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
                     }
                 });
                 AlertDialog dialog = builder.create();

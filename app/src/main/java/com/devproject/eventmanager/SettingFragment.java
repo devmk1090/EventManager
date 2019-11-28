@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
+import android.text.style.TtsSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,10 +27,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
+import static com.github.mikephil.charting.charts.Chart.LOG_TAG;
 
 
 public class SettingFragment extends Fragment{
@@ -58,14 +62,15 @@ public class SettingFragment extends Fragment{
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), 3);
                 builder.setTitle("도움말");
                 builder.setIcon(R.drawable.ic_help_black_24dp);
-                builder.setMessage("'나간 돈' '들어온 돈' 탭 오른쪽 아래에 있는 파란 십자 아이콘을 터치하여 정보를 입력할 수 있습니다.\n\n" +
-                        "등록된 정보를 터치하면 '수정' '삭제' 할 수 있습니다.\n\n" +
-                        "'설정' 탭의 '엑셀 파일 만들기' 버튼을 터치하면 등록된 정보를 엑셀 파일로 만들어 보관할 수 있습니다.");
+                builder.setMessage("# '나간 돈'  '받은 돈'  탭 오른쪽 아래에 있는 파란 십자 아이콘을 터치하면 정보를 입력할 수 있습니다.\n\n" +
+                        "# 등록된 정보를 터치하면 '수정' '삭제' 할 수 있습니다.\n\n" +
+                        "# '설정' 탭의 '엑셀 파일 만들기' 버튼을 터치하면 등록된 정보를 엑셀 파일로 만들어 보관할 수 있습니다.\n\n" +
+                        "# 앱을 삭제하면 모든 정보가 날아갑니다.\n");
 
-                builder.setNegativeButton("확인", new DialogInterface.OnClickListener() {
+                builder.setNeutralButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
@@ -151,12 +156,16 @@ public class SettingFragment extends Fragment{
                     cell = row2.createCell(5);
                     cell.setCellValue(cursor2.getString(6));
                 }
-
+//                if(!isExternalStorageWritable() || isExternalStorageAvailable()) {
+//                    Log.w("FileUtils", "Storage not available or read only");
+//                    return ;
+//                }
+//                boolean success = false;
                 String fileName = "test1.xls";
                 FileOutputStream os;
                 try
                 {
-                os = getActivity().openFileOutput(fileName, Context.MODE_PRIVATE);
+                    os = getActivity().openFileOutput(fileName, Context.MODE_PRIVATE);
                     wb.write(os);
                 }
                 catch (IOException e)
@@ -164,9 +173,26 @@ public class SettingFragment extends Fragment{
                     e.printStackTrace();
                 }
                 Toast.makeText(getActivity(), fileName + " 저장되었습니다", Toast.LENGTH_SHORT).show();
+//                File file = new File(getContext().getExternalFilesDir(null), "excelTest.xls");
+//                FileOutputStream os = null;
+//                try {
+//                    os =new FileOutputStream(file);
+//                    wb.write(os);
+//                    Log.w("FileUtils", "Writing file" + file);
+//                } catch (IOException e){
+//                    Log.w("FileUtils", "Error writing" + file, e);
+//                } catch (Exception e) {
+//                    Log.w("FuleUtils", "Failed to save file", e);
+//                } finally {
+//                    try {
+//                        if(null != os)
+//                            os.close();
+//                    } catch (Exception ex) {
+//
+//                    }
+//                }
             }
         });
-
         linkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,7 +200,27 @@ public class SettingFragment extends Fragment{
                 startActivity(intent);
             }
         });
-
         return v;
+    }
+    public static boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if(Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+    public static boolean isExternalStorageAvailable() {
+        String state = Environment.getExternalStorageState();
+        if(Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+    public File getExcelFileStorageDir(String excelFile) {
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), excelFile);
+        if(!file.mkdir()){
+            Log.e(LOG_TAG, "Directory not created");
+        }
+        return file;
     }
 }

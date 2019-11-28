@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -6,13 +5,17 @@
     android:orientation="vertical"
     tools:context=".StatisticsFragment">
     <LinearLayout
-        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
         android:layout_marginBottom="5dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
+            android:layout_marginRight="5dp"
+            android:gravity="center"
+            android:layout_weight="1"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:background="@drawable/custom_textview"
@@ -22,15 +25,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
-            android:layout_marginLeft="13dp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:background="@drawable/custom_textview"
-            android:textSize="20dp"
+            android:layout_marginLeft="5dp"
+            android:gravity="center"
+            android:layout_weight="1"
             android:id="@+id/relationText"
-            android:text=" 관계별 통계 "
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_textview"
+            android:text=" 관계별 통계 "
+            android:textColor="#FFFFFF"
+            android:textSize="20dp"
+            android:textStyle="bold" />
     </LinearLayout>
     <LinearLayout
         android:background="@drawable/linearborder2"
@@ -139,6 +144,24 @@
     </LinearLayout>
     <LinearLayout
         android:id="@+id/relationLayout"
+        android:background="@drawable/totalborder"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/categoryInLayout"
+        android:background="@drawable/totalborder"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/relationInLayout"
         android:background="@drawable/totalborder"
         android:layout_margin="5dp"
         android:padding="5dp"

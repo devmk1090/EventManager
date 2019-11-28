@@ -10,10 +10,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class InActivity extends AppCompatActivity {
 
@@ -22,8 +25,10 @@ public class InActivity extends AppCompatActivity {
     private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, saveButton;
     private EditText moneyData, nameData, memoData;
     private int moneyTotal;
-    private DatePickerDialog.OnDateSetListener dateSetListener;
-
+    private DatePickerDialog datePickerDialog;
+    Calendar calendar;
+    int year, month, dayoOfMonth;
+    String dayOfWeek;
     InOutDatabase database;
 
     @Override
@@ -55,14 +60,35 @@ public class InActivity extends AppCompatActivity {
         memoData = (EditText) findViewById(R.id.memoData);
         saveButton = (Button) findViewById(R.id.saveButton);
 
-        this.calendarListener();
+        calendarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar = Calendar.getInstance();
+                year =calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH);
+                dayoOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
-        final CharSequence[] categoryItems = {" 결혼식 ", " 돌잔치 ", " 장례식 ", " 기타 "};
+
+                datePickerDialog = new DatePickerDialog(InActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE");
+                        Date date = new Date(year, month, dayOfMonth-1);
+                        dayOfWeek = simpleDateFormat.format(date);
+                        calendarData.setText(year + "/" + (month + 1) + "/" + dayOfMonth + "/" + dayOfWeek);
+                    }
+                }, year, month, dayoOfMonth);
+                datePickerDialog.show();
+            }
+        });
+
+        final CharSequence[] categoryItems = {" 결혼식 ", " 돌잔치 ", " 장례식 ", " 환갑 ", " 생일 ", " 기타 "};
         categoryData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(InActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(InActivity.this, 3);
                 builder.setTitle("경조사를 선택하세요")
+                        .setIcon(R.drawable.ic_insert_drive_file_black_24dp)
                         .setItems(categoryItems, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -79,21 +105,34 @@ public class InActivity extends AppCompatActivity {
                                     case 3:
                                         categoryData.setText(categoryItems[3]);
                                         break;
+                                    case 4:
+                                        categoryData.setText(categoryItems[4]);
+                                        break;
+                                    case 5:
+                                        categoryData.setText(categoryItems[5]);
+                                        break;
                                     default:
                                 }
                             }
                         });
+                builder.setPositiveButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
         });
 
-        final CharSequence[] relationItems = {" 동네친구 ", " 친척 ", " 직장동료 ", " 대학교 ", " 초중고 ", " 가족 ", " 기타 "};
+        final CharSequence[] relationItems = {" 친구 ", " 친척 ", " 직장동료 ", " 대학교 ", " 가족 ", " 지인 ", " 기타 "};
         relationData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(InActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(InActivity.this, 3);
                 builder.setTitle("관계를 선택하세요")
+                        .setIcon(R.drawable.ic_insert_drive_file_black_24dp)
                         .setItems(relationItems, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -123,43 +162,44 @@ public class InActivity extends AppCompatActivity {
                                 }
                             }
                         });
+                builder.setPositiveButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
         });
-
         tenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 moneyTotal += 10000;
-                moneyData.setText(moneyTotal + "원");
+                moneyData.setText(String.valueOf(moneyTotal));
             }
         });
-
         fiftyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 moneyTotal += 50000;
-                moneyData.setText(moneyTotal + "원");
+                moneyData.setText(String.valueOf(moneyTotal));
             }
         });
-
         hundredButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 moneyTotal += 100000;
-                moneyData.setText(moneyTotal + "원");
+                moneyData.setText(String.valueOf(moneyTotal));
             }
         });
-
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 moneyTotal = 0;
-                moneyData.setText(moneyTotal + "원");
+                moneyData.setText(String.valueOf(moneyTotal));
             }
         });
-
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,23 +209,69 @@ public class InActivity extends AppCompatActivity {
                 final String relation = relationData.getText().toString();
                 final String money = moneyData.getText().toString();
                 final String memo = memoData.getText().toString();
-                database.insertRecordIn(name, date, category, relation, money, memo);
-                Intent intent = new Intent(InActivity.this, MainActivity.class);
-                intent.putExtra("In", true);
-                startActivity(intent);
+                if (name.equals("")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InActivity.this, 3);
+                    builder.setTitle("알림")
+                            .setIcon(R.drawable.ic_info_black_24dp)
+                            .setMessage("이름을 입력해주세요")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+                else if (category.equals("")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InActivity.this, 3);
+                    builder.setTitle("알림")
+                            .setIcon(R.drawable.ic_info_black_24dp)
+                            .setMessage("경조사를 선택해주세요")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+                else if (relation.equals("")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InActivity.this, 3);
+                    builder.setTitle("알림")
+                            .setIcon(R.drawable.ic_info_black_24dp)
+                            .setMessage("관계를 선택해주세요")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+                else if (money.equals("")){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InActivity.this, 3);
+                    builder.setTitle("알림")
+                            .setIcon(R.drawable.ic_info_black_24dp)
+                            .setMessage("금액을 입력해주세요")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+                else {
+                    database.insertRecordIn(name, date, category, relation, money, memo);
+                    Intent intent = new Intent(InActivity.this, MainActivity.class);
+                    intent.putExtra("In", true);
+                    startActivity(intent);
+                }
             }
         });
-    }
-    public void calendarListener() {
-        dateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                calendarData.setText(year + "/" + (month +1) + "/" + dayOfMonth);
-            }
-        };
-    }
-    public void OnClickHandler(View view){
-        DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, 2019, 12, 01);
-        dialog.show();
     }
 }

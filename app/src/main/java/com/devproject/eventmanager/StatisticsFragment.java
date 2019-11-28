@@ -15,23 +15,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.github.mikephil.charting.utils.ViewPortHandler;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class StatisticsFragment extends Fragment {
 
     PieChart categoryPieChart, relationPieChart, categoryInPieChart, relationInPieChart;
     TextView categoryText, relationText, outTotalMoney, inTotalMoney, inOutTotal;
-    LinearLayout categoryLayout, relatioonLayout;
+    LinearLayout categoryLayout, relationLayout, categoryInLayout, relationInLayout;
     InOutDatabase database;
     String TAG = "OutFragment";
 
@@ -52,6 +47,7 @@ public class StatisticsFragment extends Fragment {
             Log.d(TAG, "Book database is not open");
         }
         categoryLayout = (LinearLayout) v.findViewById(R.id.categoryLayout);
+        categoryInLayout = (LinearLayout) v.findViewById(R.id.categoryInLayout);
         TextView categoryMarry = new TextView(getActivity());
         categoryMarry.setTextAppearance(getContext(), R.style.CustomTextView);
 
@@ -71,7 +67,8 @@ public class StatisticsFragment extends Fragment {
         categoryETC.setTextAppearance(getContext(), R.style.CustomTextView);
 
 
-        relatioonLayout = (LinearLayout) v.findViewById(R.id.relationLayout);
+        relationLayout = (LinearLayout) v.findViewById(R.id.relationLayout);
+        relationInLayout = (LinearLayout) v.findViewById(R.id.relationInLayout);
         TextView relationFriend = new TextView(getActivity());
         relationFriend.setTextAppearance(getContext(), R.style.CustomTextView);
 
@@ -105,9 +102,9 @@ public class StatisticsFragment extends Fragment {
 
         outTotalMoney.setText(String.valueOf(database.getAllMoneyOut()));
         inTotalMoney.setText(String.valueOf(database.getAllMoneyIn()));
-        int i = Integer.parseInt(outTotalMoney.getText().toString());
-        int j = Integer.parseInt(inTotalMoney.getText().toString());
-        int total = i - j;
+        int out = Integer.parseInt(outTotalMoney.getText().toString());
+        int in = Integer.parseInt(inTotalMoney.getText().toString());
+        int total = in - out;
         inOutTotal.setText("" + total);
 
         categoryPieChart.setVisibility(View.GONE);
@@ -115,15 +112,18 @@ public class StatisticsFragment extends Fragment {
         categoryInPieChart.setVisibility(View.GONE);
         relationInPieChart.setVisibility(View.GONE);
         categoryLayout.setVisibility(View.GONE);
-        relatioonLayout.setVisibility(View.GONE);
+        relationLayout.setVisibility(View.GONE);
+        categoryInLayout.setVisibility(View.GONE);
+        relationInLayout.setVisibility(View.GONE);
 
         final CharSequence[] categoryItems = {" 나간 돈 ", " 받은 돈 "};
 
         categoryText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), 3);
                 builder.setTitle("경조사별 통계")
+                        .setIcon(R.drawable.ic_insert_chart_black_24dp)
                         .setItems(categoryItems, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -133,11 +133,14 @@ public class StatisticsFragment extends Fragment {
                                         categoryText.setText(" 경조사별" + categoryItems[0]);
                                         relationPieChart.setVisibility(View.GONE);
                                         relationInPieChart.setVisibility(View.GONE);
-                                        relatioonLayout.setVisibility(View.GONE);
+                                        relationLayout.setVisibility(View.GONE);
                                         categoryInPieChart.setVisibility(View.GONE);
-                                        categoryPieChart.setVisibility(View.VISIBLE);
-                                        categoryLayout.setVisibility(View.VISIBLE);
-
+                                        categoryInLayout.setVisibility(View.GONE);
+                                        relationInLayout.setVisibility(View.GONE);
+                                        if (out > 0) {
+                                            categoryPieChart.setVisibility(View.VISIBLE);
+                                            categoryLayout.setVisibility(View.VISIBLE);
+                                        }
                                         if (categoryMarry.getParent() != null) {
                                             ((ViewGroup) categoryMarry.getParent()).removeView(categoryMarry);
                                         }
@@ -157,13 +160,6 @@ public class StatisticsFragment extends Fragment {
                                             ((ViewGroup) categoryETC.getParent()).removeView(categoryETC);
                                         }
 
-                                        categoryPieChart.setUsePercentValues(true);
-                                        categoryPieChart.setHoleRadius(25);
-                                        categoryPieChart.setTransparentCircleRadius(15);
-                                        categoryPieChart.setEntryLabelColor(Color.BLACK);
-                                        categoryPieChart.getLegend().setEnabled(false);
-                                        categoryPieChart.setCenterText("단위 : %");
-                                        categoryPieChart.setCenterTextSize(15);
 
                                         ArrayList<PieEntry> pieItems = new ArrayList<PieEntry>();
                                         if (database.getCategoryMarryOutMoney() != 0) {
@@ -198,10 +194,15 @@ public class StatisticsFragment extends Fragment {
                                         }
                                         PieDataSet dataset = new PieDataSet(pieItems, "Category");
                                         PieData data = new PieData(dataset);
-                                        dataset.setValueFormatter(new PercentFormatter());
-
                                         dataset.setValueTextSize(20);
                                         dataset.setColors(ColorTemplate.JOYFUL_COLORS);
+                                        categoryPieChart.setUsePercentValues(true);
+                                        categoryPieChart.setHoleRadius(25);
+                                        categoryPieChart.setTransparentCircleRadius(15);
+                                        categoryPieChart.setEntryLabelColor(Color.BLACK);
+                                        categoryPieChart.getLegend().setEnabled(false);
+                                        categoryPieChart.setCenterText("단위 : %");
+                                        categoryPieChart.setCenterTextSize(15);
                                         categoryPieChart.setData(data);
                                         categoryPieChart.invalidate(); //refresh
                                         break;
@@ -210,11 +211,14 @@ public class StatisticsFragment extends Fragment {
                                         categoryText.setText(" 경조사별" + categoryItems[1]);
                                         relationPieChart.setVisibility(View.GONE);
                                         relationInPieChart.setVisibility(View.GONE);
-                                        relatioonLayout.setVisibility(View.GONE);
                                         categoryPieChart.setVisibility(View.GONE);
-                                        categoryInPieChart.setVisibility(View.VISIBLE);
-                                        categoryLayout.setVisibility(View.VISIBLE);
-
+                                        categoryLayout.setVisibility(View.GONE);
+                                        relationInLayout.setVisibility(View.GONE);
+                                        relationLayout.setVisibility(View.GONE);
+                                        if (in > 0) {
+                                            categoryInPieChart.setVisibility(View.VISIBLE);
+                                            categoryInLayout.setVisibility(View.VISIBLE);
+                                        }
                                         if (categoryMarry.getParent() != null) {
                                             ((ViewGroup) categoryMarry.getParent()).removeView(categoryMarry);
                                         }
@@ -233,6 +237,42 @@ public class StatisticsFragment extends Fragment {
                                         if (categoryETC.getParent() != null) {
                                             ((ViewGroup) categoryETC.getParent()).removeView(categoryETC);
                                         }
+
+                                        ArrayList<PieEntry> pieItems2 = new ArrayList<PieEntry>();
+                                        if (database.getCategoryMarryInMoney() != 0) {
+                                            pieItems2.add(new PieEntry((float) database.getCategoryMarryInMoney(), "결혼식"));
+                                            categoryInLayout.addView(categoryMarry);
+                                            categoryMarry.setText("결혼식 : " + String.valueOf(database.getCategoryMarryInMoney()) + "원");
+                                        }
+                                        if (database.getCategoryFirstBirthInMoney() != 0) {
+                                            pieItems2.add(new PieEntry(database.getCategoryFirstBirthInMoney(), "돌잔치"));
+                                            categoryInLayout.addView(categoryFirstBirth);
+                                            categoryFirstBirth.setText("돌잔치 : " + String.valueOf(database.getCategoryFirstBirthInMoney()) + "원");
+                                        }
+                                        if (database.getCategoryFuneralInMoney() != 0) {
+                                            pieItems2.add(new PieEntry(database.getCategoryFuneralInMoney(), "장례식"));
+                                            categoryInLayout.addView(categoryFuneral);
+                                            categoryFuneral.setText("장례식 : " + String.valueOf(database.getCategoryFuneralInMoney()) + "원");
+                                        }
+                                        if (database.getCategorySixtyInMoney() != 0) {
+                                            pieItems2.add(new PieEntry(database.getCategorySixtyInMoney(), "환갑"));
+                                            categoryInLayout.addView(categorySixty);
+                                            categorySixty.setText("환갑 : " + String.valueOf(database.getCategorySixtyInMoney()) + "원");
+                                        }
+                                        if (database.getCategoryBirthdayInMoney() != 0) {
+                                            pieItems2.add(new PieEntry(database.getCategoryBirthdayInMoney(), "생일"));
+                                            categoryInLayout.addView(categoryBirthday);
+                                            categoryBirthday.setText("생일 : " + String.valueOf(database.getCategoryBirthdayInMoney()) + "원");
+                                        }
+                                        if (database.getCategoryETCInMoney() != 0) {
+                                            pieItems2.add(new PieEntry(database.getCategoryETCInMoney(), "기타"));
+                                            categoryInLayout.addView(categoryETC);
+                                            categoryETC.setText("기타 : " + String.valueOf(database.getCategoryETCInMoney()) + "원");
+                                        }
+                                        PieDataSet dataset2 = new PieDataSet(pieItems2, "Category");
+                                        PieData data2 = new PieData(dataset2);
+                                        dataset2.setValueTextSize(20);
+                                        dataset2.setColors(ColorTemplate.JOYFUL_COLORS);
                                         categoryInPieChart.setUsePercentValues(true);
                                         categoryInPieChart.setHoleRadius(25);
                                         categoryInPieChart.setTransparentCircleRadius(15);
@@ -240,50 +280,18 @@ public class StatisticsFragment extends Fragment {
                                         categoryInPieChart.getLegend().setEnabled(false);
                                         categoryInPieChart.setCenterText("단위 : %");
                                         categoryInPieChart.setCenterTextSize(15);
-
-                                        ArrayList<PieEntry> pieItems2 = new ArrayList<PieEntry>();
-                                        if (database.getCategoryMarryInMoney() != 0) {
-                                            pieItems2.add(new PieEntry((float) database.getCategoryMarryInMoney(), "결혼식"));
-                                            categoryLayout.addView(categoryMarry);
-                                            categoryMarry.setText("결혼식 : " + String.valueOf(database.getCategoryMarryInMoney()) + "원");
-                                        }
-                                        if (database.getCategoryFirstBirthInMoney() != 0) {
-                                            pieItems2.add(new PieEntry(database.getCategoryFirstBirthInMoney(), "돌잔치"));
-                                            categoryLayout.addView(categoryFirstBirth);
-                                            categoryFirstBirth.setText("돌잔치 : " + String.valueOf(database.getCategoryFirstBirthInMoney()) + "원");
-                                        }
-                                        if (database.getCategoryFuneralInMoney() != 0) {
-                                            pieItems2.add(new PieEntry(database.getCategoryFuneralInMoney(), "장례식"));
-                                            categoryLayout.addView(categoryFuneral);
-                                            categoryFuneral.setText("장례식 : " + String.valueOf(database.getCategoryFuneralInMoney()) + "원");
-                                        }
-                                        if (database.getCategorySixtyInMoney() != 0) {
-                                            pieItems2.add(new PieEntry(database.getCategorySixtyInMoney(), "환갑"));
-                                            categoryLayout.addView(categorySixty);
-                                            categorySixty.setText("환갑 : " + String.valueOf(database.getCategorySixtyInMoney()) + "원");
-                                        }
-                                        if (database.getCategoryBirthdayInMoney() != 0) {
-                                            pieItems2.add(new PieEntry(database.getCategoryBirthdayInMoney(), "생일"));
-                                            categoryLayout.addView(categoryBirthday);
-                                            categoryBirthday.setText("생일 : " + String.valueOf(database.getCategoryBirthdayInMoney()) + "원");
-                                        }
-                                        if (database.getCategoryETCInMoney() != 0) {
-                                            pieItems2.add(new PieEntry(database.getCategoryETCInMoney(), "기타"));
-                                            categoryLayout.addView(categoryETC);
-                                            categoryETC.setText("기타 : " + String.valueOf(database.getCategoryETCInMoney()) + "원");
-                                        }
-                                        PieDataSet dataset2 = new PieDataSet(pieItems2, "Category");
-                                        PieData data2 = new PieData(dataset2);
-
-                                        dataset2.setValueTextSize(20);
-                                        dataset2.setColors(ColorTemplate.JOYFUL_COLORS);
                                         categoryInPieChart.setData(data2);
                                         categoryInPieChart.invalidate(); //refresh
                                         break;
-                                        default:
+                                    default:
                                 }
                             }
                         });
+                builder.setPositiveButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
@@ -293,8 +301,9 @@ public class StatisticsFragment extends Fragment {
         relationText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), 3);
                 builder.setTitle("관계별 통계")
+                        .setIcon(R.drawable.ic_insert_chart_black_24dp)
                         .setItems(realtionItems, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -304,11 +313,14 @@ public class StatisticsFragment extends Fragment {
                                         relationText.setText(" 관계별" + realtionItems[0]);
                                         categoryPieChart.setVisibility(View.GONE);
                                         categoryInPieChart.setVisibility(View.GONE);
-                                        categoryLayout.setVisibility(View.GONE);
                                         relationInPieChart.setVisibility(View.GONE);
-                                        relationPieChart.setVisibility(View.VISIBLE);
-                                        relatioonLayout.setVisibility(View.VISIBLE);
-
+                                        categoryLayout.setVisibility(View.GONE);
+                                        categoryInLayout.setVisibility(View.GONE);
+                                        relationInLayout.setVisibility(View.GONE);
+                                        if (out > 0) {
+                                            relationPieChart.setVisibility(View.VISIBLE);
+                                            relationLayout.setVisibility(View.VISIBLE);
+                                        }
                                         if (relationFriend.getParent() != null) {
                                             ((ViewGroup) relationFriend.getParent()).removeView(relationFriend);
                                         }
@@ -331,6 +343,46 @@ public class StatisticsFragment extends Fragment {
                                             ((ViewGroup) relationETC.getParent()).removeView(relationETC);
                                         }
 
+                                        ArrayList<PieEntry> pieItems = new ArrayList<PieEntry>();
+                                        if (database.getRelationFriendOutMoney() != 0) {
+                                            pieItems.add(new PieEntry(database.getRelationFriendOutMoney(), "친구"));
+                                            relationLayout.addView(relationFriend);
+                                            relationFriend.setText("친구 : " + String.valueOf(database.getRelationFriendOutMoney()) + "원");
+                                        }
+                                        if (database.getRelationRelativeOutMoney() != 0) {
+                                            pieItems.add(new PieEntry(database.getRelationRelativeOutMoney(), "친척"));
+                                            relationLayout.addView(relationRelative);
+                                            relationRelative.setText("친척 : " + String.valueOf(database.getRelationRelativeOutMoney()) + "원");
+                                        }
+                                        if (database.getRelationJobOutMoney() != 0) {
+                                            pieItems.add(new PieEntry(database.getRelationJobOutMoney(), "직장동료"));
+                                            relationLayout.addView(relationJob);
+                                            relationJob.setText("직장동료 : " + String.valueOf(database.getRelationJobOutMoney()) + "원");
+                                        }
+                                        if (database.getRelationUniversityOutMoney() != 0) {
+                                            pieItems.add(new PieEntry(database.getRelationUniversityOutMoney(), "대학교"));
+                                            relationLayout.addView(relationUniversity);
+                                            relationUniversity.setText("대학교 : " + String.valueOf(database.getRelationUniversityOutMoney()) + "원");
+                                        }
+                                        if (database.getRelationFamilyOutMoney() != 0) {
+                                            pieItems.add(new PieEntry(database.getRelationFamilyOutMoney(), "가족"));
+                                            relationLayout.addView(relationFamily);
+                                            relationFamily.setText("가족 : " + String.valueOf(database.getRelationFamilyOutMoney()) + "원");
+                                        }
+                                        if (database.getRelationKnowingOutMoney() != 0) {
+                                            pieItems.add(new PieEntry(database.getRelationKnowingOutMoney(), "지인"));
+                                            relationLayout.addView(relationKnowing);
+                                            relationKnowing.setText("지인 : " + String.valueOf(database.getRelationKnowingOutMoney()) + "원");
+                                        }
+                                        if (database.getRelationETCOutMoney() != 0) {
+                                            pieItems.add(new PieEntry(database.getRelationETCOutMoney(), "기타"));
+                                            relationLayout.addView(relationETC);
+                                            relationETC.setText("기타 : " + String.valueOf(database.getRelationETCOutMoney()) + "원");
+                                        }
+                                        PieDataSet dataset = new PieDataSet(pieItems, "Category");
+                                        PieData data = new PieData(dataset);
+                                        dataset.setValueTextSize(20);
+                                        dataset.setColors(ColorTemplate.JOYFUL_COLORS);
                                         relationPieChart.setUsePercentValues(true);
                                         relationPieChart.setHoleRadius(25);
                                         relationPieChart.setTransparentCircleRadius(15);
@@ -338,49 +390,6 @@ public class StatisticsFragment extends Fragment {
                                         relationPieChart.getLegend().setEnabled(false);
                                         relationPieChart.setCenterText("단위 : %");
                                         relationPieChart.setCenterTextSize(15);
-
-                                        ArrayList<PieEntry> pieItems = new ArrayList<PieEntry>();
-                                        if (database.getRelationFriendOutMoney() != 0) {
-                                            pieItems.add(new PieEntry(database.getRelationFriendOutMoney(), "친구"));
-                                            relatioonLayout.addView(relationFriend);
-                                            relationFriend.setText("친구 : " + String.valueOf(database.getRelationFriendOutMoney()) + "원");
-                                        }
-                                        if (database.getRelationRelativeOutMoney() != 0) {
-                                            pieItems.add(new PieEntry(database.getRelationRelativeOutMoney(), "친척"));
-                                            relatioonLayout.addView(relationRelative);
-                                            relationRelative.setText("친척 : " + String.valueOf(database.getRelationRelativeOutMoney()) + "원");
-                                        }
-                                        if (database.getRelationJobOutMoney() != 0) {
-                                            pieItems.add(new PieEntry(database.getRelationJobOutMoney(), "직장동료"));
-                                            relatioonLayout.addView(relationJob);
-                                            relationJob.setText("직장동료 : " + String.valueOf(database.getRelationJobOutMoney()) + "원");
-                                        }
-                                        if (database.getRelationUniversityOutMoney() != 0) {
-                                            pieItems.add(new PieEntry(database.getRelationUniversityOutMoney(), "대학교"));
-                                            relatioonLayout.addView(relationUniversity);
-                                            relationUniversity.setText("대학교 : " + String.valueOf(database.getRelationUniversityOutMoney()) + "원");
-                                        }
-                                        if (database.getRelationFamilyOutMoney() != 0) {
-                                            pieItems.add(new PieEntry(database.getRelationFamilyOutMoney(), "가족"));
-                                            relatioonLayout.addView(relationFamily);
-                                            relationFamily.setText("가족 : " + String.valueOf(database.getRelationFamilyOutMoney()) + "원");
-                                        }
-                                        if (database.getRelationKnowingOutMoney() != 0) {
-                                            pieItems.add(new PieEntry(database.getRelationKnowingOutMoney(), "지인"));
-                                            relatioonLayout.addView(relationKnowing);
-                                            relationKnowing.setText("지인 : " + String.valueOf(database.getRelationKnowingOutMoney()) + "원");
-                                        }
-                                        if (database.getRelationETCOutMoney() != 0) {
-                                            pieItems.add(new PieEntry(database.getRelationETCOutMoney(), "기타"));
-                                            relatioonLayout.addView(relationETC);
-                                            relationETC.setText("기타 : " + String.valueOf(database.getRelationETCOutMoney()) + "원");
-                                        }
-                                        PieDataSet dataset = new PieDataSet(pieItems, "Category");
-                                        PieData data = new PieData(dataset);
-                                        data.setValueFormatter(new PercentFormatter());
-
-                                        dataset.setValueTextSize(20);
-                                        dataset.setColors(ColorTemplate.JOYFUL_COLORS);
                                         relationPieChart.setData(data);
                                         relationPieChart.invalidate();
                                         break;
@@ -389,11 +398,14 @@ public class StatisticsFragment extends Fragment {
                                         relationText.setText(" 관계별" + realtionItems[1]);
                                         categoryPieChart.setVisibility(View.GONE);
                                         categoryInPieChart.setVisibility(View.GONE);
-                                        categoryLayout.setVisibility(View.GONE);
                                         relationPieChart.setVisibility(View.GONE);
-                                        relationInPieChart.setVisibility(View.VISIBLE);
-                                        relatioonLayout.setVisibility(View.VISIBLE);
-
+                                        categoryLayout.setVisibility(View.GONE);
+                                        categoryInLayout.setVisibility(View.GONE);
+                                        relationLayout.setVisibility(View.GONE);
+                                        if (in > 0) {
+                                            relationInPieChart.setVisibility(View.VISIBLE);
+                                            relationInLayout.setVisibility(View.VISIBLE);
+                                        }
                                         if (relationFriend.getParent() != null) {
                                             ((ViewGroup) relationFriend.getParent()).removeView(relationFriend);
                                         }
@@ -416,6 +428,46 @@ public class StatisticsFragment extends Fragment {
                                             ((ViewGroup) relationETC.getParent()).removeView(relationETC);
                                         }
 
+                                        ArrayList<PieEntry> pieItems2 = new ArrayList<PieEntry>();
+                                        if (database.getRelationFriendInMoney() != 0) {
+                                            pieItems2.add(new PieEntry(database.getRelationFriendInMoney(), "친구"));
+                                            relationInLayout.addView(relationFriend);
+                                            relationFriend.setText("친구 : " + String.valueOf(database.getRelationFriendInMoney()) + "원");
+                                        }
+                                        if (database.getRelationRelativeInMoney() != 0) {
+                                            pieItems2.add(new PieEntry(database.getRelationRelativeInMoney(), "친척"));
+                                            relationInLayout.addView(relationRelative);
+                                            relationRelative.setText("친척 : " + String.valueOf(database.getRelationRelativeInMoney()) + "원");
+                                        }
+                                        if (database.getRelationJobInMoney() != 0) {
+                                            pieItems2.add(new PieEntry(database.getRelationJobInMoney(), "직장동료"));
+                                            relationInLayout.addView(relationJob);
+                                            relationJob.setText("직장동료 : " + String.valueOf(database.getRelationJobInMoney()) + "원");
+                                        }
+                                        if (database.getRelationUniversityInMoney() != 0) {
+                                            pieItems2.add(new PieEntry(database.getRelationUniversityInMoney(), "대학교"));
+                                            relationInLayout.addView(relationUniversity);
+                                            relationUniversity.setText("대학교 : " + String.valueOf(database.getRelationUniversityInMoney()) + "원");
+                                        }
+                                        if (database.getRelationFamilyInMoney() != 0) {
+                                            pieItems2.add(new PieEntry(database.getRelationFamilyInMoney(), "가족"));
+                                            relationInLayout.addView(relationFamily);
+                                            relationFamily.setText("가족 : " + String.valueOf(database.getRelationFamilyInMoney()) + "원");
+                                        }
+                                        if (database.getRelationKnowingInMoney() != 0) {
+                                            pieItems2.add(new PieEntry(database.getRelationKnowingInMoney(), "지인"));
+                                            relationInLayout.addView(relationKnowing);
+                                            relationKnowing.setText("지인 : " + String.valueOf(database.getRelationKnowingInMoney()) + "원");
+                                        }
+                                        if (database.getRelationETCInMoney() != 0) {
+                                            pieItems2.add(new PieEntry(database.getRelationETCInMoney(), "기타"));
+                                            relationInLayout.addView(relationETC);
+                                            relationETC.setText("기타 : " + String.valueOf(database.getRelationETCInMoney()) + "원");
+                                        }
+                                        PieDataSet dataset2 = new PieDataSet(pieItems2, "Category");
+                                        PieData data2 = new PieData(dataset2);
+                                        dataset2.setValueTextSize(20);
+                                        dataset2.setColors(ColorTemplate.JOYFUL_COLORS);
                                         relationInPieChart.setUsePercentValues(true);
                                         relationInPieChart.setHoleRadius(25);
                                         relationInPieChart.setTransparentCircleRadius(15);
@@ -423,48 +475,6 @@ public class StatisticsFragment extends Fragment {
                                         relationInPieChart.getLegend().setEnabled(false);
                                         relationInPieChart.setCenterText("단위 : %");
                                         relationInPieChart.setCenterTextSize(15);
-
-                                        ArrayList<PieEntry> pieItems2 = new ArrayList<PieEntry>();
-                                        if (database.getRelationFriendInMoney() != 0) {
-                                            pieItems2.add(new PieEntry(database.getRelationFriendInMoney(), "친구"));
-                                            relatioonLayout.addView(relationFriend);
-                                            relationFriend.setText("친구 : " + String.valueOf(database.getRelationFriendInMoney()) + "원");
-                                        }
-                                        if (database.getRelationRelativeInMoney() != 0) {
-                                            pieItems2.add(new PieEntry(database.getRelationRelativeInMoney(), "친척"));
-                                            relatioonLayout.addView(relationRelative);
-                                            relationRelative.setText("친척 : " + String.valueOf(database.getRelationRelativeInMoney()) + "원");
-                                        }
-                                        if (database.getRelationJobInMoney() != 0) {
-                                            pieItems2.add(new PieEntry(database.getRelationJobInMoney(), "직장동료"));
-                                            relatioonLayout.addView(relationJob);
-                                            relationJob.setText("직장동료 : " + String.valueOf(database.getRelationJobInMoney()) + "원");
-                                        }
-                                        if (database.getRelationUniversityInMoney() != 0) {
-                                            pieItems2.add(new PieEntry(database.getRelationUniversityInMoney(), "대학교"));
-                                            relatioonLayout.addView(relationUniversity);
-                                            relationUniversity.setText("대학교 : " + String.valueOf(database.getRelationUniversityInMoney()) + "원");
-                                        }
-                                        if (database.getRelationFamilyInMoney() != 0) {
-                                            pieItems2.add(new PieEntry(database.getRelationFamilyInMoney(), "가족"));
-                                            relatioonLayout.addView(relationFamily);
-                                            relationFamily.setText("가족 : " + String.valueOf(database.getRelationFamilyInMoney()) + "원");
-                                        }
-                                        if (database.getRelationKnowingInMoney() != 0) {
-                                            pieItems2.add(new PieEntry(database.getRelationKnowingInMoney(), "지인"));
-                                            relatioonLayout.addView(relationKnowing);
-                                            relationKnowing.setText("지인 : " + String.valueOf(database.getRelationKnowingInMoney()) + "원");
-                                        }
-                                        if (database.getRelationETCInMoney() != 0) {
-                                            pieItems2.add(new PieEntry(database.getRelationETCInMoney(), "기타"));
-                                            relatioonLayout.addView(relationETC);
-                                            relationETC.setText("기타 : " + String.valueOf(database.getRelationETCInMoney()) + "원");
-                                        }
-                                        PieDataSet dataset2 = new PieDataSet(pieItems2, "Category");
-                                        PieData data2 = new PieData(dataset2);
-
-                                        dataset2.setValueTextSize(20);
-                                        dataset2.setColors(ColorTemplate.JOYFUL_COLORS);
                                         relationInPieChart.setData(data2);
                                         relationInPieChart.invalidate();
                                         break;
@@ -472,6 +482,11 @@ public class StatisticsFragment extends Fragment {
                                 }
                             }
                         });
+                builder.setPositiveButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }

@@ -153,7 +153,6 @@ public class InOutDatabase {
 
     public ArrayList<InList> selectAllIn() {
         ArrayList<InList> result = new ArrayList<InList>();
-
         try{
             Cursor cursor = db.rawQuery("select NAME, DATE, CATEGORY, RELATION, MONEY, MEMO from " + TABLE_IN_INFO, null);
             for(int i = 0; i < cursor.getCount(); i++) {
@@ -175,7 +174,6 @@ public class InOutDatabase {
     }
     public ArrayList<OutList> selectAllOut() {
         ArrayList<OutList> result = new ArrayList<OutList>();
-
         try{
             Cursor cursor = db.rawQuery("select NAME, DATE, CATEGORY, RELATION, MONEY, MEMO from " + TABLE_OUT_INFO, null);
             for(int i = 0; i < cursor.getCount(); i++) {
