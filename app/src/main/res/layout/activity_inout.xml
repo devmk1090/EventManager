@@ -57,7 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <EditText
-                android:maxLength="7"
+                android:maxLength="6"
                 android:id="@+id/nameData"
                 android:inputType="text"
                 android:gravity="center"

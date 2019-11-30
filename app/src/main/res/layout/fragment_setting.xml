@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/settingLayout"
     tools:context=".SettingFragment">
     <LinearLayout
         android:paddingTop="30dp"
@@ -21,6 +22,19 @@
             android:textSize="15dp"
             android:textStyle="bold"
             android:text="도움말"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/noticeButton"
+            android:layout_margin="20dp"
+            android:padding="10dp"
+            android:textColor="#ffffff"
+            android:background="@drawable/custom_textview"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:text="알림"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <Button

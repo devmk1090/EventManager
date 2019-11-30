@@ -6,8 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
     <com.google.android.material.tabs.TabLayout
-        app:tabIndicatorColor="#0028FF"
-        app:tabIndicatorHeight="3dp"
+        android:background="#4DB4FF"
+        app:tabIndicatorColor="#ECECEC"
+        app:tabIndicatorHeight="4dp"
         app:tabTextAppearance="@style/TabLayoutTextStyle"
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
@@ -35,6 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <androidx.viewpager.widget.ViewPager
+            android:background="#ffffff"
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
