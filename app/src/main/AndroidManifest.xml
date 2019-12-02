@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.devproject.eventmanager">
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.INTERNET"/>
   <application
       android:allowBackup="true"
       android:icon="@drawable/icon"
@@ -9,6 +10,9 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:supportsRtl="true"
       android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+    <meta-data
+        android:name="com.google.android.gms.ads.APPLICATION_ID"
+        android:value="ca-app-pub-1646409874287424~9947387418"/>
     <activity android:name=".InDetailActivity" />
     <activity android:name=".OutDetailActivity" />
     <activity android:name=".InActivity" />

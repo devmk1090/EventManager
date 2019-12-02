@@ -38,7 +38,7 @@
             android:textStyle="bold" />
     </LinearLayout>
     <LinearLayout
-        android:background="@drawable/linearborder2"
+        android:background="@drawable/asform"
         android:layout_margin="5dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"

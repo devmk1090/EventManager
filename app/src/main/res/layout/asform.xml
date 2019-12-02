@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <LinearLayout
-        android:background="@drawable/linearborder2"
+        android:background="@drawable/asform"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
     <LinearLayout
-        android:background="@drawable/linearborder2"
+        android:background="@drawable/asform"
         android:layout_marginTop="1dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -61,7 +61,7 @@
             android:textSize="15dp"
             android:text="100000"
             android:inputType="number"
-            android:layout_width="110dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"/>
         <TextView
             android:paddingLeft="2dp"
@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
     <LinearLayout
-        android:background="@drawable/linearborder2"
+        android:background="@drawable/asform"
         android:layout_marginTop="1dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -83,7 +83,7 @@
             android:padding="5dp"
             android:textStyle="bold"
             android:textSize="15dp"
-            android:text="메모장ㅇㅇㅇㅇㅇㅇㅁㅁㅁㅁㅁㄴㄴㄴㄴㄴ"
+            android:text="일이삼사오육칠팔구십십이십사오"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>

@@ -7,6 +7,7 @@ android {
         applicationId "com.devproject.eventmanager"
         minSdkVersion 19
         targetSdkVersion 29
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -24,6 +25,8 @@ android {
 }
 
 dependencies {
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.google.android.gms:play-services-ads:18.3.0'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.1.0'

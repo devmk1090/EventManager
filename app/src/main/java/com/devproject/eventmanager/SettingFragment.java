@@ -90,9 +90,9 @@ public class SettingFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), 3);
-                builder.setTitle("도움말");
+                builder.setTitle("VERSION");
                 builder.setIcon(R.drawable.ic_help_black_24dp);
-                builder.setMessage("# 19/12/01 version 1.0.0 : 앱 출시\n\n" );
+                builder.setMessage("# 19/12/02 version 1.0.0\n" + "- First Release\n");
 
                 builder.setNeutralButton("확인", new DialogInterface.OnClickListener() {
                     @Override
