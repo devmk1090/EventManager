@@ -62,7 +62,6 @@ public class InOutDatabase {
         db.close();
         database = null;
     }
-
     public Cursor rawQuery(String SQL) {
         println("\nexecuteQuery called.\n");
 
@@ -75,7 +74,6 @@ public class InOutDatabase {
         }
         return c1;
     }
-
     public boolean execSQL(String SQL) {
         println("\nexecute called.\n");
 
@@ -122,20 +120,16 @@ public class InOutDatabase {
                 Log.e(TAG, "Exception in CREATE_SQL", ex);
             }
         }
-
         public void onOpen(SQLiteDatabase db) {
             println("opened database [" + DATABASE_NAME + "].");
         }
-
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             println("Upgrading database from version " + oldVersion + " to " + newVersion + ".");
             if(oldVersion < 2) {
 
             }
         }
-
     }
-
     public void insertRecordIn (String name, String date, String category, String relation, String money, String memo){
         try {
             db.execSQL( "insert into " + TABLE_IN_INFO + "(NAME, DATE, CATEGORY, RELATION, MONEY, MEMO) values ('" + name + "','" + date + "','" + category +"','" + relation +"','" + money + "','" + memo + "');" );
@@ -413,14 +407,14 @@ public class InOutDatabase {
     }
     public int getRelationJobOutMoney(){
         int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 직장동료 ' ", null);
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 회사 ' ", null);
         if(cursor.moveToFirst())
             total = cursor.getInt(0);
         return total;
     }
     public int getRelationJobInMoney(){
         int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 직장동료 ' ", null);
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 회사 ' ", null);
         if(cursor.moveToFirst())
             total = cursor.getInt(0);
         return total;

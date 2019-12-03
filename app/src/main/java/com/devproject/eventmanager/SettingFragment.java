@@ -75,7 +75,7 @@ public class SettingFragment extends Fragment{
                 builder.setMessage("# '나간 돈'  '받은 돈'  탭 오른쪽 아래에 있는 파란 십자 아이콘을 터치하면 정보를 입력할 수 있습니다.\n\n" +
                         "# 등록된 정보를 터치하면 '수정' '삭제' 할 수 있습니다.\n\n" +
                         "# '설정' 탭의 '엑셀 파일 만들기' 버튼을 터치하면 등록된 정보를 엑셀 파일로 만들어 보관할 수 있습니다.\n\n" +
-                        "# '엑셀 파일 만들기'를 눌러도 파일이 만들어지지 않는다면 '앱 정보'에 들어가서 '저장권한'을 허용해야 합니다 \n");
+                        "# '엑셀 파일 만들기'를 눌러도 파일이 만들어지지 않는다면 '앱 정보'에 들어가서 '저장 권한'을 허용해야 합니다 \n");
 
                 builder.setNeutralButton("확인", new DialogInterface.OnClickListener() {
                     @Override
@@ -112,7 +112,7 @@ public class SettingFragment extends Fragment{
         linkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/"));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.devproject.eventmanager"));
                 startActivity(intent);
             }
         });

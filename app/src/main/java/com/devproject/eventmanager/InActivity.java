@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -143,7 +144,7 @@ public class InActivity extends AppCompatActivity {
             }
         });
 
-        final CharSequence[] relationItems = {" 친구 ", " 친척 ", " 직장동료 ", " 대학교 ", " 가족 ", " 지인 ", " 기타 "};
+        final CharSequence[] relationItems = {" 친구 ", " 친척 ", " 회사 ", " 대학교 ", " 가족 ", " 지인 ", " 기타 "};
         relationData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -283,6 +284,7 @@ public class InActivity extends AppCompatActivity {
                     dialog.show();
                 }
                 else {
+                    Toast.makeText(getApplicationContext(), "받은 돈 내역이 추가되었습니다.", Toast.LENGTH_SHORT).show();
                     database.insertRecordIn(name, date, category, relation, money, memo);
                     Intent intent = new Intent(InActivity.this, MainActivity.class);
                     intent.putExtra("In", true);

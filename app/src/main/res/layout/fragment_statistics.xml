@@ -6,7 +6,7 @@
     tools:context=".StatisticsFragment">
     <LinearLayout
         android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:layout_marginLeft="10dp"
         android:layout_marginBottom="5dp"
         android:orientation="horizontal"
@@ -134,42 +134,45 @@
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/categoryLayout"
-        android:background="@drawable/totalborder"
+        android:id="@+id/wholeLayout"
+        android:layout_gravity="center"
         android:layout_margin="5dp"
         android:padding="5dp"
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/relationLayout"
         android:background="@drawable/totalborder"
-        android:layout_margin="5dp"
-        android:padding="5dp"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/categoryInLayout"
-        android:background="@drawable/totalborder"
-        android:layout_margin="5dp"
-        android:padding="5dp"
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/relationInLayout"
-        android:background="@drawable/totalborder"
-        android:layout_margin="5dp"
-        android:padding="5dp"
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_marginRight="5dp"
+            android:id="@+id/categoryLayout"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginLeft="5dp"
+            android:id="@+id/categoryLayout2"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginRight="5dp"
+            android:id="@+id/relationLayout"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginLeft="5dp"
+            android:id="@+id/relationLayout2"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </LinearLayout>
     </LinearLayout>
     <RelativeLayout
+        android:layout_marginBottom="50dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <com.github.mikephil.charting.charts.PieChart

@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -98,6 +99,7 @@ public class InFragment extends Fragment {
                         builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getActivity(), "받은 돈 내역이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
                                 int i = database.getItemIdIn(position);
                                 Log.d(TAG, String.valueOf(i));
                                 Log.d(TAG, String.valueOf(position));
