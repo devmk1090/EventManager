@@ -50,9 +50,7 @@ public class OutDetailActivity extends AppCompatActivity {
             public void onInitializationComplete(InitializationStatus initializationStatus) {}
         });
         adView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
+        AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
         database = InOutDatabase.getInstance(this);
@@ -118,7 +116,7 @@ public class OutDetailActivity extends AppCompatActivity {
             }
         });
 
-        final CharSequence[] categoryItems = {" 결혼식 ", " 돌잔치 ", " 장례식 ", " 환갑 ", " 생일 ", " 기타 "};
+        final CharSequence[] categoryItems = {" 결혼식 ", " 돌잔치 ", " 장례식 ", " 환갑 ", " 칠순 ", " 생일 ", " 기타 "};
         categoryData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,6 +144,9 @@ public class OutDetailActivity extends AppCompatActivity {
                                         break;
                                     case 5:
                                         categoryData.setText(categoryItems[5]);
+                                        break;
+                                    case 6:
+                                        categoryData.setText(categoryItems[6]);
                                         break;
                                     default:
                                 }

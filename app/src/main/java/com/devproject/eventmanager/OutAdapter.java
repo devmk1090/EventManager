@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
@@ -47,8 +48,10 @@ public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
             getCalendarData.setText(item.getDate());
             getCategoryData.setText(item.getCategory());
             getRelationData.setText(item.getRelation());
-            getMoneyData.setText(item.getMoney());
             getMemoData.setText(item.getMemo());
+            DecimalFormat formatter = new DecimalFormat("###,###");
+            int moneyformat = Integer.parseInt(item.getMoney());
+            getMoneyData.setText(formatter.format(moneyformat));
         }
     }
 

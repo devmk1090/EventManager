@@ -21,6 +21,7 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,7 +36,7 @@ public class OutActivity extends AppCompatActivity {
     private int moneyTotal;
     private DatePickerDialog datePickerDialog;
     Calendar calendar;
-    int year, month, dayoOfMonth;
+    int year, month, dayOfMonth;
     String dayOfWeek;
     InOutDatabase database;
     private AdView adView;
@@ -50,9 +51,7 @@ public class OutActivity extends AppCompatActivity {
             public void onInitializationComplete(InitializationStatus initializationStatus) {}
         });
         adView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
+        AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
         database = InOutDatabase.getInstance(this);
@@ -85,7 +84,7 @@ public class OutActivity extends AppCompatActivity {
                 calendar = Calendar.getInstance();
                 year =calendar.get(Calendar.YEAR);
                 month = calendar.get(Calendar.MONTH);
-                dayoOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
 
                 datePickerDialog = new DatePickerDialog(OutActivity.this, new DatePickerDialog.OnDateSetListener() {
@@ -96,12 +95,12 @@ public class OutActivity extends AppCompatActivity {
                         dayOfWeek = simpleDateFormat.format(date);
                         calendarData.setText(year + "/" + (month + 1) + "/" + dayOfMonth + "/" + dayOfWeek);
                     }
-                }, year, month, dayoOfMonth);
+                }, year, month, dayOfMonth);
                 datePickerDialog.show();
             }
         });
 
-        final CharSequence[] categoryItems = {" 결혼식 ", " 돌잔치 ", " 장례식 ", " 환갑 ", " 생일 ", " 기타 "};
+        final CharSequence[] categoryItems = {" 결혼식 ", " 돌잔치 ", " 장례식 ", " 환갑 ", " 칠순 ", " 생일 ", " 기타 "};
         categoryData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,6 +128,9 @@ public class OutActivity extends AppCompatActivity {
                                         break;
                                     case 5:
                                         categoryData.setText(categoryItems[5]);
+                                        break;
+                                    case 6:
+                                        categoryData.setText(categoryItems[6]);
                                         break;
                                     default:
                                 }
@@ -228,6 +230,9 @@ public class OutActivity extends AppCompatActivity {
                 String relation = relationData.getText().toString();
                 String money = moneyData.getText().toString();
                 String memo = memoData.getText().toString();
+//                int moneyFormat = Integer.parseInt(moneyData.getText().toString());
+//                DecimalFormat formatter = new DecimalFormat("###,###");
+//                String money = formatter.format(moneyFormat);
                 if (name.equals("")) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(OutActivity.this, 3);
                     builder.setTitle("알림")

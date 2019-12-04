@@ -342,6 +342,20 @@ public class InOutDatabase {
             total = cursor.getInt(0);
         return total;
     }
+    public int getCategorySeventyOutMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 칠순 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
+    public int getCategorySeventyInMoney(){
+        int total = 0;
+        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 칠순 ' ", null);
+        if(cursor.moveToFirst())
+            total = cursor.getInt(0);
+        return total;
+    }
     public int getCategoryBirthdayOutMoney(){
         int total = 0;
         Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 생일 ' ", null);
@@ -370,13 +384,7 @@ public class InOutDatabase {
             total = cursor.getInt(0);
         return total;
     }
-    public int getCategoryTestMoney(String test){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=" + test , null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
+
     public int getRelationFriendOutMoney(){
         int total = 0;
         Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 친구 ' ", null);

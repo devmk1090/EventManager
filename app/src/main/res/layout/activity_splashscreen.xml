@@ -45,10 +45,12 @@
             android:layout_height="wrap_content"/>
 </LinearLayout>
     <TextView
-        android:layout_margin="5dp"
+        android:layout_margin="3dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:text="Photo by Aaron Burden on Unsplash"
+        android:textSize="10dp"
+        android:textColor="#A2A2A2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </RelativeLayout>

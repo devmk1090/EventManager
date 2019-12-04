@@ -59,7 +59,7 @@
             android:id="@+id/getMoneyData"
             android:textStyle="bold"
             android:textSize="15dp"
-            android:text="100000"
+            android:text="100,000"
             android:inputType="number"
             android:layout_width="100dp"
             android:layout_height="wrap_content"/>

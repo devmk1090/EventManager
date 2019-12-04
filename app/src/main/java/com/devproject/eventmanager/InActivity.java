@@ -34,7 +34,7 @@ public class InActivity extends AppCompatActivity {
     private int moneyTotal;
     private DatePickerDialog datePickerDialog;
     Calendar calendar;
-    int year, month, dayoOfMonth;
+    int year, month, dayOfMonth;
     String dayOfWeek;
     InOutDatabase database;
     private AdView adView;
@@ -49,9 +49,7 @@ public class InActivity extends AppCompatActivity {
             public void onInitializationComplete(InitializationStatus initializationStatus) {}
         });
         adView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
+        AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
         database = InOutDatabase.getInstance(this);
@@ -84,7 +82,7 @@ public class InActivity extends AppCompatActivity {
                 calendar = Calendar.getInstance();
                 year =calendar.get(Calendar.YEAR);
                 month = calendar.get(Calendar.MONTH);
-                dayoOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
 
                 datePickerDialog = new DatePickerDialog(InActivity.this, new DatePickerDialog.OnDateSetListener() {
@@ -95,12 +93,12 @@ public class InActivity extends AppCompatActivity {
                         dayOfWeek = simpleDateFormat.format(date);
                         calendarData.setText(year + "/" + (month + 1) + "/" + dayOfMonth + "/" + dayOfWeek);
                     }
-                }, year, month, dayoOfMonth);
+                }, year, month, dayOfMonth);
                 datePickerDialog.show();
             }
         });
 
-        final CharSequence[] categoryItems = {" 결혼식 ", " 돌잔치 ", " 장례식 ", " 환갑 ", " 생일 ", " 기타 "};
+        final CharSequence[] categoryItems = {" 결혼식 ", " 돌잔치 ", " 장례식 ", " 환갑 ", " 칠순 ", " 생일 ", " 기타 "};
         categoryData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,6 +126,9 @@ public class InActivity extends AppCompatActivity {
                                         break;
                                     case 5:
                                         categoryData.setText(categoryItems[5]);
+                                        break;
+                                    case 6:
+                                        categoryData.setText(categoryItems[6]);
                                         break;
                                     default:
                                 }
@@ -221,12 +222,12 @@ public class InActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String name = nameData.getText().toString();
-                final String date = calendarData.getText().toString();
-                final String category = categoryData.getText().toString();
-                final String relation = relationData.getText().toString();
-                final String money = moneyData.getText().toString();
-                final String memo = memoData.getText().toString();
+                String name = nameData.getText().toString();
+                String date = calendarData.getText().toString();
+                String category = categoryData.getText().toString();
+                String relation = relationData.getText().toString();
+                String money = moneyData.getText().toString();
+                String memo = memoData.getText().toString();
                 if (name.equals("")) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(InActivity.this, 3);
                     builder.setTitle("알림")
