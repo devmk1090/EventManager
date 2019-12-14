@@ -26,6 +26,9 @@ import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -33,6 +36,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -257,4 +261,61 @@ public class SettingFragment extends Fragment{
         }
         Toast.makeText(getActivity(), "'간편한 경조사 관리'폴더에 저장되었습니다", Toast.LENGTH_SHORT).show();
     }
+//    public void readExcel() {
+//        String folderName = "/간편한 경조사 관리";
+//        String fileName = "test.xls";
+//        File excelFile;
+//        FileInputStream fis;
+//        HSSFWorkbook workbook;
+//
+//        File filePath = new File(Environment.getExternalStorageDirectory() + folderName);
+//        if(!filePath.exists())
+//            filePath.mkdirs();
+//        try {
+//            fis = new FileInputStream(filePath);
+//            workbook = new HSSFWorkbook(fis);
+//
+//            int rowindex = 0;
+//            int columnindex = 0;
+//
+//            HSSFSheet sheet = workbook.getSheetAt(0);
+//            int rows = sheet.getPhysicalNumberOfRows();
+//            for(rowindex = 0; rowindex<rows; rowindex++) {
+//                HSSFRow row = sheet.getRow(rowindex);
+//                if (row != null) {
+//                    int cells = row.getPhysicalNumberOfCells();
+//                    for (columnindex = 0; columnindex <= cells; columnindex++) {
+//                        HSSFCell cell = row.getCell(columnindex);
+//                        String value = "";
+//                        if (cell == null) {
+//                            continue;
+//                        } else {
+//                            switch (cell.getCellType()) {
+//                                case HSSFCell.CELL_TYPE_FORMULA:
+//                                    value = cell.getCellFormula();
+//                                    break;
+//                                case HSSFCell.CELL_TYPE_NUMERIC:
+//                                    value = cell.getNumericCellValue() + "";
+//                                    break;
+//                                case HSSFCell.CELL_TYPE_STRING:
+//                                    value = cell.getStringCellValue() + "";
+//                                    break;
+//                                case HSSFCell.CELL_TYPE_BLANK:
+//                                    value = cell.getBooleanCellValue() + "";
+//                                    break;
+//                                case HSSFCell.CELL_TYPE_ERROR:
+//                                    value = cell.getErrorCellValue() + "";
+//                                    break;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 }

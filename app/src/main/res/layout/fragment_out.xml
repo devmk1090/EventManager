@@ -10,6 +10,11 @@
         android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <EditText
+            android:id="@+id/searchEdit"
+            android:hint="검색"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <androidx.recyclerview.widget.RecyclerView
             android:layout_marginBottom="40dp"
             android:id="@+id/outRecyclerView"
