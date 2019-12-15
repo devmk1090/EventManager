@@ -1,11 +1,8 @@
 package com.devproject.eventmanager;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,48 +12,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
-        implements OutItemClickListener, Filterable {
+        implements OutItemClickListener {
 
-    Context context;
     ArrayList<OutList> items;
     OutItemClickListener listener;
-    ArrayList<OutList> filteredList;
-
-    public OutAdapter (Context context, ArrayList<OutList> outLists) {
-        super();
-        this.context = context;
-        this.items = outLists;
-        this.filteredList = outLists;
-    }
-    @Override
-    public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                String charString = constraint.toString();
-                if(charString.isEmpty()) {
-                    filteredList = items;
-                } else {
-                    ArrayList<OutList> filteringList = new ArrayList<>();
-                    for(OutList item : items) {
-                        if(item.getName().toLowerCase().contains(charString.toLowerCase())) {
-                            filteringList.add(item);
-                        }
-                    }
-                    filteredList = filteringList;
-                }
-                FilterResults filterResults = new FilterResults();
-                filterResults.values = filteredList;
-                return filterResults;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                filteredList = (ArrayList<OutList>)results.values;
-                notifyDataSetChanged();
-            }
-        };
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView getNameData;
@@ -95,20 +54,23 @@ public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
             getMoneyData.setText(formatter.format(moneyformat));
         }
     }
+
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         View itemView = inflater.inflate(R.layout.asform, viewGroup, false);
         return new ViewHolder(itemView, this);
     }
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        OutList item = filteredList.get(position);
+        OutList item = items.get(position);
         viewHolder.setItem(item);
-     }
+    }
+
     @Override
     public int getItemCount() {
-        return filteredList.size();
+        return items.size();
     }
 
     @Override

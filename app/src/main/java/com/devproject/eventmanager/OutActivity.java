@@ -230,9 +230,6 @@ public class OutActivity extends AppCompatActivity {
                 String relation = relationData.getText().toString();
                 String money = moneyData.getText().toString();
                 String memo = memoData.getText().toString();
-//                int moneyFormat = Integer.parseInt(moneyData.getText().toString());
-//                DecimalFormat formatter = new DecimalFormat("###,###");
-//                String money = formatter.format(moneyFormat);
                 if (name.equals("")) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(OutActivity.this, 3);
                     builder.setTitle("알림")

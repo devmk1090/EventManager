@@ -10,13 +10,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -24,13 +21,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 
-public class OutFragment extends Fragment implements TextWatcher {
+public class OutFragment extends Fragment {
 
     RecyclerView recyclerView;
     OutAdapter adapter;
     String TAG = "OutFragment";
     InOutDatabase database;
-    EditText searchEdit;
 
     public OutFragment(){}
 
@@ -52,8 +48,6 @@ public class OutFragment extends Fragment implements TextWatcher {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_out, container, false);
 
-        searchEdit = v.findViewById(R.id.searchEdit);
-        searchEdit.addTextChangedListener(this);
         database = InOutDatabase.getInstance(getActivity());
         boolean isOpen = database.open();
         if(isOpen) {
@@ -65,9 +59,10 @@ public class OutFragment extends Fragment implements TextWatcher {
         recyclerView = (RecyclerView) v.findViewById(R.id.outRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        ArrayList<OutList> result = database.selectAllOut();
-        adapter = new OutAdapter(getContext(), result);
+
+        adapter = new OutAdapter();
         recyclerView.setAdapter(adapter);
+        ArrayList<OutList> result = database.selectAllOut();
         adapter.setItems(result);
 
         adapter.setOnitemClickListener(new OutItemClickListener() {
@@ -82,8 +77,6 @@ public class OutFragment extends Fragment implements TextWatcher {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(getActivity(), OutDetailActivity.class);
                         int i = database.getItemIdOut(position);
-                        Log.d(TAG, String.valueOf(i));
-                        Log.d(TAG, String.valueOf(position));
                         intent.putExtra("ID", i);
                         intent.putExtra("NAME", database.getNameOut(position));
                         intent.putExtra("DATE", database.getDateOut(position));
@@ -133,18 +126,5 @@ public class OutFragment extends Fragment implements TextWatcher {
             }
         });
         return v;
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
-
-    }
-    @Override
-    public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-        adapter.getFilter().filter(charSequence);
-    }
-    @Override
-    public void afterTextChanged(Editable editable) {
-
     }
 }

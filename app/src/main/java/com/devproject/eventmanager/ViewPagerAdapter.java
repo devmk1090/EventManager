@@ -24,10 +24,6 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             case 2:
                 StatisticsFragment statisticsFragment = new StatisticsFragment();
                 return statisticsFragment;
-            case 3:
-                SettingFragment settingFragment = new SettingFragment();
-                return settingFragment;
-
                 default:
                     return null;
         }
@@ -35,7 +31,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 4;
+        return 3;
     }
 
     //제목 세팅을 한번더 해준다
@@ -49,9 +45,6 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
                 return "받은 돈";
             case 2:
                 return "통계";
-            case 3:
-                return "설정";
-
             default:
                 return null;
         }
