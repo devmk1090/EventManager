@@ -59,7 +59,6 @@ public class InActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "Book database is not open");
         }
-
         calendarButton = (Button) findViewById(R.id.calendarButton);
         calendarData = (TextView) findViewById(R.id.calendarData);
 
