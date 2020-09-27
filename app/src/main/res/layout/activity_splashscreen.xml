@@ -1,46 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
     android:layout_gravity="center"
     android:id="@+id/lin_lay"
     android:gravity="center"
     android:orientation="vertical" >
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/splash"
         android:background="@drawable/diary" />
     <LinearLayout
         android:orientation="vertical"
+        android:layout_marginLeft="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <TextView
             android:layout_marginTop="30dp"
-            android:layout_marginLeft="10dp"
             android:textColor="#54B5FF"
             android:textStyle="italic|bold"
-            android:textSize="40dp"
-            android:text="Simple"
+            android:textSize="40sp"
+            android:text="@string/simple"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
             android:textColor="#ffffff"
             android:textStyle="italic|bold"
-            android:textSize="40dp"
-            android:text="Event"
+            android:textSize="40sp"
+            android:text="@string/event"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
             android:textColor="#54B5FF"
             android:textStyle="italic|bold"
-            android:textSize="40dp"
-            android:text="Management"
+            android:textSize="40sp"
+            android:text="@string/management"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 </LinearLayout>
@@ -48,8 +46,8 @@
         android:layout_margin="3dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:text="Photo by Aaron Burden on Unsplash"
-        android:textSize="10dp"
+        android:text="@string/image_ref"
+        android:textSize="10sp"
         android:textColor="#A2A2A2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>

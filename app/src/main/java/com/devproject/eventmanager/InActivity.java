@@ -227,6 +227,8 @@ public class InActivity extends AppCompatActivity {
                 String relation = relationData.getText().toString();
                 String money = moneyData.getText().toString();
                 String memo = memoData.getText().toString();
+                boolean check = database.checkItemIn(name, date, category, relation);
+
                 if (name.equals("")) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(InActivity.this, 3);
                     builder.setTitle("알림")
@@ -274,6 +276,20 @@ public class InActivity extends AppCompatActivity {
                     builder.setTitle("알림")
                             .setIcon(R.drawable.ic_info_black_24dp)
                             .setMessage("금액을 입력해주세요")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+                else if (!check) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InActivity.this, 3);
+                    builder.setTitle("알림")
+                            .setIcon(R.drawable.ic_info_black_24dp)
+                            .setMessage("이미 추가된 내역이 있습니다")
                             .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {

@@ -227,7 +227,7 @@
             android:id="@+id/saveButton"
             android:background="@color/colorPrimary"
             android:textStyle="bold"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:text="저   장"
             android:layout_width="200dp"
             android:layout_height="wrap_content"/>
@@ -240,6 +240,6 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/adView"
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="wrap_content">
     </com.google.android.gms.ads.AdView>
 </RelativeLayout>

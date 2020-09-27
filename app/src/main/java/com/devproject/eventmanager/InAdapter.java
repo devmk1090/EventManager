@@ -1,9 +1,17 @@
 package com.devproject.eventmanager;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,59 +20,64 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class InAdapter extends RecyclerView.Adapter<InAdapter.ViewHolder>
-        implements InItemClickListener {
+        implements Filterable {
 
-    ArrayList<InList> items = new ArrayList<InList>();
-    InItemClickListener listener;
+    private static final String TAG = "InAdapter";
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        View itemView = inflater.inflate(R.layout.asform, viewGroup, false);
+    InOutDatabase database;
+    Context context;
+    ArrayList<InList> items;
+    ArrayList<InList> filteredList;
+    private boolean isEmpty;
 
-        return new ViewHolder(itemView, this);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        InList item = items.get(position);
-        viewHolder.setItem(item);
+    public InAdapter (Context context, ArrayList<InList> inLists) {
+        super();
+        this.context = context;
+        this.items = inLists;
+        this.filteredList = inLists;
     }
 
     @Override
-    public int getItemCount() {
-        return items.size();
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String charString = constraint.toString();
+                if(charString.isEmpty()) {
+                    filteredList = items;
+                    isEmpty = false;
+                } else {
+                    ArrayList<InList> filteringList = new ArrayList<>();
+                    for(InList item : items) {
+                        if(item.getName().toLowerCase().contains(charString.toLowerCase())) {
+                            filteringList.add(item);
+                            isEmpty = true;
+                        }
+                    }
+                    filteredList = filteringList;
+                }
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = filteredList;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                filteredList = (ArrayList<InList>)results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
-    public void addItem(InList item) {
-        items.add(item);
-    }
-    public void setItems(ArrayList<InList> items) {
-        this.items = items;
-    }
-    public InList getItem(int position) {
-        return items.get(position);
-    }
-    public void setItem(int position, InList item) {
-        items.set(position, item);
-    }
-    public void setOnitemClickListener(InItemClickListener listener){
-        this.listener = listener;
-    }
-    @Override
-    public void onItemClick(ViewHolder holder, View view, int position) {
-        if (listener != null) {
-            listener.onItemClick(holder, view, position);
-        }
-    }
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView getNameData;
-        TextView getCalendarData;
-        TextView getCategoryData;
-        TextView getRelationData;
-        TextView getMoneyData;
-        TextView getMemoData;
-        public ViewHolder(View itemView, final InItemClickListener listener) {
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView getNameData;
+        private TextView getCalendarData;
+        private TextView getCategoryData;
+        private TextView getRelationData;
+        private TextView getMoneyData;
+        private TextView getMemoData;
+
+        public ViewHolder(View itemView) {
             super(itemView);
             getNameData = itemView.findViewById(R.id.getNameData);
             getCalendarData = itemView.findViewById(R.id.getCalendarData);
@@ -72,13 +85,80 @@ public class InAdapter extends RecyclerView.Adapter<InAdapter.ViewHolder>
             getRelationData = itemView.findViewById(R.id.getRelationData);
             getMoneyData = itemView.findViewById(R.id.getMoneyData);
             getMemoData = itemView.findViewById(R.id.getMemoData);
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
-                    if(listener != null){
-                        listener.onItemClick(ViewHolder.this, view, position);
-                    }
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context, 3);
+                    builder.setTitle("알림")
+                            .setMessage("수정하거나 삭제할 수 있습니다")
+                            .setIcon(R.drawable.ic_info_black_24dp)
+                            .setNegativeButton("수정", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    int i = database.getSearchItemIdIn(getNameData.getText().toString(),
+                                            getCalendarData.getText().toString(),
+                                            getCategoryData.getText().toString(),
+                                            getRelationData.getText().toString());
+                                    Intent intent = new Intent(context, InDetailActivity.class);
+                                    intent.putExtra("ID", i);
+                                    intent.putExtra("NAME", getNameData.getText().toString());
+                                    intent.putExtra("DATE", getCalendarData.getText().toString());
+                                    intent.putExtra("CATEGORY", getCategoryData.getText().toString());
+                                    intent.putExtra("RELATION", getRelationData.getText().toString());
+                                    intent.putExtra("MONEY", database.getMoneyIn(i));
+                                    intent.putExtra("MEMO", getMemoData.getText().toString());
+                                    context.startActivity(intent);
+                                }
+                            })
+                            .setNeutralButton("삭제", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(context, 3);
+                                    builder.setTitle("알림");
+                                    builder.setMessage("정말 삭제하시겠습니까 ?");
+                                    builder.setIcon(R.drawable.ic_warning_black_24dp);
+                                    builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Toast.makeText(context, "나간 돈 내역이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                                            int i = database.getSearchItemIdIn(getNameData.getText().toString(),
+                                                    getCalendarData.getText().toString(),
+                                                    getCategoryData.getText().toString(),
+                                                    getRelationData.getText().toString());
+                                            int j = database.getDeleteItemIn(getNameData.getText().toString(),
+                                                    getCalendarData.getText().toString(),
+                                                    getCategoryData.getText().toString(),
+                                                    getRelationData.getText().toString());
+                                            database.deleteDataIn(i);
+                                            if (isEmpty) {
+                                                Log.d(TAG, String.valueOf(true));
+                                                removeFilterItems(position);
+                                                removeItems(j);
+                                                Log.d(TAG, "ViewHolderTrue: " + position);
+
+                                            } else {
+                                                Log.d(TAG, String.valueOf(false));
+                                                removeItems(j);
+                                                Log.d(TAG, "ViewHolderFalse: " + position);
+                                            }
+                                        }
+                                    });
+                                    builder.setPositiveButton("아니오", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    }).create().show();
+                                }
+                            })
+                            .setPositiveButton("아니오", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {}
+                            })
+                            .create()
+                            .show();
                 }
             });
         }
@@ -93,7 +173,49 @@ public class InAdapter extends RecyclerView.Adapter<InAdapter.ViewHolder>
             getMoneyData.setText(formatter.format(moneyformat));
         }
     }
-    public void removeData(int position) {
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+        View itemView = inflater.inflate(R.layout.asform, viewGroup, false);
+        database = InOutDatabase.getInstance(context);
+        boolean isOpen = database.open();
+        if(isOpen) {
+            Log.d(TAG, "Book database is open");
+        } else {
+            Log.d(TAG, "Book database is not open");
+        }
+        return new ViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
+        InList item = filteredList.get(position);
+        viewHolder.setItem(item);
+    }
+
+    @Override
+    public int getItemCount() {
+        return filteredList.size();
+    }
+    public void addItem(InList item) {
+        items.add(item);
+    }
+    public void setItems(ArrayList<InList> items) {
+        this.items = items;
+    }
+    public InList getItem(int position) {
+        return items.get(position);
+    }
+    public void setItem(int position, InList item) {
+        items.set(position, item);
+    }
+
+    public void removeFilterItems(int position) {
+        filteredList.remove(position);
+        notifyItemRemoved(position);
+    }
+    public void removeItems(int position) {
         items.remove(position);
         notifyItemRemoved(position);
     }

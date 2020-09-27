@@ -16,6 +16,7 @@ public class OutList {
         this.relation = relation;
         this.money = money;
         this.memo = memo;
+
     }
 
     public String getName() {

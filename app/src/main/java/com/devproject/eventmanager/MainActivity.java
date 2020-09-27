@@ -94,19 +94,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 item.setChecked(false);
+                Intent intent = null;
                 switch(item.getItemId()) {
                     case R.id.nav_excelWrite:
                         checkPermission();
                         break;
                     case R.id.nav_evaluation:
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.devproject.eventmanager"));
+                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.devproject.eventmanager"));
                         startActivity(intent);
                         break;
                     case R.id.nav_app_version:
                         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this, 3);
                         builder.setTitle("VERSION");
                         builder.setIcon(R.drawable.ic_help_black_24dp);
-                        builder.setMessage("# 19/12/05 version 1.0\n" + "- First Release\n\n" + "# 19/12/16 version 1.2\n" + "- UI 변경\n");
+                        builder.setMessage("# 19/12/05 version 1.0\n" + "- First Release\n\n" + "# 19/12/16 version 1.2\n" + "- UI 변경\n\n"
+                        + "# 20/09/27 version 1.3\n" + "- 검색 기능 추가\n" + "- UI/UX 변경\n");
 
                         builder.setNeutralButton("확인", new DialogInterface.OnClickListener() {
                             @Override

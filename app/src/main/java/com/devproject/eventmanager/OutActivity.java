@@ -107,33 +107,30 @@ public class OutActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(OutActivity.this, 3);
                 builder.setTitle("경조사를 선택하세요")
                         .setIcon(R.drawable.ic_insert_drive_file_black_24dp)
-                        .setItems(categoryItems, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
-                                    case 0:
-                                        categoryData.setText(categoryItems[0]);
-                                        break;
-                                    case 1:
-                                        categoryData.setText(categoryItems[1]);
-                                        break;
-                                    case 2:
-                                        categoryData.setText(categoryItems[2]);
-                                        break;
-                                    case 3:
-                                        categoryData.setText(categoryItems[3]);
-                                        break;
-                                    case 4:
-                                        categoryData.setText(categoryItems[4]);
-                                        break;
-                                    case 5:
-                                        categoryData.setText(categoryItems[5]);
-                                        break;
-                                    case 6:
-                                        categoryData.setText(categoryItems[6]);
-                                        break;
-                                    default:
-                                }
+                        .setItems(categoryItems, (dialog, which) -> {
+                            switch (which) {
+                                case 0:
+                                    categoryData.setText(categoryItems[0]);
+                                    break;
+                                case 1:
+                                    categoryData.setText(categoryItems[1]);
+                                    break;
+                                case 2:
+                                    categoryData.setText(categoryItems[2]);
+                                    break;
+                                case 3:
+                                    categoryData.setText(categoryItems[3]);
+                                    break;
+                                case 4:
+                                    categoryData.setText(categoryItems[4]);
+                                    break;
+                                case 5:
+                                    categoryData.setText(categoryItems[5]);
+                                    break;
+                                case 6:
+                                    categoryData.setText(categoryItems[6]);
+                                    break;
+                                default:
                             }
                         });
                 builder.setPositiveButton("취소", new DialogInterface.OnClickListener() {
@@ -230,6 +227,8 @@ public class OutActivity extends AppCompatActivity {
                 String relation = relationData.getText().toString();
                 String money = moneyData.getText().toString();
                 String memo = memoData.getText().toString();
+                boolean check = database.checkItemOut(name, date, category, relation);
+
                 if (name.equals("")) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(OutActivity.this, 3);
                     builder.setTitle("알림")
@@ -277,6 +276,20 @@ public class OutActivity extends AppCompatActivity {
                     builder.setTitle("알림")
                             .setIcon(R.drawable.ic_info_black_24dp)
                             .setMessage("금액을 입력해주세요")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+                else if (!check) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(OutActivity.this, 3);
+                    builder.setTitle("알림")
+                            .setIcon(R.drawable.ic_info_black_24dp)
+                            .setMessage("이미 추가된 내역이 있습니다")
                             .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {

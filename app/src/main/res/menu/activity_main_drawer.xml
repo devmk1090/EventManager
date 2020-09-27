@@ -2,7 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-
     <item android:title="설정">
         <menu>
             <item
@@ -13,19 +12,10 @@
                 android:id="@+id/nav_evaluation"
                 android:icon="@drawable/ic_comment_black_24dp"
                 android:title="앱 평가하러 가기" />
-<!--            <item-->
-<!--                android:id="@+id/nav_driveIn"-->
-<!--                android:icon="@drawable/ic_info_black_24dp"-->
-<!--                android:title="구글 드라이브 백업" />-->
-<!--            <item-->
-<!--                android:id="@+id/nav_driveOut"-->
-<!--                android:icon="@drawable/ic_info_black_24dp"-->
-<!--                android:title="구글 드라이브 복원" />-->
             <item
                 android:id="@+id/nav_app_version"
                 android:icon="@drawable/ic_info_black_24dp"
                 android:title="APP VERSION" />
         </menu>
     </item>
-
 </menu>

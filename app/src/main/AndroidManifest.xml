@@ -1,30 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.devproject.eventmanager">
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-  <uses-permission android:name="android.permission.INTERNET"/>
-  <application
-      android:allowBackup="true"
-      android:icon="@drawable/icon"
-      android:label="간편한 경조사 관리"
-      android:roundIcon="@drawable/icon"
-      android:supportsRtl="true"
-      android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-    <meta-data
-        android:name="com.google.android.gms.ads.APPLICATION_ID"
-        android:value="ca-app-pub-1646409874287424~9947387418"/>
-    <activity android:name=".InDetailActivity" />
-    <activity android:name=".OutDetailActivity" />
-    <activity android:name=".InActivity" />
-    <activity android:name=".OutActivity" />
-    <activity android:name=".MainActivity" />
-    <activity android:name=".SplashScreen">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
 
-        <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
-    </activity>
-  </application>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/icon"
+        android:label="간편한 경조사 관리"
+        android:roundIcon="@drawable/icon"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-1646409874287424~9947387418" />
+
+        <activity android:name=".InDetailActivity" />
+        <activity android:name=".OutDetailActivity" />
+        <activity android:name=".InActivity" />
+        <activity android:name=".OutActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".SplashScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
 
 </manifest>

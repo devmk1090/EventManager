@@ -21,6 +21,7 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -86,6 +87,9 @@ public class OutDetailActivity extends AppCompatActivity {
         final String relation = intent.getExtras().getString("RELATION");
         final String money = intent.getExtras().getString("MONEY");
         final String memo = intent.getExtras().getString("MEMO");
+
+//        DecimalFormat formatter = new DecimalFormat("#");
+//        int moneyFormat = Integer.parseInt(formatter.format(money));
 
         nameData.setText(name);
         calendarData.setText(date);

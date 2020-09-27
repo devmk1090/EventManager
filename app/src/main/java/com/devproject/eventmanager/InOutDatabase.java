@@ -187,90 +187,26 @@ public class InOutDatabase {
         }
         return result;
     }
+
     private void println(String msg) {
         Log.d(TAG, msg);
     }
-    public String getNameIn(int position) {
-        Cursor cursor = db.rawQuery("select NAME from " + TABLE_IN_INFO, null);
-        cursor.moveToPosition(position);
-        String name = cursor.getString(0);
-        return name;
-    }
-    public String getNameOut(int position) {
-        Cursor cursor = db.rawQuery("select NAME from " + TABLE_OUT_INFO, null);
-        cursor.moveToPosition(position);
-        String name = cursor.getString(0);
-        return name;
-    }
-    public String getDateIn(int position) {
-        Cursor cursor = db.rawQuery("select DATE from " + TABLE_IN_INFO, null);
-        cursor.moveToPosition(position);
-        String date = cursor.getString(0);
-        return date;
-    }
-    public String getDateOut(int position) {
-        Cursor cursor = db.rawQuery("select DATE from " + TABLE_OUT_INFO, null);
-        cursor.moveToPosition(position);
-        String date = cursor.getString(0);
-        return date;
-    }
-    public String getCategoryIn(int position) {
-        Cursor cursor = db.rawQuery("select CATEGORY from " + TABLE_IN_INFO, null);
-        cursor.moveToPosition(position);
-        String category = cursor.getString(0);
-        return category;
-    }
-    public String getCategoryOut(int position) {
-        Cursor cursor = db.rawQuery("select CATEGORY from " + TABLE_OUT_INFO, null);
-        cursor.moveToPosition(position);
-        String category = cursor.getString(0);
-        return category;
-    }
-    public String getRelationIn(int position) {
-        Cursor cursor = db.rawQuery("select RELATION from " + TABLE_IN_INFO, null);
-        cursor.moveToPosition(position);
-        String relation = cursor.getString(0);
-        return relation;
-    }
-    public String getRelationOut(int position) {
-        Cursor cursor = db.rawQuery("select RELATION from " + TABLE_OUT_INFO, null);
-        cursor.moveToPosition(position);
-        String relation = cursor.getString(0);
-        return relation;
-    }
+
     public String getMoneyIn(int position) {
-        Cursor cursor = db.rawQuery("select MONEY from " + TABLE_IN_INFO, null);
-        cursor.moveToPosition(position);
-        String money = cursor.getString(0);
+        String money = null;
+        Cursor cursor = db.rawQuery("select MONEY from " + TABLE_IN_INFO + " WHERE _id='" + position + "'", null);
+        while (cursor.moveToNext()) {
+            money = cursor.getString(0);
+        }
         return money;
     }
     public String getMoneyOut(int position) {
-        Cursor cursor = db.rawQuery("select MONEY from " + TABLE_OUT_INFO, null);
-        cursor.moveToPosition(position);
-        String money = cursor.getString(0);
+        String money = null;
+        Cursor cursor = db.rawQuery("select MONEY from " + TABLE_OUT_INFO + " WHERE _id='" + position + "'", null);
+        while (cursor.moveToNext()) {
+            money = cursor.getString(0);
+        }
         return money;
-    }
-    public String getMemoIn(int position) {
-        Cursor cursor = db.rawQuery("select MEMO from " + TABLE_IN_INFO, null);
-        cursor.moveToPosition(position);
-        String memo = cursor.getString(0);
-        return memo;
-    }
-    public String getMemoOut(int position) {
-        Cursor cursor = db.rawQuery("select MEMO from " + TABLE_OUT_INFO, null);
-        cursor.moveToPosition(position);
-        String memo = cursor.getString(0);
-        return memo;
-    }
-    public int getItemIdIn (int position) {
-        Cursor cursor = db.rawQuery("select _id from " + TABLE_IN_INFO, null);
-        cursor.moveToPosition(position);
-        return cursor.getInt(0);
-    }
-    public int getItemIdOut (int position) {
-        Cursor cursor = db.rawQuery("select _id from " + TABLE_OUT_INFO, null);
-        cursor.moveToPosition(position);
-        return cursor.getInt(0);
     }
     public int getAllMoneyIn(){
         int total = 0;
@@ -501,6 +437,7 @@ public class InOutDatabase {
         return db.update(TABLE_IN_INFO, cv, "_id=" + id, null) > 0;
     }
     public boolean updateOut (int id, String name, String date, String category, String relation, String money, String memo) {
+
         ContentValues cv = new ContentValues();
         cv.put("NAME", name);
         cv.put("DATE", date);
@@ -510,5 +447,65 @@ public class InOutDatabase {
         cv.put("MEMO", memo);
 
         return db.update(TABLE_OUT_INFO, cv, "_id=" + id, null) > 0;
+    }
+    public boolean checkItemIn(String name, String date, String category, String relation) {
+        Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION from " + TABLE_IN_INFO, null);
+        while (cursor.moveToNext()) {
+            if (cursor.getString(1).equals(name) && cursor.getString(2).equals(date)
+                    && cursor.getString(3).equals(category) && cursor.getString(4).equals(relation)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    public boolean checkItemOut(String name, String date, String category, String relation) {
+        Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION from " + TABLE_OUT_INFO, null);
+        while (cursor.moveToNext()) {
+            if (cursor.getString(1).equals(name) && cursor.getString(2).equals(date)
+                    && cursor.getString(3).equals(category) && cursor.getString(4).equals(relation)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    public int getSearchItemIdIn(String name, String date, String category, String relation) {
+        Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION, MONEY from " + TABLE_IN_INFO, null);
+        while (cursor.moveToNext()) {
+            if (cursor.getString(1).equals(name) && cursor.getString(2).equals(date)
+                    && cursor.getString(3).equals(category) && cursor.getString(4).equals(relation)) {
+                return cursor.getInt(0);
+            }
+        }
+        return 0;
+    }
+    public int getSearchItemIdOut(String name, String date, String category, String relation) {
+        Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION, MONEY from " + TABLE_OUT_INFO, null);
+        while (cursor.moveToNext()) {
+            if (cursor.getString(1).equals(name) && cursor.getString(2).equals(date)
+                    && cursor.getString(3).equals(category) && cursor.getString(4).equals(relation)) {
+                return cursor.getInt(0);
+            }
+        }
+        return 0;
+    }
+    public int getDeleteItemIn(String name, String date, String category, String relation) {
+        Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION, MONEY from " + TABLE_IN_INFO, null);
+        while (cursor.moveToNext()) {
+            if (cursor.getString(1).equals(name) && cursor.getString(2).equals(date)
+                    && cursor.getString(3).equals(category) && cursor.getString(4).equals(relation)) {
+                return cursor.getPosition();
+            }
+        }
+        return 0;
+    }
+    public int getDeleteItemOut(String name, String date, String category, String relation) {
+        Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION, MONEY from " + TABLE_OUT_INFO, null);
+        while (cursor.moveToNext()) {
+            if (cursor.getString(1).equals(name) && cursor.getString(2).equals(date)
+                    && cursor.getString(3).equals(category) && cursor.getString(4).equals(relation)) {
+                return cursor.getPosition();
+            }
+        }
+        return 0;
     }
 }

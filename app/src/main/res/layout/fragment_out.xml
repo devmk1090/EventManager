@@ -10,6 +10,11 @@
         android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <EditText
+            android:id="@+id/out_edit_search"
+            android:hint="@string/search_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <androidx.recyclerview.widget.RecyclerView
             android:layout_marginBottom="40dp"
             android:id="@+id/outRecyclerView"
@@ -20,11 +25,11 @@
         android:id="@+id/outFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginBottom="55dp"
+        android:layout_marginEnd="16dp"
         android:src="@drawable/ic_add_circle_black_24dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         app:backgroundTint="#FFFFFF"
         app:maxImageSize="67dp">
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
