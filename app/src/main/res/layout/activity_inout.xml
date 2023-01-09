@@ -234,8 +234,8 @@
     </LinearLayout>
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
-        ads:adUnitId="@string/ad_unit_id"
-        ads:adSize="SMART_BANNER"
+        ads:adUnitId="@string/ad_unit_id_rev"
+        ads:adSize="BANNER"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/adView"

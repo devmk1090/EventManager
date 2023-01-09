@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">EventManager</string>
-    <string name="ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="ad_unit_id">ca-app-pub-1646409874287424/1585126093</string>
+    <string name="ad_unit_id_rev">ca-app-pub-1646409874287424/1190929999</string>
     <string name="search_hint">이름으로 검색</string>
     <string name="simple">Simple</string>
     <string name="event">Event</string>
     <string name="management">Management</string>
     <string name="image_ref">Photo by Aaron Burden on Unsplash</string>
+    <!--    TEST_ID = "ca-app-pub-3940256099942544/6300978111"-->
 </resources>
