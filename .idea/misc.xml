@@ -3,8 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/drawable/ic_baseline_keyboard_arrow_down_24.xml" value="0.152" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/drawable/test_border.xml" value="0.152" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/layout/activity_inout.xml" value="0.23425925925925925" />
+        <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/layout/activity_inout_rev.xml" value="0.264" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/layout/activity_splashscreen.xml" value="0.2317948717948718" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/layout/content_main.xml" value="0.2391102873030584" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/layout/fragment_in.xml" value="0.23425925925925925" />

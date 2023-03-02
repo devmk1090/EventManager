@@ -5,4 +5,14 @@
     <color name="colorAccent">#D81B60</color>
     <color name="fab_color">#0091FF</color>
     <color name="tab_color">#4DB4FF</color>
+    <color name="black">#000000</color>
+    <color name="black_1">#111111</color>
+    <color name="black_2">#222222</color>
+    <color name="black_3">#333333</color>
+    <color name="black_4">#444444</color>
+    <color name="black_5">#555555</color>
+    <color name="black_6">#666666</color>
+    <color name="black_7">#777777</color>
+    <color name="black_8">#888888</color>
+    <color name="black_9">#999999</color>
 </resources>
