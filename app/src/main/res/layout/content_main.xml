@@ -14,19 +14,20 @@
         android:layout_height="match_parent">
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            android:background="@color/tab_color"
             android:layout_width="match_parent"
-            android:layout_height="40dp"/>
+            android:layout_height="48dp"/>
         <com.google.android.material.tabs.TabLayout
             app:tabMaxWidth="0dp"
             app:tabGravity="fill"
             app:tabMode="fixed"
             android:background="@color/tab_color"
-            app:tabIndicatorColor="#ECECEC"
-            app:tabIndicatorHeight="4dp"
+            app:tabIndicatorColor="@color/white"
+            app:tabIndicatorHeight="2dp"
             app:tabTextAppearance="@style/TabLayoutTextStyle"
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="40dp">
+            android:layout_height="wrap_content">
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

@@ -1,5 +1,6 @@
 package com.devproject.eventmanager;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -162,21 +163,26 @@ public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
                 }
             });
         }
+        @SuppressLint("SetTextI18n")
         public void setItem(OutList item) {
-            getNameData.setText(item.getName());
+            getNameData.setText(item.getName() + " \u00b7 ");
             getCalendarData.setText(item.getDate());
-            getCategoryData.setText(item.getCategory());
-            getRelationData.setText(item.getRelation());
+            getCategoryData.setText(item.getCategory() + " \u00b7 ");
+            if (item.getDate().equals("")){
+                getRelationData.setText(item.getRelation());
+            } else{
+                getRelationData.setText(item.getRelation() + " \u00b7 ");
+            }
             getMemoData.setText(item.getMemo());
             DecimalFormat formatter = new DecimalFormat("###,###");
             int moneyformat = Integer.parseInt(item.getMoney());
-            getMoneyData.setText(formatter.format(moneyformat));
+            getMoneyData.setText(formatter.format(moneyformat) + "원");
         }
     }
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        View itemView = inflater.inflate(R.layout.asform, viewGroup, false);
+        View itemView = inflater.inflate(R.layout.asform_rev, viewGroup, false);
         database = InOutDatabase.getInstance(context);
         boolean isOpen = database.open();
         if(isOpen) {

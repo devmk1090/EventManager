@@ -13,9 +13,9 @@
                 android:icon="@drawable/ic_comment_black_24dp"
                 android:title="앱 평가하러 가기" />
             <item
-                android:id="@+id/nav_app_version"
+                android:id="@+id/nav_app_movie"
                 android:icon="@drawable/ic_info_black_24dp"
-                android:title="APP VERSION" />
+                android:title="영화 정보" />
         </menu>
     </item>
 </menu>

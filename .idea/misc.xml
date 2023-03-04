@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/drawable/asform.xml" value="0.152" />
+        <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/drawable/asform_rev_background.xml" value="0.152" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/drawable/custom_textview.xml" value="0.152" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/drawable/ic_add_circle_black_24dp.xml" value="0.152" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/drawable/ic_baseline_keyboard_arrow_down_24.xml" value="0.152" />
@@ -11,6 +12,7 @@
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/drawable/ic_warning_black_24dp.xml" value="0.152" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/drawable/linearborder.xml" value="0.152" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/drawable/test_border.xml" value="0.152" />
+        <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/font/pretendard_family.xml" value="0.2794871794871795" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/layout/activity_inout.xml" value="0.23425925925925925" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/layout/activity_inout_rev.xml" value="0.264" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/layout/activity_main.xml" value="0.2388888888888889" />
@@ -22,6 +24,8 @@
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/layout/fragment_out.xml" value="0.23425925925925925" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/layout/fragment_statistics.xml" value="0.2388888888888889" />
         <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/layout/nav_header.xml" value="0.2388888888888889" />
+        <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/menu/activity_main_drawer.xml" value="0.24974358974358973" />
+        <entry key="..\:/AndroidStudioProjects/EventManager/app/src/main/res/menu/main.xml" value="0.2388888888888889" />
       </map>
     </option>
   </component>

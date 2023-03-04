@@ -20,6 +20,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -103,20 +105,9 @@ public class MainActivity extends AppCompatActivity {
                         intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.devproject.eventmanager"));
                         startActivity(intent);
                         break;
-                    case R.id.nav_app_version:
-                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this, 3);
-                        builder.setTitle("VERSION");
-                        builder.setIcon(R.drawable.ic_help_black_24dp);
-                        builder.setMessage("# 19/12/05 version 1.0\n" + "- First Release\n\n" + "# 19/12/16 version 1.2\n" + "- UI 변경\n\n"
-                        + "# 20/09/27 version 1.3\n" + "- 검색 기능 추가\n" + "- UI/UX 변경\n");
-
-                        builder.setNeutralButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
-                        android.app.AlertDialog dialog = builder.create();
-                        dialog.show();
+                    case R.id.nav_app_movie:
+                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.devkproject.movieinfo"));
+                        startActivity(intent);
                         break;
                     default:
                         break;
@@ -170,6 +161,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        SpannableString spannableString = new SpannableString("도움말");
+        spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.white)), 0, spannableString.length(), 0);
+        menu.getItem(0).setTitle(spannableString);
         return true;
     }
     @Override

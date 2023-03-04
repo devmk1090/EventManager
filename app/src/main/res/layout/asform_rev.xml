@@ -1,22 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="10dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
+        android:id="@+id/container_first"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <TextView
+            android:layout_gravity="center"
+            android:id="@+id/getNameData"
             android:text="이름"
-            android:textSize="16sp"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_semibold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_gravity="center"
+            android:id="@+id/getMoneyData"
+            android:text="돈"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_semibold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/container_second"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/container_first"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_gravity="center"
+            android:id="@+id/getCategoryData"
+            android:text="경조사"
+            android:textSize="15sp"
+            android:textColor="@color/black_5"
+            android:fontFamily="@font/pretendard_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_gravity="center"
+            android:id="@+id/getRelationData"
+            android:text="관계"
+            android:textSize="15sp"
+            android:textColor="@color/black_5"
+            android:fontFamily="@font/pretendard_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_gravity="center"
+            android:id="@+id/getCalendarData"
+            android:text="날짜"
+            android:textSize="15sp"
+            android:textColor="@color/black_5"
+            android:fontFamily="@font/pretendard_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/container_third"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/container_second"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_gravity="center"
+            android:id="@+id/getMemoData"
+            android:layout_weight="1"
+            android:text="메모"
+            android:textSize="15sp"
+            android:textColor="@color/black_5"
+            android:fontFamily="@font/pretendard_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <View
+        android:layout_marginTop="10dp"
+        android:background="@color/background_light_grey"
+        app:layout_constraintTop_toBottomOf="@+id/container_third"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

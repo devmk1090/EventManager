@@ -2,7 +2,7 @@
     <string name="app_name">EventManager</string>
     <string name="ad_unit_id">ca-app-pub-1646409874287424/1585126093</string>
     <string name="ad_unit_id_rev">ca-app-pub-1646409874287424/1190929999</string>
-    <string name="search_hint">이름으로 검색</string>
+    <string name="search_hint">검색</string>
     <string name="simple">Simple</string>
     <string name="event">Event</string>
     <string name="management">Management</string>
