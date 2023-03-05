@@ -43,7 +43,7 @@ public class InDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inout);
+        setContentView(R.layout.activity_inout_rev);
 
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override

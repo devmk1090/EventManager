@@ -8,7 +8,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="15dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -16,10 +16,10 @@
             android:layout_marginRight="5dp"
             android:gravity="center"
             android:layout_weight="1"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:fontFamily="@font/pretendard_semibold"
             android:background="@drawable/custom_textview"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:id="@+id/categoryText"
             android:text=" 경조사별 통계 "
             android:layout_width="wrap_content"
@@ -28,26 +28,30 @@
             android:layout_marginLeft="5dp"
             android:gravity="center"
             android:layout_weight="1"
+            android:textColor="@color/white"
+            android:fontFamily="@font/pretendard_semibold"
             android:id="@+id/relationText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/custom_textview"
             android:text=" 관계별 통계 "
-            android:textColor="#FFFFFF"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
     <LinearLayout
-        android:background="@drawable/asform"
-        android:layout_margin="5dp"
+        android:background="@drawable/asform_rev_background"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
             android:gravity="center"
             android:padding="5dp"
-            android:textStyle="bold"
-            android:textSize="20dp"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_regular"
             android:text="전   체"
             android:layout_width="140dp"
             android:layout_height="match_parent"/>
@@ -58,20 +62,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <TextView
-                android:textStyle="bold"
-                android:textSize="15dp"
+                android:textSize="15sp"
+                android:textColor="@color/black_5"
+                android:fontFamily="@font/pretendard_semibold"
                 android:text="받은 돈 : "
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:textStyle="bold"
-                android:textSize="15dp"
+                android:textSize="15sp"
+                android:textColor="@color/black_5"
+                android:fontFamily="@font/pretendard_semibold"
                 android:text="나간 돈 : "
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:textStyle="bold"
-                android:textSize="15dp"
+                android:textSize="15sp"
+                android:textColor="@color/black_5"
+                android:fontFamily="@font/pretendard_semibold"
                 android:text="받음 - 나감 : "
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -85,24 +92,27 @@
             <TextView
                 android:textAlignment="textEnd"
                 android:id="@+id/inTotalMoney"
-                android:textStyle="bold"
-                android:textSize="15dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/pretendard_semibold"
                 android:text="100000"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"/>
             <TextView
                 android:textAlignment="textEnd"
                 android:id="@+id/outTotalMoney"
-                android:textStyle="bold"
-                android:textSize="15dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/pretendard_semibold"
                 android:text="100000"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"/>
             <TextView
                 android:textAlignment="textEnd"
                 android:id="@+id/inOutTotal"
-                android:textStyle="bold"
-                android:textSize="15dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/pretendard_semibold"
                 android:text="100000"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"/>
@@ -114,20 +124,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <TextView
-                android:textStyle="bold"
-                android:textSize="15dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/pretendard_regular"
                 android:text="원"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:textStyle="bold"
-                android:textSize="15dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/pretendard_regular"
                 android:text="원"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:textStyle="bold"
-                android:textSize="15dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/pretendard_regular"
                 android:text="원"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -137,7 +150,7 @@
         android:id="@+id/wholeLayout"
         android:layout_gravity="center"
         android:padding="5dp"
-        android:background="@drawable/totalborder"
+        android:background="@drawable/asform_rev_background"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
