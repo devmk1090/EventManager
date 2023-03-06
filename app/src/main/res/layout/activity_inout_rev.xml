@@ -97,18 +97,24 @@
                 android:text="경조사"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
-            <EditText
-                style="@style/InOutContentEditText"
+            <TextView
                 android:id="@+id/categoryData"
+                android:gravity="center"
+                android:padding="4dp"
+                android:layout_marginEnd="8dp"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:fontFamily="@font/pretendard_semibold"
+                android:background="@drawable/custom_textview"
                 android:hint="경조사를 선택하세요"
-                android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="36dp"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/container_relation"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintTop_toBottomOf="@+id/container_event"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -121,13 +127,19 @@
                 android:layout_marginEnd="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
-            <EditText
-                style="@style/InOutContentEditText"
+            <TextView
                 android:id="@+id/relationData"
+                android:gravity="center"
+                android:padding="4dp"
+                android:layout_marginEnd="8dp"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:fontFamily="@font/pretendard_semibold"
+                android:background="@drawable/custom_textview"
                 android:hint="관계를 선택하세요"
-                android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="36dp"/>
         </LinearLayout>
 
         <LinearLayout
