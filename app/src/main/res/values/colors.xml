@@ -17,4 +17,6 @@
     <color name="black_8">#888888</color>
     <color name="black_9">#999999</color>
     <color name="background_light_grey">#F3F1F1</color>
+    <color name="colorDialog">#007BB4</color>
+
 </resources>

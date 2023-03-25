@@ -159,7 +159,9 @@
                 android:layout_height="wrap_content"/>
             <EditText
                 style="@style/InOutContentEditText"
+                android:maxLength="12"
                 android:id="@+id/moneyData"
+                android:inputType="number"
                 android:hint="금액을 입력하거나 선택해주세요"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>

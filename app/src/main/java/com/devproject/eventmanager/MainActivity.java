@@ -302,15 +302,14 @@ public class MainActivity extends AppCompatActivity {
             cell.setCellValue(cursor2.getString(6));
         }
 
-        String folderName = "/간편한 경조사 관리";
+        String folderName = "/Download";
         String fileName = "경조사 엑셀 데이터.xls";
         File excelFile;
 
         if(!isExternalStorageWritable()) return;
 
         File filePath = new File(Environment.getExternalStorageDirectory() + folderName);
-        if(!filePath.exists())
-            filePath.mkdirs();
+
         excelFile = new File(filePath, fileName);
         if(excelFile.exists()){
             excelFile.delete();
@@ -323,6 +322,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Toast.makeText(this, "'간편한 경조사 관리'폴더에 저장되었습니다", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "다운로드 폴더에 저장되었습니다", Toast.LENGTH_SHORT).show();
     }
 }
