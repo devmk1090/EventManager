@@ -97,20 +97,16 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 item.setChecked(false);
                 Intent intent = null;
-                switch(item.getItemId()) {
-                    case R.id.nav_excelWrite:
-                        checkPermission();
-                        break;
-                    case R.id.nav_evaluation:
-                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.devproject.eventmanager"));
-                        startActivity(intent);
-                        break;
-                    case R.id.nav_app_movie:
-                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.devkproject.movieinfo3"));
-                        startActivity(intent);
-                        break;
-                    default:
-                        break;
+                int itemId = item.getItemId();
+
+                if (itemId == R.id.nav_excelWrite) {
+                    checkPermission();
+                } else if (itemId == R.id.nav_evaluation) {
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.devproject.eventmanager"));
+                    startActivity(intent);
+                } else if (itemId == R.id.nav_app_movie) {
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.devkproject.movieinfo3"));
+                    startActivity(intent);
                 }
                 return true;
             }
@@ -168,27 +164,28 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                drawerLayout.openDrawer(GravityCompat.START);
-                return true;
-            case R.id.action_settings:
-                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this, 3);
-                builder.setTitle("도움말");
-                builder.setIcon(R.drawable.ic_help_black_24dp);
-                builder.setMessage("# '나간 돈'  '받은 돈'  탭 오른쪽 하단에 있는 파란 십자 아이콘을 터치하면 내역을 입력할 수 있습니다.\n\n" +
-                        "# 등록된 내역을 터치하면 '수정' '삭제' 할 수 있습니다.\n\n" +
-                        "# '설정' 탭의 '엑셀 파일 만들기' 버튼을 터치하면 등록된 내역을 엑셀 파일로 만들어 보관할 수 있습니다.\n\n" +
-                        "# '엑셀 파일 만들기'를 눌러도 파일이 만들어지지 않는다면 '앱 정보'에 들어가서 '저장 권한'을 허용해야 합니다 \n");
+        int itemId = item.getItemId(); // 아이템 ID를 가져옵니다.
 
-                builder.setNeutralButton("확인", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-                android.app.AlertDialog dialog = builder.create();
-                dialog.show();
-                return true;
+        if (itemId == android.R.id.home) {
+            drawerLayout.openDrawer(GravityCompat.START);
+            return true;
+        } else if (itemId == R.id.action_settings) {
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this, 3);
+            builder.setTitle("도움말");
+            builder.setIcon(R.drawable.ic_help_black_24dp);
+            builder.setMessage("# '나간 돈'  '받은 돈'  탭 오른쪽 하단에 있는 파란 십자 아이콘을 터치하면 내역을 입력할 수 있습니다.\n\n" +
+                    "# 등록된 내역을 터치하면 '수정' '삭제' 할 수 있습니다.\n\n" +
+                    "# '설정' 탭의 '엑셀 파일 만들기' 버튼을 터치하면 등록된 내역을 엑셀 파일로 만들어 보관할 수 있습니다.\n\n" +
+                    "# '엑셀 파일 만들기'를 눌러도 파일이 만들어지지 않는다면 '앱 정보'에 들어가서 '저장 권한'을 허용해야 합니다 \n");
+
+            builder.setNeutralButton("확인", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            android.app.AlertDialog dialog = builder.create();
+            dialog.show();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

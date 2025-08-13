@@ -1,15 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 34
-    buildToolsVersion "33.0.0"
+    namespace 'com.devproject.eventmanager'
+    compileSdkVersion 36
+    buildToolsVersion "36.0.0"
     defaultConfig {
         applicationId "com.devproject.eventmanager"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 36
         multiDexEnabled true
-        versionCode 12
-        versionName "2.1"
+        versionCode 13
+        versionName "2.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
