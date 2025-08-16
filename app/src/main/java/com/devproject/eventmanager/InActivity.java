@@ -10,17 +10,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,26 +24,19 @@ public class InActivity extends AppCompatActivity {
     private TextView calendarData, categoryData, relationData;
     private Button calendarButton, tenButton, fiftyButton, hundredButton, resetButton, saveButton;
     private EditText moneyData, nameData, memoData;
+    private ImageButton backButton;
+
     private int moneyTotal;
     private DatePickerDialog datePickerDialog;
     Calendar calendar;
     int year, month, dayOfMonth;
     String dayOfWeek;
     InOutDatabase database;
-    private AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inout_rev);
-
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {}
-        });
-        adView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
 
         database = InOutDatabase.getInstance(this);
         boolean isOpen = database.open();
@@ -59,6 +45,7 @@ public class InActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "Book database is not open");
         }
+
         calendarButton = (Button) findViewById(R.id.calendarButton);
         calendarData = (TextView) findViewById(R.id.calendarData);
 
@@ -74,6 +61,12 @@ public class InActivity extends AppCompatActivity {
 
         memoData = (EditText) findViewById(R.id.memoData);
         saveButton = (Button) findViewById(R.id.saveButton);
+
+        backButton = (ImageButton) findViewById(R.id.backButton);
+
+        backButton.setOnClickListener(v -> {
+            finish();
+        });
 
         calendarButton.setOnClickListener(new View.OnClickListener() {
             @Override

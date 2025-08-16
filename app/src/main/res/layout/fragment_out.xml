@@ -7,6 +7,7 @@
     tools:context=".OutFragment">
     <LinearLayout
         android:orientation="vertical"
+        android:layout_marginBottom="4dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <EditText

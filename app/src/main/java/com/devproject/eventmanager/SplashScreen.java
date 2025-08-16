@@ -1,6 +1,5 @@
 package com.devproject.eventmanager;
 
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -10,6 +9,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import androidx.core.view.WindowCompat;
 
 public class SplashScreen extends Activity {
     public void onAttachedToWindow(){
@@ -25,6 +25,7 @@ public class SplashScreen extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splashscreen);
+        WindowCompat.enableEdgeToEdge(getWindow());
         StartAnimations();
     }
     private void StartAnimations() {
