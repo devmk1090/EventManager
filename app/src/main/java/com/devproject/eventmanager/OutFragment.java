@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -29,6 +30,8 @@ public class OutFragment extends Fragment implements TextWatcher {
     private ArrayList<OutList> result;
     private RecyclerView recyclerView;
     private EditText edit_search;
+    private TextView empty_text;
+    private RecyclerView.AdapterDataObserver adapterDataObserver;
 
     public OutFragment(){}
 
@@ -50,6 +53,7 @@ public class OutFragment extends Fragment implements TextWatcher {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_out, container, false);
 
+        empty_text = v.findViewById(R.id.empty_text);
         edit_search = v.findViewById(R.id.out_edit_search);
         edit_search.addTextChangedListener(this);
         database = InOutDatabase.getInstance(getActivity());
@@ -67,7 +71,47 @@ public class OutFragment extends Fragment implements TextWatcher {
         result = database.selectAllOut();
         adapter = new OutAdapter(getContext(), result);
         recyclerView.setAdapter(adapter);
+
+        adapterDataObserver = new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                checkEmpty();
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                checkEmpty();
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+                checkEmpty();
+            }
+        };
+        adapter.registerAdapterDataObserver(adapterDataObserver);
+
+        checkEmpty();
+
         return v;
+    }
+
+    private void checkEmpty() {
+        if (adapter.getItemCount() == 0) {
+            empty_text.setVisibility(View.VISIBLE);
+        } else {
+            empty_text.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (adapter != null && adapterDataObserver != null) {
+            adapter.unregisterAdapterDataObserver(adapterDataObserver);
+        }
     }
 
     @Override
