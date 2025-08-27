@@ -2,6 +2,8 @@ package com.devproject.eventmanager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -9,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -40,6 +43,11 @@ public class OutDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         WindowCompat.enableEdgeToEdge(getWindow());
         setContentView(R.layout.activity_inout_rev);
+
+        Window window = getWindow();
+        View decorView = window.getDecorView();
+        WindowInsetsControllerCompat wic = new WindowInsetsControllerCompat(window, decorView);
+        wic.setAppearanceLightStatusBars(true);
 
         database = InOutDatabase.getInstance(this);
         boolean isOpen = database.open();

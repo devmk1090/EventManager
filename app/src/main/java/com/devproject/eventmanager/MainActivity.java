@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -27,6 +28,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -68,6 +70,11 @@ public class MainActivity extends AppCompatActivity {
         WindowCompat.enableEdgeToEdge(getWindow());
         setContentView(R.layout.activity_main);
 
+        Window window = getWindow();
+        View decorView = window.getDecorView();
+        WindowInsetsControllerCompat wic = new WindowInsetsControllerCompat(window, decorView);
+        wic.setAppearanceLightStatusBars(true);
+
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {}
@@ -106,10 +113,11 @@ public class MainActivity extends AppCompatActivity {
                 } else if (itemId == R.id.nav_evaluation) {
                     intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.devproject.eventmanager"));
                     startActivity(intent);
-                } else if (itemId == R.id.nav_app_movie) {
-                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.devkproject.movieinfo3"));
-                    startActivity(intent);
                 }
+//                else if (itemId == R.id.nav_app_movie) {
+//                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.devkproject.movieinfo3"));
+//                    startActivity(intent);
+//                }
                 return true;
             }
         });

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -14,6 +15,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowInsetsControllerCompat;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,6 +41,11 @@ public class InDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inout_rev);
+
+        Window window = getWindow();
+        View decorView = window.getDecorView();
+        WindowInsetsControllerCompat wic = new WindowInsetsControllerCompat(window, decorView);
+        wic.setAppearanceLightStatusBars(true);
 
         database = InOutDatabase.getInstance(this);
         boolean isOpen = database.open();
