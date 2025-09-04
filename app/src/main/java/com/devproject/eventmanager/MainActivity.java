@@ -96,31 +96,30 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
 
-        drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                item.setChecked(false);
-                Intent intent = null;
-                int itemId = item.getItemId();
-
-                if (itemId == R.id.nav_excelWrite) {
-                    checkPermission();
-                } else if (itemId == R.id.nav_evaluation) {
-                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.devproject.eventmanager"));
-                    startActivity(intent);
-                }
+//        drawerLayout = findViewById(R.id.drawer_layout);
+//        NavigationView navigationView = findViewById(R.id.nav_view);
+//        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+//            @Override
+//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//                item.setChecked(false);
+//                Intent intent = null;
+//                int itemId = item.getItemId();
+//
+//                if (itemId == R.id.nav_excelWrite) {
+//                    checkPermission();
+//                }
+//                else if (itemId == R.id.nav_evaluation) {
+//                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.devproject.eventmanager"));
+//                    startActivity(intent);
+//                }
 //                else if (itemId == R.id.nav_app_movie) {
 //                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.devkproject.movieinfo3"));
 //                    startActivity(intent);
 //                }
-                return true;
-            }
-        });
+//                return true;
+//            }
+//        });
 
         //Set ViewPager
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -138,59 +137,53 @@ public class MainActivity extends AppCompatActivity {
             viewPager.setCurrentItem(1);
         }
     }
+
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        }
-        else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("알림")
-                    .setMessage("죵료하시겠습니까 ?")
-                    .setIcon(R.drawable.ic_info_black_24dp)
-                    .setPositiveButton("예", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finishAffinity();
-                        }
-                    })
-                    .setNegativeButton("아니오", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            return;
-                        }
-                    });
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("알림")
+                .setMessage("죵료하시겠습니까 ?")
+                .setIcon(R.drawable.ic_info_black_24dp)
+                .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finishAffinity();
+                    }
+                })
+                .setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        return;
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        SpannableString spannableString = new SpannableString("도움말");
+        SpannableString spannableString = new SpannableString("엑셀 파일 저장");
         spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.white)), 0, spannableString.length(), 0);
         menu.getItem(0).setTitle(spannableString);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId(); // 아이템 ID를 가져옵니다.
+        int itemId = item.getItemId();
 
-        if (itemId == android.R.id.home) {
-            drawerLayout.openDrawer(GravityCompat.START);
-            return true;
-        } else if (itemId == R.id.action_settings) {
+        if (itemId == R.id.action_settings) {
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this, 3);
-            builder.setTitle("도움말");
+            builder.setTitle("엑셀 파일 저장");
             builder.setIcon(R.drawable.ic_help_black_24dp);
             builder.setMessage("# '나간 돈'  '받은 돈'  탭 오른쪽 하단에 있는 파란 십자 아이콘을 터치하면 내역을 입력할 수 있습니다.\n\n" +
                     "# 등록된 내역을 터치하면 '수정' '삭제' 할 수 있습니다.\n\n" +
                     "# '설정' 탭의 '엑셀 파일 만들기' 버튼을 터치하면 등록된 내역을 엑셀 파일로 만들어 보관할 수 있습니다.\n\n" +
                     "# '엑셀 파일 만들기'를 눌러도 파일이 만들어지지 않는다면 '앱 정보'에 들어가서 '저장 권한'을 허용해야 합니다 \n");
 
-            builder.setNeutralButton("확인", new DialogInterface.OnClickListener() {
+            builder.setNeutralButton("저장", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    checkPermission();
                 }
             });
             android.app.AlertDialog dialog = builder.create();
