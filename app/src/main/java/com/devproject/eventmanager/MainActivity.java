@@ -175,16 +175,17 @@ public class MainActivity extends AppCompatActivity {
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this, 3);
             builder.setTitle("엑셀 파일 저장");
             builder.setIcon(R.drawable.ic_help_black_24dp);
-            builder.setMessage("# '나간 돈'  '받은 돈'  탭 오른쪽 하단에 있는 파란 십자 아이콘을 터치하면 내역을 입력할 수 있습니다.\n\n" +
-                    "# 등록된 내역을 터치하면 '수정' '삭제' 할 수 있습니다.\n\n" +
-                    "# '설정' 탭의 '엑셀 파일 만들기' 버튼을 터치하면 등록된 내역을 엑셀 파일로 만들어 보관할 수 있습니다.\n\n" +
-                    "# '엑셀 파일 만들기'를 눌러도 파일이 만들어지지 않는다면 '앱 정보'에 들어가서 '저장 권한'을 허용해야 합니다 \n");
+            builder.setMessage("# '저장' 버튼을 터치하면 등록된 내역을 엑셀 파일로 만들어 보관할 수 있습니다.");
 
-            builder.setNeutralButton("저장", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("저장", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     checkPermission();
                 }
+            });
+            builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {}
             });
             android.app.AlertDialog dialog = builder.create();
             dialog.show();
@@ -192,43 +193,16 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    public boolean isExternalStorageWritable(){
-        String state = Environment.getExternalStorageState();
-        if(Environment.MEDIA_MOUNTED.equals(state)){
-            return true;
-        }
-        return false;
-    }
+
     public void checkPermission(){
-        int externalStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if(externalStorage == PackageManager.PERMISSION_GRANTED) { //외부 저장소 퍼미션을 가지고 있는지 체크
-            saveExcel();
-        } else { //퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) { //사용자가 퍼미션 거부를 한 적이 있는 경우
-                Snackbar.make(relativeLayout, "엑셀 파일을 저장하려면 외부 저장소 접근 권한이 필요합니다.", //사용자에게 퍼미션이 필요한 이유 설명
-                        Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) { //퍼미션 요청
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSION_STORAGE);
-                    }
-                }).show();
-            } else { //퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청이 바로 이루어짐
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSION_STORAGE);
-            }
-        }
+        saveExcel();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSION_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                } else {
-                }
-                return;
-            }
-        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
     public void saveExcel(){
         Workbook wb = new HSSFWorkbook();
         Sheet sheet1 = wb.createSheet("나간 돈");
@@ -302,26 +276,33 @@ public class MainActivity extends AppCompatActivity {
             cell.setCellValue(cursor2.getString(6));
         }
 
-        String folderName = "/Download";
         String fileName = "경조사 엑셀 데이터.xls";
         File excelFile;
 
-        if(!isExternalStorageWritable()) return;
-
-        File filePath = new File(Environment.getExternalStorageDirectory() + folderName);
-
-        excelFile = new File(filePath, fileName);
-        if(excelFile.exists()){
-            excelFile.delete();
-        }
         try {
+            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            if (!downloadsDir.exists()) {
+                downloadsDir.mkdirs();
+            }
+
+            excelFile = new File(downloadsDir, fileName);
+            if(excelFile.exists()){
+                excelFile.delete();
+            }
+
             FileOutputStream os = new FileOutputStream(excelFile);
             wb.write(os);
+            os.close();
+            wb.close();
+
+            Toast.makeText(this, "다운로드 폴더에 저장되었습니다", Toast.LENGTH_SHORT).show();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "파일 저장 실패", Toast.LENGTH_SHORT).show();
         }
-        Toast.makeText(this, "다운로드 폴더에 저장되었습니다", Toast.LENGTH_SHORT).show();
     }
 }
