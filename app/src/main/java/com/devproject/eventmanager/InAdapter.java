@@ -123,7 +123,7 @@ public class InAdapter extends RecyclerView.Adapter<InAdapter.ViewHolder>
                                     builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            Toast.makeText(context, "나간 돈 내역이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "받은 돈 내역이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
                                             int i = database.getSearchItemIdIn(getNameData.getText().toString(),
                                                     getCalendarData.getText().toString(),
                                                     getCategoryData.getText().toString(),
@@ -165,14 +165,12 @@ public class InAdapter extends RecyclerView.Adapter<InAdapter.ViewHolder>
         }
         @SuppressLint("SetTextI18n")
         public void setItem(InList item) {
-            getNameData.setText(item.getName() + " \u00b7 ");
+            getNameData.setText(item.getName());
+
+            getCategoryData.setText(item.getCategory());
+            getRelationData.setText(item.getRelation());
             getCalendarData.setText(item.getDate());
-            getCategoryData.setText(item.getCategory() + " \u00b7 ");
-            if (item.getDate().equals("")){
-                getRelationData.setText(item.getRelation());
-            } else{
-                getRelationData.setText(item.getRelation() + " \u00b7 ");
-            }
+
             getMemoData.setText(item.getMemo());
             DecimalFormat formatter = new DecimalFormat("###,###");
             int moneyformat = Integer.parseInt(item.getMoney());

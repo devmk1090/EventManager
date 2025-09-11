@@ -96,31 +96,30 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
 
-        drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                item.setChecked(false);
-                Intent intent = null;
-                int itemId = item.getItemId();
-
-                if (itemId == R.id.nav_excelWrite) {
-                    checkPermission();
-                } else if (itemId == R.id.nav_evaluation) {
-                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.devproject.eventmanager"));
-                    startActivity(intent);
-                }
+//        drawerLayout = findViewById(R.id.drawer_layout);
+//        NavigationView navigationView = findViewById(R.id.nav_view);
+//        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+//            @Override
+//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//                item.setChecked(false);
+//                Intent intent = null;
+//                int itemId = item.getItemId();
+//
+//                if (itemId == R.id.nav_excelWrite) {
+//                    checkPermission();
+//                }
+//                else if (itemId == R.id.nav_evaluation) {
+//                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=com.devproject.eventmanager"));
+//                    startActivity(intent);
+//                }
 //                else if (itemId == R.id.nav_app_movie) {
 //                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.devkproject.movieinfo3"));
 //                    startActivity(intent);
 //                }
-                return true;
-            }
-        });
+//                return true;
+//            }
+//        });
 
         //Set ViewPager
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -138,60 +137,55 @@ public class MainActivity extends AppCompatActivity {
             viewPager.setCurrentItem(1);
         }
     }
+
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        }
-        else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("알림")
-                    .setMessage("죵료하시겠습니까 ?")
-                    .setIcon(R.drawable.ic_info_black_24dp)
-                    .setPositiveButton("예", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finishAffinity();
-                        }
-                    })
-                    .setNegativeButton("아니오", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            return;
-                        }
-                    });
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("알림")
+                .setMessage("죵료하시겠습니까 ?")
+                .setIcon(R.drawable.ic_info_black_24dp)
+                .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finishAffinity();
+                    }
+                })
+                .setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        return;
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        SpannableString spannableString = new SpannableString("도움말");
+        SpannableString spannableString = new SpannableString("엑셀 파일 저장");
         spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.white)), 0, spannableString.length(), 0);
         menu.getItem(0).setTitle(spannableString);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId(); // 아이템 ID를 가져옵니다.
+        int itemId = item.getItemId();
 
-        if (itemId == android.R.id.home) {
-            drawerLayout.openDrawer(GravityCompat.START);
-            return true;
-        } else if (itemId == R.id.action_settings) {
+        if (itemId == R.id.action_settings) {
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this, 3);
-            builder.setTitle("도움말");
+            builder.setTitle("엑셀 파일 저장");
             builder.setIcon(R.drawable.ic_help_black_24dp);
-            builder.setMessage("# '나간 돈'  '받은 돈'  탭 오른쪽 하단에 있는 파란 십자 아이콘을 터치하면 내역을 입력할 수 있습니다.\n\n" +
-                    "# 등록된 내역을 터치하면 '수정' '삭제' 할 수 있습니다.\n\n" +
-                    "# '설정' 탭의 '엑셀 파일 만들기' 버튼을 터치하면 등록된 내역을 엑셀 파일로 만들어 보관할 수 있습니다.\n\n" +
-                    "# '엑셀 파일 만들기'를 눌러도 파일이 만들어지지 않는다면 '앱 정보'에 들어가서 '저장 권한'을 허용해야 합니다 \n");
+            builder.setMessage("# '저장' 버튼을 터치하면 등록된 내역을 엑셀 파일로 만들어 보관할 수 있습니다.");
 
-            builder.setNeutralButton("확인", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("저장", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    checkPermission();
                 }
+            });
+            builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {}
             });
             android.app.AlertDialog dialog = builder.create();
             dialog.show();
@@ -199,43 +193,16 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    public boolean isExternalStorageWritable(){
-        String state = Environment.getExternalStorageState();
-        if(Environment.MEDIA_MOUNTED.equals(state)){
-            return true;
-        }
-        return false;
-    }
+
     public void checkPermission(){
-        int externalStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if(externalStorage == PackageManager.PERMISSION_GRANTED) { //외부 저장소 퍼미션을 가지고 있는지 체크
-            saveExcel();
-        } else { //퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) { //사용자가 퍼미션 거부를 한 적이 있는 경우
-                Snackbar.make(relativeLayout, "엑셀 파일을 저장하려면 외부 저장소 접근 권한이 필요합니다.", //사용자에게 퍼미션이 필요한 이유 설명
-                        Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) { //퍼미션 요청
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSION_STORAGE);
-                    }
-                }).show();
-            } else { //퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청이 바로 이루어짐
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSION_STORAGE);
-            }
-        }
+        saveExcel();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSION_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                } else {
-                }
-                return;
-            }
-        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
     public void saveExcel(){
         Workbook wb = new HSSFWorkbook();
         Sheet sheet1 = wb.createSheet("나간 돈");
@@ -309,26 +276,33 @@ public class MainActivity extends AppCompatActivity {
             cell.setCellValue(cursor2.getString(6));
         }
 
-        String folderName = "/Download";
         String fileName = "경조사 엑셀 데이터.xls";
         File excelFile;
 
-        if(!isExternalStorageWritable()) return;
-
-        File filePath = new File(Environment.getExternalStorageDirectory() + folderName);
-
-        excelFile = new File(filePath, fileName);
-        if(excelFile.exists()){
-            excelFile.delete();
-        }
         try {
+            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            if (!downloadsDir.exists()) {
+                downloadsDir.mkdirs();
+            }
+
+            excelFile = new File(downloadsDir, fileName);
+            if(excelFile.exists()){
+                excelFile.delete();
+            }
+
             FileOutputStream os = new FileOutputStream(excelFile);
             wb.write(os);
+            os.close();
+            wb.close();
+
+            Toast.makeText(this, "다운로드 폴더에 저장되었습니다", Toast.LENGTH_SHORT).show();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "파일 저장 실패", Toast.LENGTH_SHORT).show();
         }
-        Toast.makeText(this, "다운로드 폴더에 저장되었습니다", Toast.LENGTH_SHORT).show();
     }
 }
