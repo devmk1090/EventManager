@@ -2,6 +2,7 @@ package com.devproject.eventmanager;
 
 public class OutList {
 
+    int id;
     String name;
     String date;
     String category;
@@ -9,7 +10,8 @@ public class OutList {
     String money;
     String memo;
 
-    public OutList(String name, String date, String category, String relation, String money, String memo) {
+    public OutList(int id, String name, String date, String category, String relation, String money, String memo) {
+        this.id = id;
         this.name = name;
         this.date = date;
         this.category = category;
@@ -17,6 +19,11 @@ public class OutList {
         this.money = money;
         this.memo = memo;
 
+    }
+
+    // DB의 _id. 수정·삭제할 행을 정확히 가리키는 데 쓴다.
+    public int getId() {
+        return id;
     }
 
     public String getName() {

@@ -130,35 +130,45 @@ public class InOutDatabase {
             }
         }
     }
-    public void insertRecordIn (String name, String date, String category, String relation, String money, String memo){
-        try {
-            db.execSQL( "insert into " + TABLE_IN_INFO + "(NAME, DATE, CATEGORY, RELATION, MONEY, MEMO) values ('" + name + "','" + date + "','" + category +"','" + relation +"','" + money + "','" + memo + "');" );
-        } catch (Exception ex){
-            Log.e(TAG, "Exception in executing insert SQL.", ex);
-        }
+    public boolean insertRecordIn (String name, String date, String category, String relation, String money, String memo){
+        return insertRecord(TABLE_IN_INFO, name, date, category, relation, money, memo);
     }
-    public void insertRecordOut (String name, String date, String category, String relation, String money, String memo){
+    public boolean insertRecordOut (String name, String date, String category, String relation, String money, String memo){
+        return insertRecord(TABLE_OUT_INFO, name, date, category, relation, money, memo);
+    }
+    // 값을 SQL 문자열에 이어 붙이지 않고 ContentValues로 넘긴다(이름·메모에 ' 가 있어도 저장되도록).
+    // 저장되는 컬럼과 값(모두 TEXT)은 이전 방식과 같다.
+    private boolean insertRecord (String table, String name, String date, String category, String relation, String money, String memo){
+        ContentValues cv = new ContentValues();
+        cv.put("NAME", name);
+        cv.put("DATE", date);
+        cv.put("CATEGORY", category);
+        cv.put("RELATION", relation);
+        cv.put("MONEY", money);
+        cv.put("MEMO", memo);
         try {
-            db.execSQL( "insert into " + TABLE_OUT_INFO + "(NAME, DATE, CATEGORY, RELATION, MONEY, MEMO) values ('" + name + "','" + date + "','" + category +"','" + relation +"','" + money + "','" + memo + "');" );
+            return db.insertOrThrow(table, null, cv) != -1;
         } catch (Exception ex){
             Log.e(TAG, "Exception in executing insert SQL.", ex);
+            return false;
         }
     }
 
     public ArrayList<InList> selectAllIn() {
         ArrayList<InList> result = new ArrayList<InList>();
         try{
-            Cursor cursor = db.rawQuery("select NAME, DATE, CATEGORY, RELATION, MONEY, MEMO from " + TABLE_IN_INFO + " order by DATE desc", null);
+            Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION, MONEY, MEMO from " + TABLE_IN_INFO + " order by DATE desc", null);
             for(int i = 0; i < cursor.getCount(); i++) {
                 cursor.moveToNext();
-                String name = cursor.getString(0);
-                String date = cursor.getString(1);
-                String category = cursor.getString(2);
-                String relation = cursor.getString(3);
-                String money = cursor.getString(4);
-                String memo = cursor.getString(5);
+                int id = cursor.getInt(0);
+                String name = cursor.getString(1);
+                String date = cursor.getString(2);
+                String category = cursor.getString(3);
+                String relation = cursor.getString(4);
+                String money = cursor.getString(5);
+                String memo = cursor.getString(6);
 
-                InList info = new InList(name, date, category, relation, money, memo);
+                InList info = new InList(id, name, date, category, relation, money, memo);
                 result.add(info);
             }
         } catch (Exception ex) {
@@ -169,17 +179,18 @@ public class InOutDatabase {
     public ArrayList<OutList> selectAllOut() {
         ArrayList<OutList> result = new ArrayList<OutList>();
         try{
-            Cursor cursor = db.rawQuery("select NAME, DATE, CATEGORY, RELATION, MONEY, MEMO from " + TABLE_OUT_INFO + " order by DATE desc", null);
+            Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION, MONEY, MEMO from " + TABLE_OUT_INFO + " order by DATE desc", null);
             for(int i = 0; i < cursor.getCount(); i++) {
                 cursor.moveToNext();
-                String name = cursor.getString(0);
-                String date = cursor.getString(1);
-                String category = cursor.getString(2);
-                String relation = cursor.getString(3);
-                String money = cursor.getString(4);
-                String memo = cursor.getString(5);
+                int id = cursor.getInt(0);
+                String name = cursor.getString(1);
+                String date = cursor.getString(2);
+                String category = cursor.getString(3);
+                String relation = cursor.getString(4);
+                String money = cursor.getString(5);
+                String memo = cursor.getString(6);
 
-                OutList info = new OutList(name, date, category, relation, money, memo);
+                OutList info = new OutList(id, name, date, category, relation, money, memo);
                 result.add(info);
             }
         } catch (Exception ex) {
@@ -468,44 +479,21 @@ public class InOutDatabase {
         }
         return true;
     }
-    public int getSearchItemIdIn(String name, String date, String category, String relation) {
-        Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION, MONEY from " + TABLE_IN_INFO, null);
-        while (cursor.moveToNext()) {
-            if (cursor.getString(1).equals(name) && cursor.getString(2).equals(date)
-                    && cursor.getString(3).equals(category) && cursor.getString(4).equals(relation)) {
-                return cursor.getInt(0);
-            }
-        }
-        return 0;
+    // 수정할 때 자기 자신(id)을 뺀 다른 행에 같은 (이름, 날짜, 경조사, 관계)가 있는지 본다
+    public boolean hasOtherItemIn(int id, String name, String date, String category, String relation) {
+        return hasOtherItem(TABLE_IN_INFO, id, name, date, category, relation);
     }
-    public int getSearchItemIdOut(String name, String date, String category, String relation) {
-        Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION, MONEY from " + TABLE_OUT_INFO, null);
-        while (cursor.moveToNext()) {
-            if (cursor.getString(1).equals(name) && cursor.getString(2).equals(date)
-                    && cursor.getString(3).equals(category) && cursor.getString(4).equals(relation)) {
-                return cursor.getInt(0);
-            }
-        }
-        return 0;
+    public boolean hasOtherItemOut(int id, String name, String date, String category, String relation) {
+        return hasOtherItem(TABLE_OUT_INFO, id, name, date, category, relation);
     }
-    public int getDeleteItemIn(String name, String date, String category, String relation) {
-        Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION, MONEY from " + TABLE_IN_INFO, null);
-        while (cursor.moveToNext()) {
-            if (cursor.getString(1).equals(name) && cursor.getString(2).equals(date)
-                    && cursor.getString(3).equals(category) && cursor.getString(4).equals(relation)) {
-                return cursor.getPosition();
-            }
+    private boolean hasOtherItem(String table, int id, String name, String date, String category, String relation) {
+        Cursor cursor = db.rawQuery("select _id from " + table + " where _id <> " + id
+                        + " and NAME = ? and DATE = ? and CATEGORY = ? and RELATION = ? limit 1",
+                new String[]{name, date, category, relation});
+        try {
+            return cursor.moveToFirst();
+        } finally {
+            cursor.close();
         }
-        return 0;
-    }
-    public int getDeleteItemOut(String name, String date, String category, String relation) {
-        Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION, MONEY from " + TABLE_OUT_INFO, null);
-        while (cursor.moveToNext()) {
-            if (cursor.getString(1).equals(name) && cursor.getString(2).equals(date)
-                    && cursor.getString(3).equals(category) && cursor.getString(4).equals(relation)) {
-                return cursor.getPosition();
-            }
-        }
-        return 0;
     }
 }

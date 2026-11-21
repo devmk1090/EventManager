@@ -1,5 +1,6 @@
 package com.devproject.eventmanager;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -136,13 +137,20 @@ public class MainActivity extends AppCompatActivity {
         {
             viewPager.setCurrentItem(1);
         }
+
+        // targetSdk 36 + Android 16에서는 onBackPressed()가 호출되지 않으므로 콜백으로 처리한다
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                showExitDialog();
+            }
+        });
     }
 
-    @Override
-    public void onBackPressed() {
+    private void showExitDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("알림")
-                .setMessage("죵료하시겠습니까 ?")
+                .setMessage("종료하시겠습니까 ?")
                 .setIcon(R.drawable.ic_info_black_24dp)
                 .setPositiveButton("예", new DialogInterface.OnClickListener() {
                     @Override
