@@ -251,6 +251,13 @@ public class OutDetailActivity extends AppCompatActivity {
                 String relation = relationData.getText().toString();
                 String money = moneyData.getText().toString();
                 String memo = memoData.getText().toString();
+                // (이름, 날짜, 경조사, 관계)를 바꿀 때만 다른 항목과 겹치는지 본다.
+                // 예전 버전에서 이미 생긴 중복 항목도 금액·메모는 계속 고칠 수 있게 하기 위해서다.
+                Intent original = getIntent();
+                boolean keyChanged = !name.equals(original.getStringExtra("NAME"))
+                        || !date.equals(original.getStringExtra("DATE"))
+                        || !category.equals(original.getStringExtra("CATEGORY"))
+                        || !relation.equals(original.getStringExtra("RELATION"));
                 if (name.equals("")) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(OutDetailActivity.this, 3);
                     builder.setTitle("알림")
@@ -307,11 +314,29 @@ public class OutDetailActivity extends AppCompatActivity {
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }
+                else if (keyChanged && database.hasOtherItemOut(id, name, date, category, relation)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(OutDetailActivity.this, 3);
+                    builder.setTitle("알림")
+                            .setIcon(R.drawable.ic_info_black_24dp)
+                            .setMessage("이미 추가된 내역이 있습니다")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
                 else{
-                    Toast.makeText(getApplicationContext(), "나간 돈 내역이 수정되었습니다.", Toast.LENGTH_SHORT).show();
-                    database.updateOut(id, name, date, category, relation, money, memo);
-                    Intent intent = new Intent(OutDetailActivity.this, MainActivity.class);
-                    startActivity(intent);
+                    boolean saved = database.updateOut(id, name, date, category, relation, money, memo);
+                    if (saved) {
+                        Toast.makeText(getApplicationContext(), "나간 돈 내역이 수정되었습니다.", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(OutDetailActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "저장에 실패했습니다. 다시 시도해 주세요.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

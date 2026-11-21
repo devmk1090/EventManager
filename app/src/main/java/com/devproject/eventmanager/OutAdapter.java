@@ -29,7 +29,6 @@ public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
     Context context;
     ArrayList<OutList> items;
     ArrayList<OutList> filteredList;
-    private boolean isEmpty;
 
     public OutAdapter (Context context, ArrayList<OutList> outLists) {
         super();
@@ -46,13 +45,11 @@ public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
                 String charString = constraint.toString();
                 if(charString.isEmpty()) {
                     filteredList = items;
-                    isEmpty = false;
                 } else {
                     ArrayList<OutList> filteringList = new ArrayList<>();
                     for(OutList item : items) {
                         if(item.getName().toLowerCase().contains(charString.toLowerCase())) {
                             filteringList.add(item);
-                            isEmpty = true;
                         }
                     }
                     filteredList = filteringList;
@@ -91,6 +88,10 @@ public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
+                    if (position == RecyclerView.NO_POSITION) {
+                        return;
+                    }
+                    OutList clickedItem = filteredList.get(position);
                     AlertDialog.Builder builder = new AlertDialog.Builder(context, 3);
                     builder.setTitle("알림")
                             .setMessage("수정하거나 삭제할 수 있습니다")
@@ -98,18 +99,16 @@ public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
                             .setNegativeButton("수정", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    int i = database.getSearchItemIdOut(getNameData.getText().toString(),
-                                            getCalendarData.getText().toString(),
-                                            getCategoryData.getText().toString(),
-                                            getRelationData.getText().toString());
+                                    // 누른 항목의 _id로 수정할 행을 정한다
+                                    int i = clickedItem.getId();
                                     Intent intent = new Intent(context, OutDetailActivity.class);
                                     intent.putExtra("ID", i);
-                                    intent.putExtra("NAME", getNameData.getText().toString());
-                                    intent.putExtra("DATE", getCalendarData.getText().toString());
-                                    intent.putExtra("CATEGORY", getCategoryData.getText().toString());
-                                    intent.putExtra("RELATION", getRelationData.getText().toString());
+                                    intent.putExtra("NAME", clickedItem.getName());
+                                    intent.putExtra("DATE", clickedItem.getDate());
+                                    intent.putExtra("CATEGORY", clickedItem.getCategory());
+                                    intent.putExtra("RELATION", clickedItem.getRelation());
                                     intent.putExtra("MONEY", database.getMoneyOut(i));
-                                    intent.putExtra("MEMO", getMemoData.getText().toString());
+                                    intent.putExtra("MEMO", clickedItem.getMemo());
                                     context.startActivity(intent);
                                 }
                             })
@@ -123,26 +122,14 @@ public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
                                     builder.setNegativeButton("예", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            Toast.makeText(context, "나간 돈 내역이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
-                                            int i = database.getSearchItemIdOut(getNameData.getText().toString(),
-                                                    getCalendarData.getText().toString(),
-                                                    getCategoryData.getText().toString(),
-                                                    getRelationData.getText().toString());
-                                            int j = database.getDeleteItemOut(getNameData.getText().toString(),
-                                                    getCalendarData.getText().toString(),
-                                                    getCategoryData.getText().toString(),
-                                                    getRelationData.getText().toString());
-                                            database.deleteDataOut(i);
-                                            if (isEmpty) {
-                                                Log.d(TAG, String.valueOf(true));
-                                                removeFilterItems(position);
-                                                removeItems(j);
-                                                Log.d(TAG, "ViewHolderTrue: " + position);
-
+                                            // 누른 항목의 _id로 지운다. 같은 (이름, 날짜, 경조사, 관계)가 둘 있어도 누른 행만 지워진다.
+                                            if (database.deleteDataOut(clickedItem.getId())) {
+                                                Toast.makeText(context, "나간 돈 내역이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                                                // 화면 목록에서는 누른 항목 객체를 지운다. DB 조회 순서의 위치를 쓰면
+                                                // 목록(DATE desc 정렬)과 순서가 달라 다른 항목이 사라진다.
+                                                removeItem(clickedItem);
                                             } else {
-                                                Log.d(TAG, String.valueOf(false));
-                                                removeItems(j);
-                                                Log.d(TAG, "ViewHolderFalse: " + position);
+                                                Toast.makeText(context, "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
@@ -212,12 +199,12 @@ public class OutAdapter extends RecyclerView.Adapter<OutAdapter.ViewHolder>
         items.set(position, item);
     }
 
-    public void removeFilterItems(int position) {
-        filteredList.remove(position);
-        notifyItemRemoved(position);
-    }
-    public void removeItems(int position) {
-        items.remove(position);
-        notifyItemRemoved(position);
+    private void removeItem(OutList item) {
+        int position = ListUtils.removeItem(items, filteredList, item);
+        if (position >= 0) {
+            notifyItemRemoved(position);
+        } else {
+            notifyDataSetChanged();
+        }
     }
 }

@@ -301,10 +301,14 @@ public class OutActivity extends AppCompatActivity {
                     dialog.show();
                 }
                 else{
-                    Toast.makeText(getApplicationContext(), "나간 돈 내역이 추가되었습니다.", Toast.LENGTH_SHORT).show();
-                    database.insertRecordOut(name, date, category, relation, money, memo);
-                    Intent intent = new Intent(OutActivity.this, MainActivity.class);
-                    startActivity(intent);
+                    boolean saved = database.insertRecordOut(name, date, category, relation, money, memo);
+                    if (saved) {
+                        Toast.makeText(getApplicationContext(), "나간 돈 내역이 추가되었습니다.", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(OutActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "저장에 실패했습니다. 다시 시도해 주세요.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

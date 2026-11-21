@@ -2,6 +2,7 @@ package com.devproject.eventmanager;
 
 public class InList {
 
+    int id;
     String name;
     String date;
     String category;
@@ -9,13 +10,19 @@ public class InList {
     String money;
     String memo;
 
-    public InList(String name, String date, String category, String relation, String money, String memo) {
+    public InList(int id, String name, String date, String category, String relation, String money, String memo) {
+        this.id = id;
         this.name = name;
         this.date = date;
         this.category = category;
         this.relation = relation;
         this.money = money;
         this.memo = memo;
+    }
+
+    // DB의 _id. 수정·삭제할 행을 정확히 가리키는 데 쓴다.
+    public int getId() {
+        return id;
     }
 
     public String getName() {
