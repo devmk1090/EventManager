@@ -23,13 +23,13 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 ./gradlew assembleDebug
 ./gradlew installDebug                   # 연결된 기기/에뮬레이터에 설치
 ./gradlew testDebugUnitTest
-./gradlew testDebugUnitTest --tests 'com.devproject.eventmanager.ExampleUnitTest'
+./gradlew testDebugUnitTest --tests 'com.devproject.eventmanager.ListUtilsTest'
 ./gradlew connectedDebugAndroidTest      # 기기/에뮬레이터 필요
-./gradlew lintDebug                      # 현재 오류 2건으로 실패 (아래 "알려진 문제")
+./gradlew lintDebug                      # 오류 0건 유지 (경고 약 275건은 예전부터 있던 것)
 ```
 
 - 로컬 Gradle이 9.x뿐이면 프로젝트 루트에서는 `gradle wrapper`도 실패한다. 빈 `settings.gradle`만 있는 임시 폴더에서 같은 명령을 실행한 뒤 `gradlew`, `gradlew.bat`, `gradle/wrapper/gradle-wrapper.jar`만 복사한다.
-- 테스트는 Android Studio 템플릿 예제(`ExampleUnitTest`, `ExampleInstrumentedTest`)뿐이다. 동작 확인은 기기나 에뮬레이터에서 직접 해야 한다.
+- 테스트는 `ListUtilsTest`(목록에서 항목 지우기)와 Android Studio 템플릿 예제뿐이다. DB와 화면 동작은 기기나 에뮬레이터에서 직접 확인해야 한다.
 - 릴리스할 때는 `app/build.gradle`의 `versionCode`/`versionName`을 올린다. 서명 설정은 build.gradle에 없고 `minifyEnabled false`다.
 - 커밋 메시지는 `Release 2.4 - 레이아웃 수정`처럼 `Release <버전> - <한국어 변경 내용>` 형식이다. 2.4는 `feature/version-2.4` 브랜치에서 작업해 `master`로 PR 병합했다.
 
@@ -49,7 +49,7 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 
 ### In/Out 복제 구조
 
-받은 돈과 나간 돈은 같은 기능을 `In*`/`Out*` 클래스 쌍(Activity, DetailActivity, Adapter, Fragment, `InList`/`OutList` 모델)과 `InOutDatabase`의 `...In()`/`...Out()` 메서드 쌍으로 따로 구현했다. 차이는 호출하는 DB 메서드, 토스트 문구, 저장 후 돌아갈 탭 정도다. **한쪽을 고치면 반대쪽도 같이 고쳐야 한다.** 실제로 2023년에 목록 텍스트에 붙인 `" · "`를 `OutAdapter`에서만 걷어 내는 바람에, 받은 돈의 수정·삭제는 2.4에서 `InAdapter`를 고칠 때까지 깨져 있었다(이유는 아래 "행 식별").
+받은 돈과 나간 돈은 같은 기능을 `In*`/`Out*` 클래스 쌍(Activity, DetailActivity, Adapter, Fragment, `InList`/`OutList` 모델)과 `InOutDatabase`의 `...In()`/`...Out()` 메서드 쌍으로 따로 구현했다. 차이는 호출하는 DB 메서드, 토스트 문구, 저장 후 돌아갈 탭 정도다. **한쪽을 고치면 반대쪽도 같이 고쳐야 한다.** 실제로 2023년에 목록 텍스트에 붙인 `" · "`를 `OutAdapter`에서만 걷어 내는 바람에, 받은 돈의 수정·삭제는 2.4에서 `InAdapter`를 고칠 때까지 깨져 있었다(당시에는 화면에 표시된 텍스트로 DB 행을 찾았다).
 
 두 쪽 모두 같은 레이아웃을 쓴다. 입력/수정 화면은 `activity_inout_rev.xml`, 목록 항목은 `asform_rev.xml`이다. 이름이 비슷한 `activity_inout.xml`, `asform.xml`은 쓰이지 않는다.
 
@@ -59,14 +59,15 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 - DB 파일은 `InOut.db`, 테이블은 `IN_INFO`(받은 돈)와 `OUT_INFO`(나간 돈)이고 스키마가 같다: `_id, NAME, DATE, CATEGORY, RELATION, MONEY, MEMO, CREATE_DATE`. `MONEY`도 TEXT다.
 - `DATABASE_VERSION = 1`이고 `onUpgrade()`는 비어 있다. 스키마를 바꾸려면 버전을 올리고 마이그레이션을 직접 써야 한다. `saveExcel()`은 `SELECT *` 결과를 컬럼 인덱스(1~6)로 읽으므로 컬럼 순서에도 의존한다.
 - 통계용 합계는 경조사·관계 값마다 하드코딩된 메서드(`getCategoryMarryOutMoney()` 등, In/Out 각각)로 구한다.
+- INSERT·UPDATE 값은 `ContentValues`로 넘긴다. 예전 INSERT는 값을 SQL 문자열에 이어 붙여서 `'`가 든 이름·메모가 저장되지 않았다.
 
-### 행 식별: 화면에 표시된 텍스트가 키다
+### 행 식별
 
-목록 모델(`InList`/`OutList`)에는 `_id`가 없다. 수정·삭제할 때 Adapter는 ViewHolder의 **TextView에 표시된 이름·날짜·경조사·관계 텍스트를 다시 읽어** `getSearchItemIdIn/Out()`으로 `_id`를 찾는다.
+목록 모델(`InList`/`OutList`)은 DB `_id`를 들고 있고(`selectAllIn/Out()`이 함께 읽음), 수정·삭제는 누른 항목의 `_id`로 한다. 수정 화면에는 `"ID"` extra로 넘긴다.
 
-- 이 네 TextView에는 DB 값을 가공하지 말고 그대로 넣어야 한다. 구분자를 덧붙이면 수정·삭제가 깨진다. 구분자(`" · "`)는 `asform_rev.xml`의 별도 TextView로 둔다.
-- 금액은 `###,###원`으로 표시해도 된다. 수정 화면으로 넘길 때 `getMoneyIn/Out(id)`로 DB 값을 다시 읽기 때문이다.
-- 저장할 때 같은 (이름, 날짜, 경조사, 관계) 조합은 `checkItemIn/Out()`으로 막는다. 이 네 값의 조합이 사실상 기본 키다.
+- 2.4까지는 모델에 `_id`가 없어서, TextView에 표시된 (이름, 날짜, 경조사, 관계) 텍스트로 `_id`를 다시 찾았다. 그래서 표시 텍스트를 가공하면 수정·삭제가 깨졌고, 같은 조합이 둘이면 먼저 찾은 행에 적용됐다. 예전 버전을 쓰던 사용자의 DB에는 이런 중복이 남아 있을 수 있다.
+- 같은 (이름, 날짜, 경조사, 관계) 조합은 추가할 때 `checkItemIn/Out()`, 수정할 때 `hasOtherItemIn/Out()`으로 막는다. 수정 화면은 이 네 값을 바꾼 경우에만 검사하므로, 이미 있던 중복 항목도 금액·메모는 고칠 수 있다.
+- 삭제 후 화면 목록에서는 위치가 아니라 누른 항목 객체를 지운다(`ListUtils.removeItem()`). 예전에는 ORDER BY 없는 DB 조회 순서의 위치를 써서, `DATE desc`로 정렬된 화면에서 다른 항목이 사라졌다.
 
 ### 저장 값 형식
 
@@ -77,7 +78,7 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 
 ### 화면 갱신 방식
 
-목록과 통계는 Fragment의 `onCreateView`에서 한 번만 읽고, `onResume`에서 다시 읽지 않는다. 추가·수정 후에는 `MainActivity`를 새로 `startActivity`해서(플래그나 `finish()` 없음) 다시 그리고, 받은 돈 쪽은 `"In"` extra로 1번 탭을 연다. 그래서 백스택에 `MainActivity`가 쌓이고, `MainActivity`의 뒤로가기는 종료 확인 다이얼로그 후 `finishAffinity()`로 전부 닫는다.
+목록과 통계는 Fragment의 `onCreateView`에서 한 번만 읽고, `onResume`에서 다시 읽지 않는다. 추가·수정 후에는 `MainActivity`를 새로 `startActivity`해서(플래그나 `finish()` 없음) 다시 그리고, 받은 돈 쪽은 `"In"` extra로 1번 탭을 연다. 그래서 백스택에 `MainActivity`가 쌓이고, `MainActivity`의 뒤로가기(`OnBackPressedCallback`)는 종료 확인 다이얼로그 후 `finishAffinity()`로 전부 닫는다.
 
 ### Excel 내보내기
 
@@ -87,10 +88,13 @@ Apache POI(HSSF)로 "나간 돈"/"받은 돈" 두 시트의 `.xls`를 만들고,
 
 - Android 15 이상에서는 edge-to-edge가 강제된다. 시스템 바 인셋은 각 화면 루트 레이아웃의 `android:fitsSystemWindows="true"`로 처리하고, WindowInsets 리스너는 없다.
 - `WindowCompat.enableEdgeToEdge()`는 `MainActivity`, `Out*`, `SplashScreen`에서만 호출하고 `In*`에는 없다. 상태 바 아이콘 색은 `SplashScreen`을 뺀 Activity들에서 `setAppearanceLightStatusBars(true)`로 맞춘다.
+- 뒤로가기는 `onBackPressed()`를 오버라이드하지 말고 `getOnBackPressedDispatcher()`에 콜백을 등록해 처리한다. targetSdk 36이라 Android 16 기기에서는 predictive back이 기본으로 켜져 `onBackPressed()`가 호출되지 않는다.
 
 ### 광고
 
-AdMob App ID는 `AndroidManifest.xml`에 있고, 배너 단위 ID는 `content_main.xml`이 참조하는 `@string/ad_unit_id_rev`(운영 ID)다. Google 테스트 배너 ID는 `strings.xml`에 주석으로 있다.
+AdMob App ID는 `AndroidManifest.xml`에 있고, 배너 단위 ID는 `content_main.xml`이 참조하는 `@string/ad_unit_id_rev`(운영 ID)다. Google 테스트 배너 ID는 `strings.xml`에 주석으로 있다. 에뮬레이터에서는 운영 ID여도 "Test Ad"가 표시된다.
+
+`play-services-ads`는 23.6.0이다. 24.0.0부터 minSdk 23(25.x는 24)을 요구하므로, minSdk 21을 유지하는 동안은 23.x가 상한이다. 이전에 쓰던 21.3.0은 Play SDK Index에서 Play Console 게시 차단 대상으로 표시되어 있었다.
 
 ### 쓰이지 않는 레거시
 
@@ -100,10 +104,6 @@ AdMob App ID는 `AndroidManifest.xml`에 있고, 배너 단위 ID는 `content_ma
 
 코드를 읽고 확인한 내용이며, 고치면 이 목록에서 지운다.
 
-- `./gradlew lintDebug`가 오류 2건으로 실패한다. 하나는 `MainActivity.onBackPressed()`의 `MissingSuperCall`이고, 다른 하나는 `play-services-ads:21.3.0`이 Play SDK Index에서 문제 버전으로 보고되어 Play Console 게시가 막힌다는 경고다.
-- `insertRecordIn/Out()`은 값을 SQL 문자열에 그대로 이어 붙인다. 이름이나 메모에 `'`가 있으면 INSERT가 실패하는데, 예외는 로그로만 남고 화면은 이미 "추가되었습니다" 토스트를 띄운 뒤다. 수정·삭제(`updateIn/Out`, `deleteDataIn/Out`)는 `ContentValues`/whereClause를 쓴다.
-- 삭제 후 Adapter 리스트에서 지울 위치를 `getDeleteItemIn/Out()`(ORDER BY 없는 SELECT의 커서 위치)로 구한다. 목록은 `DATE desc`로 정렬되어 있어서 DB에서는 맞는 행이 지워져도 화면에서는 다른 항목이 사라질 수 있다.
 - `ORDER BY DATE desc`가 문자열 정렬이라 실제 날짜 순서와 다르다(예: `2025/9/3`이 `2025/10/1`과 `2025/9/25`보다 위).
 - 금액 입력은 `maxLength="12"`라서 int 범위를 넘는 값이 저장될 수 있다. 그런 항목을 목록에 그릴 때 `Integer.parseInt()`에서 앱이 죽는다.
 - Excel 내보내기는 API 21~29 기기에서 권한이 없어 실패한다. `FileNotFoundException`은 토스트 없이 로그만 남긴다.
-- targetSdk 36이라 Android 16 기기에서는 predictive back이 기본으로 켜져 `MainActivity.onBackPressed()`(종료 확인 다이얼로그)가 호출되지 않는다. `OnBackPressedCallback`으로 옮기거나 manifest에서 `android:enableOnBackInvokedCallback="false"`로 끄면 된다.
