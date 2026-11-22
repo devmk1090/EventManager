@@ -8,8 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - 단일 `:app` 모듈, 순수 Java(소스 호환 1.8). Kotlin 플러그인은 루트 classpath에만 있고 적용되어 있지 않다.
 - 데이터는 기기 로컬 SQLite에만 있다(서버·동기화 없음).
-- 주요 라이브러리: MPAndroidChart(JitPack), AdMob(`play-services-ads`), Apache POI(`app/libs/poi-4.0.1.jar`, 로컬 jar).
-- UI 문자열은 대부분 Java 코드와 레이아웃 XML에 한국어로 직접 들어 있다(`strings.xml`에는 광고 ID 등 일부만 있음).
+- 주요 라이브러리: Material Components 1.11(Material3 테마), AdMob(`play-services-ads`), Apache POI(`app/libs/poi-4.0.1.jar`, 로컬 jar).
+- 화면 문구는 `res/values/strings.xml`에 있고, 말투는 "~해요"체다. 글꼴은 앱에 들어 있는 Pretendard(`res/font/`).
 
 ## 빌드와 테스트
 
@@ -23,87 +23,87 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 ./gradlew assembleDebug
 ./gradlew installDebug                   # 연결된 기기/에뮬레이터에 설치
 ./gradlew testDebugUnitTest
-./gradlew testDebugUnitTest --tests 'com.devproject.eventmanager.ListUtilsTest'
+./gradlew testDebugUnitTest --tests 'com.devproject.eventmanager.EntryListTest'
 ./gradlew connectedDebugAndroidTest      # 기기/에뮬레이터 필요
-./gradlew lintDebug                      # 오류 0건 유지 (경고 약 275건은 예전부터 있던 것)
+./gradlew lintDebug                      # 오류 0건 유지
 ```
 
 - 로컬 Gradle이 9.x뿐이면 프로젝트 루트에서는 `gradle wrapper`도 실패한다. 빈 `settings.gradle`만 있는 임시 폴더에서 같은 명령을 실행한 뒤 `gradlew`, `gradlew.bat`, `gradle/wrapper/gradle-wrapper.jar`만 복사한다.
-- 테스트는 `ListUtilsTest`(목록에서 항목 지우기)와 Android Studio 템플릿 예제뿐이다. DB와 화면 동작은 기기나 에뮬레이터에서 직접 확인해야 한다.
+- 단위 테스트는 화면과 무관한 순수 로직(`EntryDateTest`, `MoneyFormatTest`, `EntryListTest`)만 있다. DB와 화면 동작은 기기나 에뮬레이터에서 직접 확인해야 한다.
 - 릴리스할 때는 `app/build.gradle`의 `versionCode`/`versionName`을 올린다. 서명 설정은 build.gradle에 없고 `minifyEnabled false`다.
-- 커밋 메시지는 `Release 2.4 - 레이아웃 수정`처럼 `Release <버전> - <한국어 변경 내용>` 형식이다. 2.4는 `feature/version-2.4` 브랜치에서 작업해 `master`로 PR 병합했다.
+- 커밋 메시지는 `Release 2.4 - 레이아웃 수정`처럼 `Release <버전> - <한국어 변경 내용>` 형식이다. 작업은 `feature/...` 브랜치에서 하고 `master`로 병합한다.
 
 ## 아키텍처
 
 ### 화면 구성
 
-`SplashScreen`(약 2.5초) → `MainActivity`(Toolbar + TabLayout + `ViewPager` + 하단 AdMob 배너). `ViewPagerAdapter`의 탭 순서는 다음과 같다.
+`SplashScreen`(약 2.5초) → `MainActivity`. `MainActivity`는 하단 메뉴(`BottomNavigationView`, `menu/bottom_nav.xml`)와 그 위의 AdMob 배너를 가지며, 세 Fragment를 한 번에 붙여 두고 숨김/보임으로 전환한다.
 
-| 탭 | Fragment | 내용 |
+| 하단 메뉴 | Fragment | 내용 |
 |---|---|---|
-| 0 | `OutFragment` | 나간 돈 목록, 이름 검색 |
-| 1 | `InFragment` | 받은 돈 목록, 이름 검색 |
-| 2 | `StatisticsFragment` | 합계, 경조사별/관계별 파이 차트 |
+| 내역 | `HistoryFragment` | 합계 카드, 전체/받은 돈/나간 돈 필터, 이름 검색, 월별 목록 |
+| 통계 | `StatisticsFragment` | 나간 돈/받은 돈 합계와 경조사별·관계별 막대 |
+| 설정 | `SettingsFragment` | 엑셀 내보내기, 앱 버전 |
 
-**`In` = 받은 돈, `Out` = 나간 돈이다.** 목록의 FAB를 누르면 `InActivity`/`OutActivity`(추가), 항목을 누르면 다이얼로그에서 `InDetailActivity`/`OutDetailActivity`(수정)나 삭제를 고른다. 툴바 메뉴는 Excel 내보내기(`MainActivity.saveExcel()`) 하나뿐이다.
+내역의 + 버튼은 `EntryFormActivity`(추가, 보냄/받음 선택), 목록 항목을 누르면 같은 화면이 수정 모드로 열린다(오른쪽 위 휴지통으로 삭제). 엑셀 내보내기는 내역 상단 아이콘과 설정에서 `ExcelExporter.confirmAndExport()`를 부른다.
 
-### In/Out 복제 구조
+### 데이터 모델과 DB (`Entry`, `InOutDatabase`)
 
-받은 돈과 나간 돈은 같은 기능을 `In*`/`Out*` 클래스 쌍(Activity, DetailActivity, Adapter, Fragment, `InList`/`OutList` 모델)과 `InOutDatabase`의 `...In()`/`...Out()` 메서드 쌍으로 따로 구현했다. 차이는 호출하는 DB 메서드, 토스트 문구, 저장 후 돌아갈 탭 정도다. **한쪽을 고치면 반대쪽도 같이 고쳐야 한다.** 실제로 2023년에 목록 텍스트에 붙인 `" · "`를 `OutAdapter`에서만 걷어 내는 바람에, 받은 돈의 수정·삭제는 2.4에서 `InAdapter`를 고칠 때까지 깨져 있었다(당시에는 화면에 표시된 텍스트로 DB 행을 찾았다).
+- 받은 돈·나간 돈은 하나의 모델 `Entry`(+ `Entry.Direction.RECEIVED`/`SENT`)로 다룬다. DB는 예전 그대로 두 테이블이다: `IN_INFO`(받은 돈), `OUT_INFO`(나간 돈). 방향과 테이블의 대응은 `InOutDatabase.table()` 한 곳에만 있다.
+- `InOutDatabase`는 싱글톤에 `SQLiteOpenHelper`를 직접 쓴다(Room 없음). 화면마다 `getInstance(ctx)` 다음 `open()`을 부르는데, `open()`은 이미 열려 있으면 그대로 쓴다.
+- 두 테이블의 스키마는 같다: `_id, NAME, DATE, CATEGORY, RELATION, MONEY, MEMO, CREATE_DATE`. `MONEY`도 TEXT다. `DATABASE_VERSION = 1`이고 `onUpgrade()`는 비어 있다. 스키마를 바꾸려면 버전을 올리고 마이그레이션을 직접 써야 한다(사용자 데이터는 기기에만 있다).
+- 쓰기는 `insert`/`update`/`delete(direction, …)` 세 가지이고 값은 `ContentValues`로 넘긴다. 합계는 `sum`/`count`, 통계는 `sumByCategory`/`sumByRelation`(`trim`으로 묶는 `GROUP BY`)이다. 금액 합계는 `long`이다.
 
-두 쪽 모두 같은 레이아웃을 쓴다. 입력/수정 화면은 `activity_inout_rev.xml`, 목록 항목은 `asform_rev.xml`이다. 이름이 비슷한 `activity_inout.xml`, `asform.xml`은 쓰이지 않는다.
+### 행 식별과 중복
 
-### 데이터 계층 (`InOutDatabase`)
+- `Entry`는 DB `_id`와 방향을 들고 있고, 수정·삭제는 그 둘로 한다. 수정 화면에서는 방향을 바꿀 수 없다(테이블이 다르므로).
+- 같은 (이름, 날짜, 경조사, 관계) 조합은 추가할 때 `exists()`, 수정할 때 `hasOtherItem()`으로 막는다. 수정은 이 네 값을 바꾼 경우에만 검사하므로, 예전 버전에서 이미 생긴 중복 항목도 금액·메모는 고칠 수 있다.
+- 2.4까지는 모델에 `_id`가 없어서 화면 텍스트로 행을 다시 찾았고, 같은 조합이 둘이면 먼저 찾은 행에 수정·삭제가 적용됐다. 예전 사용자의 DB에는 이런 중복이 남아 있을 수 있다.
 
-- 싱글톤에 `SQLiteOpenHelper`를 직접 쓴다(Room 없음). 화면마다 `InOutDatabase.getInstance(ctx)` 다음 `open()`을 호출하는 패턴이다.
-- DB 파일은 `InOut.db`, 테이블은 `IN_INFO`(받은 돈)와 `OUT_INFO`(나간 돈)이고 스키마가 같다: `_id, NAME, DATE, CATEGORY, RELATION, MONEY, MEMO, CREATE_DATE`. `MONEY`도 TEXT다.
-- `DATABASE_VERSION = 1`이고 `onUpgrade()`는 비어 있다. 스키마를 바꾸려면 버전을 올리고 마이그레이션을 직접 써야 한다. `saveExcel()`은 `SELECT *` 결과를 컬럼 인덱스(1~6)로 읽으므로 컬럼 순서에도 의존한다.
-- 통계용 합계는 경조사·관계 값마다 하드코딩된 메서드(`getCategoryMarryOutMoney()` 등, In/Out 각각)로 구한다.
-- INSERT·UPDATE 값은 `ContentValues`로 넘긴다. 예전 INSERT는 값을 SQL 문자열에 이어 붙여서 `'`가 든 이름·메모가 저장되지 않았다.
+### 저장 값 형식 (예전 버전과 호환 유지)
 
-### 행 식별
+- **CATEGORY/RELATION**: 새로 저장할 때는 **앞뒤 공백을 붙인다**(`" 결혼식 "`). 예전 버전이 그렇게 저장했고, 예전 데이터와 중복 검사가 맞아야 하기 때문이다. 수정 화면은 바꾸지 않은 값이면 저장된 원문을 그대로 쓴다. 표시·통계는 `trim()`한 값을 쓴다.
+- 선택지는 `EntryFormActivity`의 `CATEGORIES`/`RELATIONS` 배열에만 있다. 통계는 저장된 값으로 묶으므로 항목을 늘릴 때 다른 곳은 고치지 않아도 된다. 목록에 없는 예전 값(예: "선후배")은 수정 화면에 칩으로 하나 더 붙여 그대로 둘 수 있게 한다.
+- **DATE**: 저장 형식은 `yyyy/M/d/요일`이다(0으로 채우지 않고, 요일은 기기 언어라 "Friday"일 수도 있다). 빈 문자열일 수 있다(예전에는 날짜가 선택 입력이었다). 읽기·표시는 `EntryDate`가 하고, 요일은 저장된 글자 대신 날짜로 다시 계산한다. 새 내역은 오늘 날짜로 시작한다.
+- **정렬**: DATE가 문자열이라 DB에서 정렬하면 순서가 틀린다. `EntryList.sort()`가 날짜를 읽어 최신순으로 정렬하고, 날짜가 같으면 `_id`가 큰 것, 날짜 없는 내역은 맨 뒤에 둔다. 월별 묶음은 `EntryList.group()`이 만든다.
+- **MONEY**: 숫자 문자열이다. `MoneyFormat.parse()`(long, 실패하면 0)로 읽고 `MoneyFormat`으로 표시한다. 입력 화면에는 한글 단위(`10만 원`)를 함께 보여 준다.
 
-목록 모델(`InList`/`OutList`)은 DB `_id`를 들고 있고(`selectAllIn/Out()`이 함께 읽음), 수정·삭제는 누른 항목의 `_id`로 한다. 수정 화면에는 `"ID"` extra로 넘긴다.
+### 화면 갱신과 뒤로가기
 
-- 2.4까지는 모델에 `_id`가 없어서, TextView에 표시된 (이름, 날짜, 경조사, 관계) 텍스트로 `_id`를 다시 찾았다. 그래서 표시 텍스트를 가공하면 수정·삭제가 깨졌고, 같은 조합이 둘이면 먼저 찾은 행에 적용됐다. 예전 버전을 쓰던 사용자의 DB에는 이런 중복이 남아 있을 수 있다.
-- 같은 (이름, 날짜, 경조사, 관계) 조합은 추가할 때 `checkItemIn/Out()`, 수정할 때 `hasOtherItemIn/Out()`으로 막는다. 수정 화면은 이 네 값을 바꾼 경우에만 검사하므로, 이미 있던 중복 항목도 금액·메모는 고칠 수 있다.
-- 삭제 후 화면 목록에서는 위치가 아니라 누른 항목 객체를 지운다(`ListUtils.removeItem()`). 예전에는 ORDER BY 없는 DB 조회 순서의 위치를 써서, `DATE desc`로 정렬된 화면에서 다른 항목이 사라졌다.
+- `HistoryFragment`·`StatisticsFragment`는 `onResume`과 `onHiddenChanged(false)`에서 DB를 다시 읽는다. `EntryFormActivity`는 저장·삭제 후 `finish()`만 하고, 돌아온 화면이 다시 읽는다.
+- 뒤로가기는 `MainActivity`의 `OnBackPressedCallback`이 처리한다: 다른 탭이면 내역으로, 검색 중이면 검색 닫기, 그 밖에는 광고가 든 종료 확인 창(`ExitAdDialog`, 아래 "광고"). `onBackPressed()`를 오버라이드하지 않는다(targetSdk 36이라 Android 16 기기에서는 호출되지 않는다).
 
-### 저장 값 형식
+### 테마·스타일
 
-- **CATEGORY/RELATION**: 4개 Activity(`In/Out` × 추가/수정)에 각각 하드코딩된 배열(`categoryItems`, `relationItems`)에서 고르고, **앞뒤 공백이 붙은 채로 저장된다**(`" 결혼식 "`, `" 친구 "`). 통계 쿼리도 `WHERE CATEGORY=' 결혼식 '`처럼 공백까지 비교하므로 trim하면 기존 사용자 데이터의 통계가 깨진다. `res/values/array.xml`의 배열은 쓰이지 않는다.
-- 경조사나 관계 항목을 추가하려면 4개 Activity의 배열, `InOutDatabase`의 항목별 합계 메서드, `StatisticsFragment`(항목별 TextView, `PieEntry`, 7색 배열)를 모두 고쳐야 한다.
-- **DATE**: `yyyy/M/d/요일` 형식의 표시용 문자열이다(0으로 채우지 않고, 요일은 기기 로케일). 날짜는 필수 입력이 아니어서 빈 문자열일 수 있다. 요일 계산의 `new Date(year, month, dayOfMonth-1)`에서 `-1`은 deprecated 생성자의 1900년 오프셋으로 생기는 요일 차이를 메우는 꼼수다(2001~2099년 범위에서만 보장됨). `-1`만 지우면 요일이 틀어진다.
-- **MONEY**: 숫자 문자열이다. 통계는 SQLite `SUM()` 결과를 `getInt()`로, 목록은 `Integer.parseInt()`로 읽는다.
-
-### 화면 갱신 방식
-
-목록과 통계는 Fragment의 `onCreateView`에서 한 번만 읽고, `onResume`에서 다시 읽지 않는다. 추가·수정 후에는 `MainActivity`를 새로 `startActivity`해서(플래그나 `finish()` 없음) 다시 그리고, 받은 돈 쪽은 `"In"` extra로 1번 탭을 연다. 그래서 백스택에 `MainActivity`가 쌓이고, `MainActivity`의 뒤로가기(`OnBackPressedCallback`)는 종료 확인 다이얼로그 후 `finishAffinity()`로 전부 닫는다.
-
-### Excel 내보내기
-
-Apache POI(HSSF)로 "나간 돈"/"받은 돈" 두 시트의 `.xls`를 만들고, `java.io.File`로 공용 Download 폴더에 `경조사 엑셀 데이터.xls`로 덮어쓴다. 2.4에서 `WRITE_EXTERNAL_STORAGE` 권한을 뺐으므로 이 방식은 scoped storage가 Download 폴더 쓰기를 허용하는 Android 11(API 30) 이상에서만 통한다. `checkPermission()`은 이름과 달리 `saveExcel()`만 호출한다.
+- `AppTheme`은 `Theme.Material3.Light.NoActionBar`에 시안 B 팔레트(`colors.xml`: 먹색 `ink`, 청록 `accent`, 바탕 `background`)를 넣은 것이다. 스플래시만 `SplashTheme`(상태 표시줄 아이콘 밝게)이다.
+- 글자는 `style="@style/Text.…"`(`Title`, `Section`, `Strong`, `Label`, `Caption`, `Amount`)로 맞춘다. **글꼴을 바꾸는 스타일·뷰에는 `android:fontFamily`와 `fontFamily`(app)를 함께 지정해야 한다.** 테마의 `fontFamily`(app)를 AppCompat이 나중에 덮어써서, `android:fontFamily`만 주면 굵은 글꼴이 적용되지 않는다.
+- 금액은 `Text.Amount`(굵게, `tnum` 고정폭 숫자). 받은 돈은 `+`와 청록, 나간 돈은 `−`(U+2212)와 먹색이다.
+- 같은 달 내역은 흰 카드 하나로 보이도록 `EntryAdapter`가 줄마다 `bg_card_top/middle/bottom/single`을 고른다.
 
 ### 시스템 UI (targetSdk 36)
 
-- Android 15 이상에서는 edge-to-edge가 강제된다. 시스템 바 인셋은 각 화면 루트 레이아웃의 `android:fitsSystemWindows="true"`로 처리하고, WindowInsets 리스너는 없다.
-- `WindowCompat.enableEdgeToEdge()`는 `MainActivity`, `Out*`, `SplashScreen`에서만 호출하고 `In*`에는 없다. 상태 바 아이콘 색은 `SplashScreen`을 뺀 Activity들에서 `setAppearanceLightStatusBars(true)`로 맞춘다.
-- 뒤로가기는 `onBackPressed()`를 오버라이드하지 말고 `getOnBackPressedDispatcher()`에 콜백을 등록해 처리한다. targetSdk 36이라 Android 16 기기에서는 predictive back이 기본으로 켜져 `onBackPressed()`가 호출되지 않는다.
+- 모든 Activity가 `WindowCompat.enableEdgeToEdge()`를 쓴다. `MainActivity`는 루트에 상태 표시줄만큼 위 여백을 주고, 아래 여백은 `BottomNavigationView`가 스스로 준다. `EntryFormActivity`는 아래를 내비게이션 바와 키보드 중 큰 쪽만큼 띄운다(manifest `adjustResize`).
+
+### Excel 내보내기 (`ExcelExporter`)
+
+Apache POI(HSSF)로 "나간 돈"/"받은 돈" 두 시트의 `.xls`를 만들고, `java.io.File`로 공용 Download 폴더에 `경조사 엑셀 데이터.xls`로 덮어쓴다. 경조사·관계는 trim, 금액은 숫자 셀로 쓴다. 2.4에서 `WRITE_EXTERNAL_STORAGE` 권한을 뺐으므로 Android 11(API 30) 이상에서만 통한다(아래 "알려진 문제").
 
 ### 광고
 
-AdMob App ID는 `AndroidManifest.xml`에 있고, 배너 단위 ID는 `content_main.xml`이 참조하는 `@string/ad_unit_id_rev`(운영 ID)다. Google 테스트 배너 ID는 `strings.xml`에 주석으로 있다. 에뮬레이터에서는 운영 ID여도 "Test Ad"가 표시된다.
+AdMob App ID는 `AndroidManifest.xml`에 있고, 광고 단위 ID는 `@string/ad_unit_id_rev`(배너 운영 ID) 하나를 두 곳에서 쓴다.
+
+- 하단 배너(320x50): `activity_main.xml`의 `AdView`, 하단 메뉴 바로 위.
+- 종료 확인 창(300x250, `ExitAdDialog` + `dialog_exit.xml`): 창을 열자마자 보이도록 `MainActivity` 시작 3초 뒤에 미리 불러 두고, 창을 열 때마다 같은 `AdView`를 떼었다 붙여 다시 쓴다. 3초 안에 종료하면 그때 불러오고, 불러오지 못했으면 광고 자리를 접고 창만 띄운다. 창 밖을 눌러도 닫히지 않는다. M2 앱(`~/Documents/M2`)과 같은 방식이다.
+- **디버그 빌드는 `app/src/debug/res/values/ad_ids.xml`이 `ad_unit_id_rev`를 Google 테스트 ID로 덮어쓴다.** 릴리스 빌드에만 운영 ID가 들어간다. 광고 단위를 새로 추가하면 이 파일에도 테스트 ID를 같이 넣는다.
 
 `play-services-ads`는 23.6.0이다. 24.0.0부터 minSdk 23(25.x는 24)을 요구하므로, minSdk 21을 유지하는 동안은 23.x가 상한이다. 이전에 쓰던 21.3.0은 Play SDK Index에서 Play Console 게시 차단 대상으로 표시되어 있었다.
 
-### 쓰이지 않는 레거시
+### 쓰이지 않는 리소스
 
-아래 파일은 고쳐도 화면에 반영되지 않는다: `layout/activity_inout.xml`, `layout/asform.xml`, `values/array.xml`, `InItemClickListener.java`, `@string/ad_unit_id`. `layout/nav_header.xml`과 `menu/activity_main_drawer.xml`은 주석 처리된 NavigationView에서만 참조한다(2.4에서 내비게이션 드로어 제거).
+`mipmap-*/ic_launcher*`와 `drawable/ic_launcher_*`(manifest는 `@drawable/icon`을 쓴다), `font/pretendard_family.xml`, `@string/app_name`은 참조되지 않는다.
 
 ## 알려진 문제
 
 코드를 읽고 확인한 내용이며, 고치면 이 목록에서 지운다.
 
-- `ORDER BY DATE desc`가 문자열 정렬이라 실제 날짜 순서와 다르다(예: `2025/9/3`이 `2025/10/1`과 `2025/9/25`보다 위).
-- 금액 입력은 `maxLength="12"`라서 int 범위를 넘는 값이 저장될 수 있다. 그런 항목을 목록에 그릴 때 `Integer.parseInt()`에서 앱이 죽는다.
-- Excel 내보내기는 API 21~29 기기에서 권한이 없어 실패한다. `FileNotFoundException`은 토스트 없이 로그만 남긴다.
+- Excel 내보내기는 API 21~29 기기에서 저장 권한이 없어 실패한다(실패 토스트는 뜬다). 고치려면 MediaStore(API 29+)나 SAF로 저장해야 한다.
