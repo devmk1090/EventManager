@@ -8,9 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class InOutDatabase {
-
 
     public static final String TAG = "InOutDatabase";
 
@@ -20,11 +20,22 @@ public class InOutDatabase {
     // database name
     public static String DATABASE_NAME = "InOut.db";
 
-    // table name for ADD_INFO
+    // IN_INFO = 받은 돈, OUT_INFO = 나간 돈. 두 테이블의 스키마는 같다.
     public static String TABLE_IN_INFO = "IN_INFO";
     public static String TABLE_OUT_INFO = "OUT_INFO";
 
     public static int DATABASE_VERSION = 1;
+
+    /** 경조사별·관계별 합계 한 줄 */
+    public static class GroupSum {
+        public final String label;
+        public final long amount;
+
+        GroupSum(String label, long amount) {
+            this.label = label;
+            this.amount = amount;
+        }
+    }
 
     // helper class defined
     private InOutDatabase.DatabaseHelper dbHelper;
@@ -32,7 +43,7 @@ public class InOutDatabase {
     // database object
     private SQLiteDatabase db;
 
-    private Context context;
+    private final Context context;
 
     private InOutDatabase(Context context){
         this.context = context;
@@ -41,13 +52,16 @@ public class InOutDatabase {
     // singleton 패턴으로 구현 . 여러번 호출하더라도 최초에 생성된 객체를 반환하는 디자인 패턴
     public static InOutDatabase getInstance(Context context){
         if (database == null) {
-            database = new InOutDatabase(context);
+            database = new InOutDatabase(context.getApplicationContext());
         }
         return database;
     }
 
-    // open database
+    // open database (이미 열려 있으면 그대로 쓴다)
     public boolean open(){
+        if (db != null && db.isOpen()) {
+            return true;
+        }
         println("opening database [" + DATABASE_NAME + "].");
 
         dbHelper = new InOutDatabase.DatabaseHelper(context);
@@ -130,370 +144,156 @@ public class InOutDatabase {
             }
         }
     }
-    public boolean insertRecordIn (String name, String date, String category, String relation, String money, String memo){
-        return insertRecord(TABLE_IN_INFO, name, date, category, relation, money, memo);
+
+    private static String table(Entry.Direction direction) {
+        return direction == Entry.Direction.RECEIVED ? TABLE_IN_INFO : TABLE_OUT_INFO;
     }
-    public boolean insertRecordOut (String name, String date, String category, String relation, String money, String memo){
-        return insertRecord(TABLE_OUT_INFO, name, date, category, relation, money, memo);
+
+    /** 받은 돈·나간 돈 내역 전부. 순서는 EntryList.sort로 정한다. */
+    public List<Entry> selectAll() {
+        List<Entry> result = new ArrayList<>();
+        readInto(result, Entry.Direction.RECEIVED);
+        readInto(result, Entry.Direction.SENT);
+        return result;
     }
+
+    private void readInto(List<Entry> out, Entry.Direction direction) {
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION, MONEY, MEMO from " + table(direction), null);
+            while (cursor.moveToNext()) {
+                out.add(new Entry(cursor.getInt(0), direction, cursor.getString(1), cursor.getString(2),
+                        cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6)));
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "Exception in executing select SQL.", ex);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
     // 값을 SQL 문자열에 이어 붙이지 않고 ContentValues로 넘긴다(이름·메모에 ' 가 있어도 저장되도록).
     // 저장되는 컬럼과 값(모두 TEXT)은 이전 방식과 같다.
-    private boolean insertRecord (String table, String name, String date, String category, String relation, String money, String memo){
-        ContentValues cv = new ContentValues();
-        cv.put("NAME", name);
-        cv.put("DATE", date);
-        cv.put("CATEGORY", category);
-        cv.put("RELATION", relation);
-        cv.put("MONEY", money);
-        cv.put("MEMO", memo);
+    public boolean insert(Entry.Direction direction, String name, String date, String category, String relation, String money, String memo) {
         try {
-            return db.insertOrThrow(table, null, cv) != -1;
+            return db.insertOrThrow(table(direction), null, values(name, date, category, relation, money, memo)) != -1;
         } catch (Exception ex){
             Log.e(TAG, "Exception in executing insert SQL.", ex);
             return false;
         }
     }
 
-    public ArrayList<InList> selectAllIn() {
-        ArrayList<InList> result = new ArrayList<InList>();
-        try{
-            Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION, MONEY, MEMO from " + TABLE_IN_INFO + " order by DATE desc", null);
-            for(int i = 0; i < cursor.getCount(); i++) {
-                cursor.moveToNext();
-                int id = cursor.getInt(0);
-                String name = cursor.getString(1);
-                String date = cursor.getString(2);
-                String category = cursor.getString(3);
-                String relation = cursor.getString(4);
-                String money = cursor.getString(5);
-                String memo = cursor.getString(6);
+    public boolean update(Entry.Direction direction, int id, String name, String date, String category, String relation, String money, String memo) {
+        try {
+            return db.update(table(direction), values(name, date, category, relation, money, memo), "_id=" + id, null) > 0;
+        } catch (Exception ex) {
+            Log.e(TAG, "Exception in executing update SQL.", ex);
+            return false;
+        }
+    }
 
-                InList info = new InList(id, name, date, category, relation, money, memo);
-                result.add(info);
+    public boolean delete(Entry.Direction direction, int id) {
+        try {
+            return db.delete(table(direction), " _id = " + id, null) > 0;
+        } catch (Exception ex) {
+            Log.e(TAG, "Exception in executing delete SQL.", ex);
+            return false;
+        }
+    }
+
+    private static ContentValues values(String name, String date, String category, String relation, String money, String memo) {
+        ContentValues cv = new ContentValues();
+        cv.put("NAME", name);
+        cv.put("DATE", date);
+        cv.put("CATEGORY", category);
+        cv.put("RELATION", relation);
+        cv.put("MONEY", money);
+        cv.put("MEMO", memo);
+        return cv;
+    }
+
+    /** 추가할 때: 같은 (이름, 날짜, 경조사, 관계) 내역이 이미 있는지 */
+    public boolean exists(Entry.Direction direction, String name, String date, String category, String relation) {
+        return hasOtherItem(direction, -1, name, date, category, relation);
+    }
+
+    /** 수정할 때: 자기 자신(id)을 뺀 다른 행에 같은 (이름, 날짜, 경조사, 관계)가 있는지 */
+    public boolean hasOtherItem(Entry.Direction direction, int id, String name, String date, String category, String relation) {
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("select _id from " + table(direction) + " where _id <> " + id
+                            + " and NAME = ? and DATE = ? and CATEGORY = ? and RELATION = ? limit 1",
+                    new String[]{name, date, category, relation});
+            return cursor.moveToFirst();
+        } catch (Exception ex) {
+            Log.e(TAG, "Exception in executing select SQL.", ex);
+            return false;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    /** 합계 금액 */
+    public long sum(Entry.Direction direction) {
+        return queryLong("select SUM(MONEY) from " + table(direction));
+    }
+
+    /** 내역 수 */
+    public long count(Entry.Direction direction) {
+        return queryLong("select COUNT(*) from " + table(direction));
+    }
+
+    /** 경조사별 합계, 금액 큰 순 (0원 항목은 뺀다) */
+    public List<GroupSum> sumByCategory(Entry.Direction direction) {
+        return sumBy(direction, "CATEGORY");
+    }
+
+    /** 관계별 합계, 금액 큰 순 (0원 항목은 뺀다) */
+    public List<GroupSum> sumByRelation(Entry.Direction direction) {
+        return sumBy(direction, "RELATION");
+    }
+
+    // 저장값에 앞뒤 공백이 있으므로(" 결혼식 ") trim해서 묶는다. column은 상수만 넘어온다.
+    private List<GroupSum> sumBy(Entry.Direction direction, String column) {
+        List<GroupSum> result = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("select trim(" + column + ") as label, SUM(MONEY) as total from " + table(direction)
+                    + " group by label having total > 0 order by total desc", null);
+            while (cursor.moveToNext()) {
+                String label = cursor.isNull(0) || cursor.getString(0).isEmpty() ? "미지정" : cursor.getString(0);
+                result.add(new GroupSum(label, cursor.getLong(1)));
             }
         } catch (Exception ex) {
-            Log.e(TAG, "Exception in executing insert SQL.", ex);
+            Log.e(TAG, "Exception in executing select SQL.", ex);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         return result;
     }
-    public ArrayList<OutList> selectAllOut() {
-        ArrayList<OutList> result = new ArrayList<OutList>();
-        try{
-            Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION, MONEY, MEMO from " + TABLE_OUT_INFO + " order by DATE desc", null);
-            for(int i = 0; i < cursor.getCount(); i++) {
-                cursor.moveToNext();
-                int id = cursor.getInt(0);
-                String name = cursor.getString(1);
-                String date = cursor.getString(2);
-                String category = cursor.getString(3);
-                String relation = cursor.getString(4);
-                String money = cursor.getString(5);
-                String memo = cursor.getString(6);
 
-                OutList info = new OutList(id, name, date, category, relation, money, memo);
-                result.add(info);
-            }
+    private long queryLong(String sql) {
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(sql, null);
+            return cursor.moveToFirst() && !cursor.isNull(0) ? cursor.getLong(0) : 0;
         } catch (Exception ex) {
-            Log.e(TAG, "Exception in executing insert SQL.", ex);
+            Log.e(TAG, "Exception in executing select SQL.", ex);
+            return 0;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        return result;
     }
 
     private void println(String msg) {
         Log.d(TAG, msg);
-    }
-
-    public String getMoneyIn(int position) {
-        String money = null;
-        Cursor cursor = db.rawQuery("select MONEY from " + TABLE_IN_INFO + " WHERE _id='" + position + "'", null);
-        while (cursor.moveToNext()) {
-            money = cursor.getString(0);
-        }
-        return money;
-    }
-    public String getMoneyOut(int position) {
-        String money = null;
-        Cursor cursor = db.rawQuery("select MONEY from " + TABLE_OUT_INFO + " WHERE _id='" + position + "'", null);
-        while (cursor.moveToNext()) {
-            money = cursor.getString(0);
-        }
-        return money;
-    }
-    public int getAllMoneyIn(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO, null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getAllMoneyOut(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO, null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategoryMarryOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 결혼식 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategoryMarryInMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 결혼식 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategoryFirstBirthOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 돌잔치 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategoryFirstBirthInMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 돌잔치 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategoryFuneralOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 장례식 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategoryFuneralInMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 장례식 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategorySixtyOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 환갑 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategorySixtyInMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 환갑 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategorySeventyOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 칠순 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategorySeventyInMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 칠순 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategoryBirthdayOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 생일 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategoryBirthdayInMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 생일 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategoryETCOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE CATEGORY=' 기타 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getCategoryETCInMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE CATEGORY=' 기타 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-
-    public int getRelationFriendOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 친구 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getRelationFriendInMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 친구 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getRelationRelativeOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 친척 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getRelationRelativeInMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 친척 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getRelationJobOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 회사 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getRelationJobInMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 회사 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getRelationUniversityOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 대학교 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getRelationUniversityInMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 대학교 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getRelationFamilyOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 가족 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getRelationFamilyInMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 가족 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getRelationKnowingOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 지인 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getRelationKnowingInMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 지인 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getRelationETCOutMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_OUT_INFO + " WHERE RELATION=' 기타 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public int getRelationETCInMoney(){
-        int total = 0;
-        Cursor cursor = db.rawQuery("select SUM(MONEY) from " + TABLE_IN_INFO + " WHERE RELATION=' 기타 ' ", null);
-        if(cursor.moveToFirst())
-            total = cursor.getInt(0);
-        return total;
-    }
-    public boolean deleteDataIn (long id) {
-        return db.delete(TABLE_IN_INFO, " _id = " + id, null) > 0;
-    }
-    public boolean deleteDataOut (long id) {
-        return db.delete(TABLE_OUT_INFO, " _id = " + id, null) > 0;
-    }
-    public boolean updateIn(int id, String name, String date, String category, String relation, String money, String memo) {
-        ContentValues cv = new ContentValues();
-        cv.put("NAME", name);
-        cv.put("DATE", date);
-        cv.put("CATEGORY", category);
-        cv.put("RELATION", relation);
-        cv.put("MONEY", money);
-        cv.put("MEMO", memo);
-
-        return db.update(TABLE_IN_INFO, cv, "_id=" + id, null) > 0;
-    }
-    public boolean updateOut (int id, String name, String date, String category, String relation, String money, String memo) {
-
-        ContentValues cv = new ContentValues();
-        cv.put("NAME", name);
-        cv.put("DATE", date);
-        cv.put("CATEGORY", category);
-        cv.put("RELATION", relation);
-        cv.put("MONEY", money);
-        cv.put("MEMO", memo);
-
-        return db.update(TABLE_OUT_INFO, cv, "_id=" + id, null) > 0;
-    }
-    public boolean checkItemIn(String name, String date, String category, String relation) {
-        Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION from " + TABLE_IN_INFO, null);
-        while (cursor.moveToNext()) {
-            if (cursor.getString(1).equals(name) && cursor.getString(2).equals(date)
-                    && cursor.getString(3).equals(category) && cursor.getString(4).equals(relation)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    public boolean checkItemOut(String name, String date, String category, String relation) {
-        Cursor cursor = db.rawQuery("select _id, NAME, DATE, CATEGORY, RELATION from " + TABLE_OUT_INFO, null);
-        while (cursor.moveToNext()) {
-            if (cursor.getString(1).equals(name) && cursor.getString(2).equals(date)
-                    && cursor.getString(3).equals(category) && cursor.getString(4).equals(relation)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    // 수정할 때 자기 자신(id)을 뺀 다른 행에 같은 (이름, 날짜, 경조사, 관계)가 있는지 본다
-    public boolean hasOtherItemIn(int id, String name, String date, String category, String relation) {
-        return hasOtherItem(TABLE_IN_INFO, id, name, date, category, relation);
-    }
-    public boolean hasOtherItemOut(int id, String name, String date, String category, String relation) {
-        return hasOtherItem(TABLE_OUT_INFO, id, name, date, category, relation);
-    }
-    private boolean hasOtherItem(String table, int id, String name, String date, String category, String relation) {
-        Cursor cursor = db.rawQuery("select _id from " + table + " where _id <> " + id
-                        + " and NAME = ? and DATE = ? and CATEGORY = ? and RELATION = ? limit 1",
-                new String[]{name, date, category, relation});
-        try {
-            return cursor.moveToFirst();
-        } finally {
-            cursor.close();
-        }
     }
 }

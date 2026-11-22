@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 디버그 빌드 전용: main의 실서비스 광고 단위 ID를 Google 테스트 ID로 덮어쓴다 (M2 앱과 같은 방식).
+     개발 중 실제 광고 노출·클릭으로 AdMob 계정이 제재받는 것을 막기 위함이다. 릴리스 빌드에는 실서비스 ID가 들어간다. -->
+<resources>
+    <string name="ad_unit_id_rev" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+</resources>

@@ -1,41 +1,178 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-  <!-- Base application theme. -->
-  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-    <!-- Customize your theme here. -->
-    <item name="colorPrimary">@color/colorPrimary</item>
-    <item name="colorPrimaryDark">@color/white</item>
-    <item name="colorAccent">@color/colorAccent</item>
-    <item name="android:statusBarColor">@color/tab_color</item>
-  </style>
-
-  <style name="CustomTextView" parent="android:Widget.TextView">
-    <item name="android:layout_width">wrap_content</item>
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:textColor">@color/black</item>
+  <!-- 앱 테마: Material3 + 시안 B 팔레트. 글꼴은 앱에 들어 있는 Pretendard -->
+  <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
+    <item name="colorPrimary">@color/accent</item>
+    <item name="colorOnPrimary">@color/white</item>
+    <item name="colorPrimaryContainer">@color/accent_soft</item>
+    <item name="colorOnPrimaryContainer">@color/accent</item>
+    <item name="colorSecondary">@color/ink</item>
+    <item name="colorOnSecondary">@color/white</item>
+    <item name="colorSurface">@color/surface</item>
+    <item name="colorOnSurface">@color/ink</item>
+    <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+    <item name="colorOutline">@color/divider</item>
+    <item name="android:colorBackground">@color/background</item>
+    <item name="colorOnBackground">@color/ink</item>
+    <item name="android:textColorPrimary">@color/ink</item>
+    <item name="android:textColorSecondary">@color/text_secondary</item>
+    <item name="android:textColorHint">@color/text_tertiary</item>
     <item name="android:fontFamily">@font/pretendard_regular</item>
-    <item name="android:textSize">15sp</item>
+    <item name="fontFamily">@font/pretendard_regular</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="android:navigationBarColor">@android:color/transparent</item>
+    <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
+    <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
   </style>
 
-  <style name="TabLayoutTextStyle" parent="Widget.Design.TabLayout">
-    <item name="android:textSize">20sp</item>
-    <item name="tabSelectedTextColor">@color/white</item>
+  <!-- 스플래시는 사진 위라 상태 표시줄 아이콘을 밝게 둔다 (예전 모습 유지) -->
+  <style name="SplashTheme" parent="AppTheme">
+    <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
+    <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+  </style>
+
+  <!-- 글자 스타일: style="@style/Text.…"로 TextView에 붙인다.
+       글꼴은 android:fontFamily와 fontFamily를 함께 줘야 한다. 테마의 fontFamily(app)를 AppCompat이 나중에 덮어쓰기 때문 -->
+  <style name="Text">
+    <item name="android:fontFamily">@font/pretendard_regular</item>
+    <item name="fontFamily">@font/pretendard_regular</item>
+    <item name="android:textColor">@color/ink</item>
+    <item name="android:textSize">16sp</item>
+  </style>
+
+  <style name="Text.Title">
+    <item name="android:fontFamily">@font/pretendard_bold</item>
+    <item name="fontFamily">@font/pretendard_bold</item>
+    <item name="android:textSize">24sp</item>
+    <item name="android:letterSpacing">-0.02</item>
+  </style>
+
+  <style name="Text.Section">
+    <item name="android:fontFamily">@font/pretendard_bold</item>
+    <item name="fontFamily">@font/pretendard_bold</item>
+    <item name="android:textSize">16sp</item>
+  </style>
+
+  <style name="Text.Strong">
+    <item name="android:fontFamily">@font/pretendard_semibold</item>
+    <item name="fontFamily">@font/pretendard_semibold</item>
+  </style>
+
+  <style name="Text.Label">
+    <item name="android:textColor">@color/text_secondary</item>
+    <item name="android:textSize">14sp</item>
+  </style>
+
+  <style name="Text.Caption">
+    <item name="android:textColor">@color/text_tertiary</item>
+    <item name="android:textSize">13sp</item>
+  </style>
+
+  <style name="Text.Amount">
+    <item name="android:fontFamily">@font/pretendard_bold</item>
+    <item name="fontFamily">@font/pretendard_bold</item>
+    <item name="android:fontFeatureSettings">tnum</item>
+  </style>
+
+  <!-- 칩: 내역·통계의 필터 (선택 = 먹색) -->
+  <style name="Widget.App.Chip.Filter" parent="Widget.Material3.Chip.Filter">
+    <item name="chipBackgroundColor">@color/chip_filter_bg</item>
+    <item name="android:textColor">@color/chip_filter_text</item>
+    <item name="chipStrokeWidth">0dp</item>
+    <item name="chipCornerRadius">22dp</item>
+    <item name="chipMinHeight">44dp</item>
+    <item name="chipStartPadding">8dp</item>
+    <item name="chipEndPadding">8dp</item>
+    <item name="checkedIconVisible">false</item>
+    <item name="chipIconVisible">false</item>
+    <item name="closeIconVisible">false</item>
+    <item name="ensureMinTouchTargetSize">false</item>
+    <item name="android:fontFamily">@font/pretendard_semibold</item>
+    <item name="fontFamily">@font/pretendard_semibold</item>
+    <item name="android:textAppearance">@style/TextAppearance.App.Chip</item>
+  </style>
+
+  <!-- 칩: 입력 화면의 경조사·관계 선택 (선택 = 청록) -->
+  <style name="Widget.App.Chip.Choice" parent="Widget.App.Chip.Filter">
+    <item name="chipBackgroundColor">@color/chip_choice_bg</item>
+    <item name="android:textColor">@color/chip_choice_text</item>
+  </style>
+
+  <style name="TextAppearance.App.Chip" parent="TextAppearance.Material3.LabelLarge">
+    <item name="android:textSize">15sp</item>
+    <item name="android:letterSpacing">0</item>
+    <item name="fontFamily">@font/pretendard_semibold</item>
+    <item name="android:fontFamily">@font/pretendard_semibold</item>
+  </style>
+
+  <!-- 하단 메뉴: 활성 표시(알약 배경) 없이 색으로만 구분 -->
+  <style name="Widget.App.BottomNav" parent="Widget.Material3.BottomNavigationView">
+    <item name="android:background">@color/surface</item>
+    <item name="backgroundTint">@color/surface</item>
+    <item name="elevation">0dp</item>
+    <item name="android:minHeight">64dp</item>
+    <item name="itemIconTint">@color/nav_item</item>
+    <item name="itemTextColor">@color/nav_item</item>
+    <item name="itemActiveIndicatorStyle">@style/Widget.App.BottomNav.Indicator</item>
+    <item name="itemTextAppearanceActive">@style/TextAppearance.App.NavLabel.Active</item>
+    <item name="itemTextAppearanceInactive">@style/TextAppearance.App.NavLabel</item>
+    <item name="labelVisibilityMode">labeled</item>
+  </style>
+
+  <style name="Widget.App.BottomNav.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+    <item name="android:color">@android:color/transparent</item>
+  </style>
+
+  <style name="TextAppearance.App.NavLabel" parent="TextAppearance.Material3.LabelMedium">
+    <item name="android:textSize">12sp</item>
+    <item name="android:letterSpacing">0</item>
+    <item name="fontFamily">@font/pretendard_regular</item>
+    <item name="android:fontFamily">@font/pretendard_regular</item>
+  </style>
+
+  <style name="TextAppearance.App.NavLabel.Active">
+    <item name="fontFamily">@font/pretendard_semibold</item>
+    <item name="android:fontFamily">@font/pretendard_semibold</item>
+  </style>
+
+  <!-- 버튼 -->
+  <style name="Widget.App.Button.Primary" parent="Widget.Material3.Button">
+    <item name="android:minHeight">56dp</item>
+    <item name="android:insetTop">0dp</item>
+    <item name="android:insetBottom">0dp</item>
+    <item name="cornerRadius">16dp</item>
+    <item name="backgroundTint">@color/accent</item>
+    <item name="android:textColor">@color/white</item>
+    <item name="android:textSize">17sp</item>
+    <item name="android:letterSpacing">0</item>
+    <item name="android:fontFamily">@font/pretendard_bold</item>
     <item name="fontFamily">@font/pretendard_bold</item>
   </style>
 
-  <style name="InOutTitleTextView" parent="Widget.AppCompat.TextView">
-    <item name="android:layout_marginEnd">8dp</item>
-    <item name="android:layout_gravity">center</item>
-    <item name="android:fontFamily">@font/pretendard_regular</item>
-    <item name="android:textSize">15sp</item>
-    <item name="android:textColor">@color/black_5</item>
+  <style name="Widget.App.Button.Secondary" parent="Widget.App.Button.Primary">
+    <item name="backgroundTint">@color/background</item>
+    <item name="android:textColor">@color/ink</item>
   </style>
 
-  <style name="InOutContentEditText" parent="Widget.AppCompat.EditText">
-    <item name="android:layout_marginEnd">8dp</item>
-    <item name="android:layout_gravity">center</item>
+  <style name="Widget.App.Button.Quick" parent="Widget.Material3.Button.TonalButton">
+    <item name="android:minHeight">44dp</item>
+    <item name="android:minWidth">0dp</item>
+    <item name="android:insetTop">0dp</item>
+    <item name="android:insetBottom">0dp</item>
+    <item name="android:paddingStart">0dp</item>
+    <item name="android:paddingEnd">0dp</item>
+    <item name="cornerRadius">12dp</item>
+    <item name="backgroundTint">@color/background</item>
+    <item name="android:textColor">@color/text_chip</item>
+    <item name="android:textSize">14sp</item>
+    <item name="android:letterSpacing">0</item>
     <item name="android:fontFamily">@font/pretendard_semibold</item>
-    <item name="android:textSize">20sp</item>
-    <item name="android:textColorHint">@color/black_9</item>
+    <item name="fontFamily">@font/pretendard_semibold</item>
+  </style>
+
+  <!-- 원형 FAB -->
+  <style name="ShapeAppearance.App.Circle" parent="">
+    <item name="cornerFamily">rounded</item>
+    <item name="cornerSize">50%</item>
   </style>
 </resources>
