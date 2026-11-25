@@ -79,6 +79,46 @@
     <string name="settings_export_title">엑셀 파일로 저장</string>
     <string name="settings_export_desc">모든 내역을 Download 폴더에 저장해요</string>
     <string name="settings_version">앱 버전</string>
+    <string name="settings_section_data">데이터</string>
+    <string name="settings_section_app">앱 정보</string>
+    <string name="settings_backup_title">백업 파일 저장</string>
+    <string name="settings_backup_desc">Google 드라이브나 휴대폰에 파일로 저장해요</string>
+    <string name="settings_restore_title">백업 불러오기</string>
+    <string name="settings_restore_desc">백업 파일의 내역으로 바꿔요</string>
+    <string name="settings_backup_last">마지막 백업: %1$s</string>
+    <string name="settings_guide_title">백업 방법 보기</string>
+    <string name="settings_guide_desc">휴대폰을 바꿔도 내역을 옮길 수 있어요</string>
+    <string name="action_ok">확인</string>
+
+    <!-- 백업 안내 -->
+    <string name="guide_title">백업은 이렇게 해요</string>
+    <string name="guide_intro">내역은 이 휴대폰 안에만 저장돼요. 앱을 지우거나 휴대폰을 바꾸면 내역이 사라질 수 있으니 백업 파일을 Google 드라이브에 저장해 두세요.</string>
+    <string name="guide_step1">설정에서 ‘백업 파일 저장’을 눌러요.</string>
+    <string name="guide_step2">저장 위치를 고르는 창에서 왼쪽 위 메뉴(☰)를 열고 ‘Google 드라이브’를 골라 저장해요.</string>
+    <string name="guide_step3">새 휴대폰에서는 앱을 설치한 뒤 ‘백업 불러오기’에서 그 파일을 고르면 내역이 그대로 돌아와요.</string>
+    <string name="guide_tip">내역을 추가하거나 고쳤다면 다시 저장해 두세요. 백업을 불러오면 지금 내역이 백업 내용으로 바뀌지만, 바로 되돌릴 수도 있어요.</string>
+    <string name="action_backup_now">백업 파일 저장하기</string>
+
+    <!-- 백업·불러오기 -->
+    <string name="backup_working">백업 파일을 저장하고 있어요…</string>
+    <string name="backup_done">백업 파일을 저장했어요</string>
+    <string name="backup_failed">백업 파일을 저장하지 못했어요</string>
+    <string name="restore_checking">백업 파일을 확인하고 있어요…</string>
+    <string name="restore_confirm_title">이 백업으로 바꿀까요?</string>
+    <string name="restore_confirm_message">백업 파일: 받은 돈 %1$d건 · 나간 돈 %2$d건\n마지막 내역: %3$s\n\n지금 내역(받은 돈 %4$d건 · 나간 돈 %5$d건)은 모두 백업 내용으로 바뀌어요. 바꾸기 전 내역은 앱 안에 보관해 두어 바로 되돌릴 수 있어요.</string>
+    <string name="restore_no_date">없음</string>
+    <string name="action_restore_confirm">바꾸기</string>
+    <string name="restore_done_title">백업을 불러왔어요</string>
+    <string name="restore_done_message">받은 돈 %1$d건 · 나간 돈 %2$d건으로 바꿨어요. 잘못 불러왔다면 되돌릴 수 있어요.</string>
+    <string name="action_undo_restore">되돌리기</string>
+    <string name="restore_undone">불러오기 전 내역으로 되돌렸어요</string>
+    <string name="restore_undo_failed">되돌리지 못했어요</string>
+    <string name="restore_failed">백업을 불러오지 못했어요. 지금 내역은 그대로예요.</string>
+    <string name="restore_error_title">백업을 불러올 수 없어요</string>
+    <string name="restore_error_not_backup">이 앱의 백업 파일이 아니에요. 다른 파일을 골라 주세요.</string>
+    <string name="restore_error_newer">더 새 버전의 앱에서 만든 백업이에요. 앱을 업데이트한 뒤 다시 시도해 주세요.</string>
+    <string name="restore_error_damaged">파일이 손상돼서 불러올 수 없어요.</string>
+    <string name="restore_error_read">파일을 읽지 못했어요. 다시 시도해 주세요.</string>
 
     <!-- 엑셀 내보내기 -->
     <string name="export_confirm_title">엑셀 파일로 저장할까요?</string>

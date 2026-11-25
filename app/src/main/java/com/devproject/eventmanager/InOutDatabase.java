@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +77,28 @@ public class InOutDatabase {
         println("closing database [" + DATABASE_NAME + "].");
         db.close();
         database = null;
+    }
+
+    /**
+     * 백업·복원에서 DB 파일을 직접 복사하거나 바꾸는 동안만 연결을 닫아 둔다. 작업이 끝나면(실패해도) 다시 연다.
+     * close()와 달리 싱글톤 객체는 그대로 두므로 화면들이 들고 있는 참조를 계속 쓸 수 있다.
+     * DB 읽기·쓰기와 엇갈리지 않도록 메인 스레드에서만 부른다.
+     */
+    public void withClosedConnection(FileTask task) throws IOException {
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
+        db = null;
+        try {
+            task.run(context.getDatabasePath(DATABASE_NAME));
+        } finally {
+            open();
+        }
+    }
+
+    /** withClosedConnection 안에서 DB 파일을 다루는 작업 */
+    public interface FileTask {
+        void run(File databaseFile) throws IOException;
     }
     public Cursor rawQuery(String SQL) {
         println("\nexecuteQuery called.\n");
