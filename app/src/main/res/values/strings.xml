@@ -1,13 +1,7 @@
 <resources>
-    <string name="app_name">EventManager</string>
+    <string name="app_name">간편한 경조사 관리</string>
     <string name="ad_unit_id_rev">ca-app-pub-1646409874287424/1190929999</string>
     <!--    TEST_ID = "ca-app-pub-3940256099942544/6300978111"-->
-
-    <!-- 스플래시 -->
-    <string name="simple">Simple</string>
-    <string name="event">Event</string>
-    <string name="management">Management</string>
-    <string name="image_ref">Photo by Aaron Burden on Unsplash</string>
 
     <!-- 하단 메뉴 -->
     <string name="nav_history">내역</string>

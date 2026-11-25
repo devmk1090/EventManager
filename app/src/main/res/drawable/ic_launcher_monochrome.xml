@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 13+ 테마 아이콘용 단색 레이어. 시스템이 색을 입히므로 투명도만 의미가 있다.
+     봉투는 덮개 부분을 뺀 몸통을 진하게, 덮개를 반투명하게 그려 접힌 모양이 보이게 한다.
+     좌표와 변환은 ic_launcher_foreground.xml과 같다. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.140625"
+        android:scaleY="0.140625"
+        android:translateX="18"
+        android:translateY="18">
+        <group
+            android:pivotX="256"
+            android:pivotY="256"
+            android:rotation="-8">
+            <!-- 봉투 몸통 (덮개 부분 제외) -->
+            <path
+                android:fillColor="#FFFFFFFF"
+                android:pathData="M154.2,76L256,172L357.8,76A14,14 0,0 1,362 86V426A14,14 0,0 1,348 440H164A14,14 0,0 1,150 426V86A14,14 0,0 1,154.2 76Z" />
+            <!-- 덮개 -->
+            <path
+                android:fillColor="#80FFFFFF"
+                android:pathData="M154.2,76A14,14 0,0 1,164 72H348A14,14 0,0 1,357.8 76L256,172Z" />
+        </group>
+    </group>
+</vector>

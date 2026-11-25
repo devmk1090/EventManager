@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 앱 아이콘 앞면: 세로로 긴 경조사 봉투(뒷면 덮개)를 살짝 기울인 모양. 바탕은 @color/ic_launcher_background.
+     512×512 스토어 아이콘과 같은 좌표로 그리고, 바깥 그룹이 가운데 72dp 영역에 맞춘다(18 이동, 72/512배). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.140625"
+        android:scaleY="0.140625"
+        android:translateX="18"
+        android:translateY="18">
+        <group
+            android:pivotX="256"
+            android:pivotY="256"
+            android:rotation="-8">
+            <!-- 봉투 -->
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M164,72H348A14,14 0,0 1,362 86V426A14,14 0,0 1,348 440H164A14,14 0,0 1,150 426V86A14,14 0,0 1,164 72Z" />
+            <!-- 덮개 -->
+            <path
+                android:fillColor="#BFE0DA"
+                android:pathData="M154.2,76A14,14 0,0 1,164 72H348A14,14 0,0 1,357.8 76L256,172Z" />
+        </group>
+    </group>
+</vector>

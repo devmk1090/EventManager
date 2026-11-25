@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 스플래시 배경 (예전 색 유지) -->
-    <color name="colorPrimaryDark">#948686</color>
-
     <!-- 시안 B 팔레트 -->
     <color name="accent">#0F766E</color>
     <color name="accent_soft">#E2EFEE</color>
@@ -16,4 +13,7 @@
     <color name="track">#EEF0F3</color>
     <color name="avatar_sent">#EEF0F3</color>
     <color name="white">#FFFFFF</color>
+
+    <!-- 앱 아이콘 바탕 (적응형 아이콘 background) -->
+    <color name="ic_launcher_background">#0F766E</color>
 </resources>
