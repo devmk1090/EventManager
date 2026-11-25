@@ -43,7 +43,7 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 |---|---|---|
 | 내역 | `HistoryFragment` | 합계 카드, 전체/받은 돈/나간 돈 필터, 이름 검색, 월별 목록 |
 | 통계 | `StatisticsFragment` | 나간 돈/받은 돈 합계와 경조사별·관계별 막대 |
-| 설정 | `SettingsFragment` | 엑셀 내보내기, 앱 버전 |
+| 설정 | `SettingsFragment` | 백업 파일 저장·불러오기·백업 방법 안내, 엑셀 내보내기, 앱 버전 |
 
 내역의 + 버튼은 `EntryFormActivity`(추가, 보냄/받음 선택), 목록 항목을 누르면 같은 화면이 수정 모드로 열린다(오른쪽 위 휴지통으로 삭제). 엑셀 내보내기는 내역 상단 아이콘과 설정에서 `ExcelExporter.confirmAndExport()`를 부른다.
 
@@ -89,6 +89,15 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 - manifest는 `@mipmap/ic_launcher`(`roundIcon`은 `ic_launcher_round`)를 쓴다. 모양은 세로로 긴 경조사 봉투의 뒷면(덮개)을 살짝 기울인 것이다.
 - API 26 이상은 `mipmap-anydpi-v26`의 적응형 아이콘이다. 바탕은 `@color/ic_launcher_background`, 앞면은 `drawable/ic_launcher_foreground.xml`, Android 13 이상의 테마 아이콘은 `drawable/ic_launcher_monochrome.xml`(덮개만 반투명)을 쓴다. 두 벡터는 512×512 스토어 아이콘과 같은 좌표로 그리고, 바깥 그룹(18 이동, 0.140625배)으로 가운데 72dp 안에 넣는다.
 - API 21~25는 `mipmap-*dpi`의 PNG(둥근 사각형 `ic_launcher`, 원형 `ic_launcher_round`)를 쓴다. 모양을 바꾸면 벡터 두 개, PNG 10장, Play 스토어 아이콘을 함께 바꾼다.
+
+### 백업·불러오기 (`DatabaseBackup`)
+
+- DB 파일(`InOut.db`)을 통째로 복사한다. 저장하거나 불러올 위치는 시스템 파일 창(SAF, `CreateDocument`/`OpenDocument`)에서 사용자가 고르므로 권한이나 로그인이 필요 없다. Google 드라이브는 드라이브 앱이 그 창에 나와서 쓸 수 있다. 기본 파일 이름은 `경조사 백업 yyyy-MM-dd.db`이고, 이름·확장자가 바뀐 파일도 고를 수 있게 열 때는 모든 파일(`*/*`)을 보여 준다.
+- 불러올 때는 앱 캐시로 복사한 뒤 내용으로 검사한다: SQLite 머리글, `user_version`(1 이상 `DATABASE_VERSION` 이하. 더 높으면 새 버전 앱의 백업이라 거절), 두 테이블과 필수 컬럼, `PRAGMA quick_check`. 통과하면 백업과 지금 데이터의 건수, 백업의 마지막 날짜를 보여 주고 확인을 받아 바꾼다.
+- 바꾸기 직전 DB는 `noBackupFilesDir/before-restore.db`에 보관하고 완료 창의 "되돌리기"로 되돌린다(다음 불러오기 때 덮어쓴다). 파일을 바꾸다 실패하면 원래 파일로 되돌린다.
+- 파일 읽기·쓰기는 백그라운드 스레드 하나에서, DB 연결을 닫고 파일을 복사·교체하는 일은 메인 스레드에서 `InOutDatabase.withClosedConnection()`으로 한다. 싱글톤을 비우는 `close()`와 달리 객체를 그대로 두므로 화면들이 들고 있는 참조가 계속 산다. 내역·통계 탭은 다시 보일 때 DB를 새로 읽는다.
+- DB 스키마를 바꿔 `DATABASE_VERSION`을 올리면 예전 백업은 불러온 뒤 `onUpgrade`를 거친다. 마이그레이션은 예전 백업 파일에도 맞아야 한다.
+- 처음 "백업 파일 저장"을 누르면 안내 시트(`sheet_backup_guide.xml`, 단계 줄은 `item_guide_step.xml`)를 먼저 띄우고, 그 뒤로는 바로 저장 창을 연다. 설정의 "백업 방법 보기"로 언제든 다시 볼 수 있다. 안내를 봤는지와 마지막 백업 시각은 SharedPreferences `backup`(`guide_shown`, `last_backup`)에 두고, 마지막 백업 날짜를 백업 항목 설명에 보여 준다.
 
 ### Excel 내보내기 (`ExcelExporter`)
 
