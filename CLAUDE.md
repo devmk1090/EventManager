@@ -37,7 +37,7 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 
 ### 화면 구성
 
-`SplashScreen`(약 2.5초) → `MainActivity`. `MainActivity`는 하단 메뉴(`BottomNavigationView`, `menu/bottom_nav.xml`)와 그 위의 AdMob 배너를 가지며, 세 Fragment를 한 번에 붙여 두고 숨김/보임으로 전환한다.
+`SplashScreen`(청록 바탕에 봉투 아이콘과 앱 이름, 약 2.5초. 화면을 벗어나면 넘어가지 않고 돌아오면 다시 기다린다) → `MainActivity`. `MainActivity`는 하단 메뉴(`BottomNavigationView`, `menu/bottom_nav.xml`)와 그 위의 AdMob 배너를 가지며, 세 Fragment를 한 번에 붙여 두고 숨김/보임으로 전환한다.
 
 | 하단 메뉴 | Fragment | 내용 |
 |---|---|---|
@@ -75,7 +75,7 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 
 ### 테마·스타일
 
-- `AppTheme`은 `Theme.Material3.Light.NoActionBar`에 시안 B 팔레트(`colors.xml`: 먹색 `ink`, 청록 `accent`, 바탕 `background`)를 넣은 것이다. 스플래시만 `SplashTheme`(상태 표시줄 아이콘 밝게)이다.
+- `AppTheme`은 `Theme.Material3.Light.NoActionBar`에 시안 B 팔레트(`colors.xml`: 먹색 `ink`, 청록 `accent`, 바탕 `background`)를 넣은 것이다. 스플래시만 `SplashTheme`(청록 바탕, 상태 표시줄 아이콘 밝게)이다. 이 바탕색이 Android 12+ 시스템 시작 화면의 배경이 되므로, `activity_splashscreen.xml`은 아이콘을 시스템 화면과 같은 크기로 화면 한가운데에 두어 두 화면이 이어져 보이게 한다. 아이콘 바탕색이 창 바탕색과 같으면 시스템이 바탕 없이 앞면만 1.2배로 그리므로 상자는 288dp다(바탕색을 바꾸면 240dp로 줄어든다). M3 대화상자(`MaterialAlertDialogBuilder`)는 기본 표면색이 보라빛이라 `colorSurfaceContainer*`를 모두 `surface`(흰색)로 덮고 `elevationOverlayEnabled`를 끈다.
 - 글자는 `style="@style/Text.…"`(`Title`, `Section`, `Strong`, `Label`, `Caption`, `Amount`)로 맞춘다. **글꼴을 바꾸는 스타일·뷰에는 `android:fontFamily`와 `fontFamily`(app)를 함께 지정해야 한다.** 테마의 `fontFamily`(app)를 AppCompat이 나중에 덮어써서, `android:fontFamily`만 주면 굵은 글꼴이 적용되지 않는다.
 - 금액은 `Text.Amount`(굵게, `tnum` 고정폭 숫자). 받은 돈은 `+`와 청록, 나간 돈은 `−`(U+2212)와 먹색이다.
 - 같은 달 내역은 흰 카드 하나로 보이도록 `EntryAdapter`가 줄마다 `bg_card_top/middle/bottom/single`을 고른다.
@@ -83,6 +83,12 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 ### 시스템 UI (targetSdk 36)
 
 - 모든 Activity가 `WindowCompat.enableEdgeToEdge()`를 쓴다. `MainActivity`는 루트에 상태 표시줄만큼 위 여백을 주고, 아래 여백은 `BottomNavigationView`가 스스로 준다. `EntryFormActivity`는 아래를 내비게이션 바와 키보드 중 큰 쪽만큼 띄운다(manifest `adjustResize`).
+
+### 앱 아이콘
+
+- manifest는 `@mipmap/ic_launcher`(`roundIcon`은 `ic_launcher_round`)를 쓴다. 모양은 세로로 긴 경조사 봉투의 뒷면(덮개)을 살짝 기울인 것이다.
+- API 26 이상은 `mipmap-anydpi-v26`의 적응형 아이콘이다. 바탕은 `@color/ic_launcher_background`, 앞면은 `drawable/ic_launcher_foreground.xml`, Android 13 이상의 테마 아이콘은 `drawable/ic_launcher_monochrome.xml`(덮개만 반투명)을 쓴다. 두 벡터는 512×512 스토어 아이콘과 같은 좌표로 그리고, 바깥 그룹(18 이동, 0.140625배)으로 가운데 72dp 안에 넣는다.
+- API 21~25는 `mipmap-*dpi`의 PNG(둥근 사각형 `ic_launcher`, 원형 `ic_launcher_round`)를 쓴다. 모양을 바꾸면 벡터 두 개, PNG 10장, Play 스토어 아이콘을 함께 바꾼다.
 
 ### Excel 내보내기 (`ExcelExporter`)
 
@@ -100,7 +106,7 @@ AdMob App ID는 `AndroidManifest.xml`에 있고, 광고 단위 ID는 `@string/ad
 
 ### 쓰이지 않는 리소스
 
-`mipmap-*/ic_launcher*`와 `drawable/ic_launcher_*`(manifest는 `@drawable/icon`을 쓴다), `font/pretendard_family.xml`, `@string/app_name`은 참조되지 않는다.
+`font/pretendard_family.xml`은 참조되지 않는다.
 
 ## 알려진 문제
 
