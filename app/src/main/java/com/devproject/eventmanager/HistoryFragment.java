@@ -42,7 +42,6 @@ public class HistoryFragment extends Fragment implements EntryAdapter.Listener {
         searchInput = view.findViewById(R.id.search_input);
         view.findViewById(R.id.btn_search).setOnClickListener(v -> openSearch());
         view.findViewById(R.id.btn_search_close).setOnClickListener(v -> closeSearch());
-        view.findViewById(R.id.btn_export).setOnClickListener(v -> ExcelExporter.confirmAndExport(requireContext()));
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -93,8 +92,8 @@ public class HistoryFragment extends Fragment implements EntryAdapter.Listener {
     private void reload() {
         entries = database.selectAll();
         EntryList.sort(entries);
-        receivedTotal = database.sum(Entry.Direction.RECEIVED);
-        sentTotal = database.sum(Entry.Direction.SENT);
+        receivedTotal = EntryStats.sum(entries, Entry.Direction.RECEIVED);
+        sentTotal = EntryStats.sum(entries, Entry.Direction.SENT);
         render();
     }
 

@@ -1,7 +1,10 @@
 package com.devproject.eventmanager;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -18,15 +21,18 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 
-/** 설정 탭: 백업 파일 저장·불러오기와 안내, 엑셀 내보내기, 앱 버전. */
+/** 설정 탭: 백업 파일 저장·보내기·불러오기와 안내, 엑셀 내보내기, 앱 버전. */
 public class SettingsFragment extends Fragment {
 
     private static final String PREFS = "backup";
@@ -42,6 +48,8 @@ public class SettingsFragment extends Fragment {
             new ActivityResultContracts.CreateDocument(DatabaseBackup.MIME_TYPE), this::saveBackup);
     private final ActivityResultLauncher<String[]> openBackup = registerForActivityResult(
             new ActivityResultContracts.OpenDocument(), this::inspectBackup);
+    private final ActivityResultLauncher<String> createExcel = registerForActivityResult(
+            new ActivityResultContracts.CreateDocument(ExcelExporter.MIME_TYPE), this::saveExcel);
 
     private AlertDialog progress;
     private TextView backupDesc;
@@ -52,10 +60,12 @@ public class SettingsFragment extends Fragment {
         backupDesc = view.findViewById(R.id.backup_desc);
         showLastBackup();
         view.findViewById(R.id.row_backup).setOnClickListener(v -> onBackupClicked());
+        view.findViewById(R.id.row_share).setOnClickListener(v -> shareBackup());
         // 이름이나 확장자를 바꾼 백업 파일도 고를 수 있게 모든 파일을 보여 주고, 내용으로 검사한다
         view.findViewById(R.id.row_restore).setOnClickListener(v -> openBackup.launch(new String[]{"*/*"}));
         view.findViewById(R.id.row_guide).setOnClickListener(v -> showGuide());
-        view.findViewById(R.id.row_export).setOnClickListener(v -> ExcelExporter.confirmAndExport(requireContext()));
+        view.findViewById(R.id.row_export).setOnClickListener(v ->
+                createExcel.launch(ExcelExporter.fileName(Calendar.getInstance())));
         ((TextView) view.findViewById(R.id.version_text)).setText(versionName());
         return view;
     }
@@ -130,14 +140,77 @@ public class SettingsFragment extends Fragment {
             ((TextView) row.findViewById(R.id.step_text)).setText(GUIDE_STEPS[i]);
             steps.addView(row);
         }
+        // 드라이브 앱이 없거나 꺼져 있으면 저장 창에 드라이브가 안 나오므로 켜는 방법을 알려 준다
+        boolean driveAvailable = DatabaseBackup.isDriveAvailable(requireContext());
+        view.findViewById(R.id.guide_drive_off).setVisibility(driveAvailable ? View.GONE : View.VISIBLE);
+        view.findViewById(R.id.guide_enable_drive).setOnClickListener(v -> {
+            sheet.dismiss();
+            openDriveInStore();
+        });
         view.findViewById(R.id.guide_backup_now).setOnClickListener(v -> {
             sheet.dismiss();
             launchBackup();
+        });
+        view.findViewById(R.id.guide_share).setOnClickListener(v -> {
+            sheet.dismiss();
+            shareBackup();
         });
         sheet.setContentView(view);
         sheet.getBehavior().setSkipCollapsed(true);
         sheet.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
         sheet.show();
+    }
+
+    /** Play 스토어의 Google 드라이브 페이지. 꺼져 있으면 ‘사용’, 없으면 ‘설치’ 버튼이 나온다. */
+    private void openDriveInStore() {
+        String id = DatabaseBackup.DRIVE_PACKAGE;
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + id)));
+        } catch (ActivityNotFoundException noStore) {
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://play.google.com/store/apps/details?id=" + id)));
+            } catch (ActivityNotFoundException ignored) {
+                // Play 스토어도 브라우저도 없는 기기: 안내 문구만으로 둔다
+            }
+        }
+    }
+
+    // ---- 다른 앱으로 보내기 ----
+
+    /** 백업 파일을 공유 창으로 보낸다 (카카오톡 나에게 보내기, 메일, 드라이브 등). 마지막 백업 날짜는 바꾸지 않는다. */
+    private void shareBackup() {
+        File file;
+        try {
+            file = DatabaseBackup.createShareFile(requireContext());
+        } catch (IOException e) {
+            Toast.makeText(requireContext(), R.string.share_failed, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Uri uri = FileProvider.getUriForFile(requireContext(),
+                requireContext().getPackageName() + DatabaseBackup.SHARE_AUTHORITY_SUFFIX, file);
+        Intent send = new Intent(Intent.ACTION_SEND)
+                .setType(DatabaseBackup.MIME_TYPE)
+                .putExtra(Intent.EXTRA_STREAM, uri)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        send.setClipData(ClipData.newRawUri(file.getName(), uri));
+        startActivity(Intent.createChooser(send, getString(R.string.share_backup_chooser)));
+    }
+
+    // ---- 엑셀 ----
+
+    private void saveExcel(Uri target) {
+        if (target == null) {
+            return; // 파일 창에서 취소
+        }
+        showProgress(R.string.export_working);
+        ExcelExporter.export(requireContext(), target, saved -> {
+            hideProgress();
+            if (isAdded()) {
+                Toast.makeText(requireContext(), saved ? R.string.export_done : R.string.export_failed,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // ---- 불러오기 ----

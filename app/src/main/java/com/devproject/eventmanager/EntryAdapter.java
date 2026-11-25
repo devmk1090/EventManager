@@ -16,7 +16,10 @@ import com.google.android.material.chip.ChipGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-/** 내역 목록: 맨 위 합계 카드, 필터 칩, 그 아래 월 제목과 내역(같은 달은 카드 하나로 보이게). */
+/**
+ * 내역 목록: 맨 위 합계 카드, 필터 칩, 그 아래 월 제목과 내역(같은 달은 카드 하나로 보이게).
+ * 사람별 내역(PersonActivity)에서는 필터 칩 없이 쓴다.
+ */
 class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     interface Listener {
@@ -30,9 +33,10 @@ class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_HEADER = 2;
     private static final int TYPE_ENTRY = 3;
     private static final int TYPE_EMPTY = 4;
-    private static final int FIXED_ITEMS = 2; // 합계 카드 + 필터 칩
 
     private final Listener listener;
+    private final boolean showFilters;
+    private final int fixedItems; // 합계 카드 (+ 필터 칩)
     private long receivedTotal;
     private long sentTotal;
     private EntryList.Filter filter = EntryList.Filter.ALL;
@@ -40,7 +44,13 @@ class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private String emptyMessage = "";
 
     EntryAdapter(Listener listener) {
+        this(listener, true);
+    }
+
+    EntryAdapter(Listener listener, boolean showFilters) {
         this.listener = listener;
+        this.showFilters = showFilters;
+        this.fixedItems = showFilters ? 2 : 1;
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -55,7 +65,7 @@ class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return FIXED_ITEMS + (rows.isEmpty() ? 1 : rows.size());
+        return fixedItems + (rows.isEmpty() ? 1 : rows.size());
     }
 
     @Override
@@ -63,13 +73,13 @@ class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (position == 0) {
             return TYPE_SUMMARY;
         }
-        if (position == 1) {
+        if (showFilters && position == 1) {
             return TYPE_FILTERS;
         }
         if (rows.isEmpty()) {
             return TYPE_EMPTY;
         }
-        return rows.get(position - FIXED_ITEMS).isHeader() ? TYPE_HEADER : TYPE_ENTRY;
+        return rows.get(position - fixedItems).isHeader() ? TYPE_HEADER : TYPE_ENTRY;
     }
 
     @NonNull
@@ -97,9 +107,9 @@ class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if (holder instanceof FiltersHolder) {
             ((FiltersHolder) holder).bind(filter);
         } else if (holder instanceof EntryHolder) {
-            ((EntryHolder) holder).bind(rows.get(position - FIXED_ITEMS));
+            ((EntryHolder) holder).bind(rows.get(position - fixedItems));
         } else if (holder instanceof TextHolder) {
-            String text = rows.isEmpty() ? emptyMessage : rows.get(position - FIXED_ITEMS).header;
+            String text = rows.isEmpty() ? emptyMessage : rows.get(position - fixedItems).header;
             ((TextHolder) holder).text.setText(text);
         }
     }

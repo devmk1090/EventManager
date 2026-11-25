@@ -1,106 +1,85 @@
 package com.devproject.eventmanager;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.os.Environment;
+import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
-/** 모든 내역을 공용 Download 폴더에 .xls로 저장한다. 시트 구성(나간 돈·받은 돈)은 예전과 같다. */
+/**
+ * 모든 내역을 엑셀(.xls)로 저장한다. 시트 구성(나간 돈·받은 돈)과 칸은 예전과 같다.
+ * 저장 위치는 설정에서 시스템 파일 창(SAF)으로 사용자가 고르므로, 저장소 권한 없이 모든 Android 버전에서 된다.
+ */
 final class ExcelExporter {
 
     private static final String TAG = "ExcelExporter";
-    private static final String FILE_NAME = "경조사 엑셀 데이터.xls";
+    static final String MIME_TYPE = "application/vnd.ms-excel";
     private static final String[] HEADERS = {"이름", "날짜", "경조사", "관계", "금액", "메모"};
+
+    private static final Executor IO = Executors.newSingleThreadExecutor();
 
     private ExcelExporter() {}
 
-    static void confirmAndExport(Context context) {
-        new MaterialAlertDialogBuilder(context)
-                .setTitle(R.string.export_confirm_title)
-                .setMessage(R.string.export_confirm_message)
-                .setPositiveButton(R.string.action_export_confirm, (dialog, which) -> {
-                    boolean saved = export(context);
-                    Toast.makeText(context, saved ? R.string.export_done : R.string.export_failed, Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton(R.string.action_cancel, null)
-                .show();
+    /** 기본 파일 이름: "경조사 내역 2026-11-26.xls" */
+    static String fileName(Calendar day) {
+        return String.format(Locale.US, "경조사 내역 %04d-%02d-%02d.xls",
+                day.get(Calendar.YEAR), day.get(Calendar.MONTH) + 1, day.get(Calendar.DAY_OF_MONTH));
     }
 
     /**
-     * 저장에 성공하면 true. 공용 폴더에 java.io.File로 쓰므로 Android 11(API 30) 이상에서만 권한 없이 된다.
-     * 실패하면 false를 돌려주고 호출한 쪽이 실패 토스트를 띄운다.
+     * 모든 내역을 target에 저장한다. DB는 다른 화면처럼 메인 스레드에서 읽고, 엑셀 만들기와 쓰기는 백그라운드에서 한다.
+     * 결과는 메인 스레드로 돌려준다.
      */
-    static boolean export(Context context) {
-        InOutDatabase database = InOutDatabase.getInstance(context);
+    static void export(Context context, Uri target, DatabaseBackup.Callback<Boolean> callback) {
+        Context app = context.getApplicationContext();
+        InOutDatabase database = InOutDatabase.getInstance(app);
         database.open();
-        Workbook workbook = new HSSFWorkbook();
-        try {
-            fillSheet(workbook.createSheet("나간 돈"), database, InOutDatabase.TABLE_OUT_INFO);
-            fillSheet(workbook.createSheet("받은 돈"), database, InOutDatabase.TABLE_IN_INFO);
-
-            File downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            if (!downloads.exists()) {
-                downloads.mkdirs();
-            }
-            File file = new File(downloads, FILE_NAME);
-            if (file.exists()) {
-                file.delete();
-            }
-            try (FileOutputStream out = new FileOutputStream(file)) {
+        List<Entry> entries = database.selectAll();
+        IO.execute(() -> {
+            boolean saved = false;
+            try (Workbook workbook = new HSSFWorkbook();
+                 OutputStream out = DatabaseBackup.openForWrite(app, target)) {
+                fillSheet(workbook.createSheet("나간 돈"), entries, Entry.Direction.SENT);
+                fillSheet(workbook.createSheet("받은 돈"), entries, Entry.Direction.RECEIVED);
                 workbook.write(out);
+                saved = true;
+            } catch (IOException | RuntimeException e) {
+                Log.e(TAG, "엑셀 파일 저장 실패", e);
             }
-            return true;
-        } catch (Exception e) {
-            Log.e(TAG, "엑셀 파일 저장 실패", e);
-            return false;
-        } finally {
-            try {
-                workbook.close();
-            } catch (IOException ignored) {
-                // 닫기 실패는 저장 결과와 무관하다
-            }
-        }
+            boolean result = saved;
+            DatabaseBackup.postToMain(() -> callback.done(result));
+        });
     }
 
-    private static void fillSheet(Sheet sheet, InOutDatabase database, String table) {
+    /** 저장된 순서대로 한 줄씩. 경조사·관계는 앞뒤 공백을 빼고, 금액은 숫자 칸으로 쓴다. */
+    private static void fillSheet(Sheet sheet, List<Entry> entries, Entry.Direction direction) {
         Row header = sheet.createRow(0);
         for (int i = 0; i < HEADERS.length; i++) {
             header.createCell(i).setCellValue(HEADERS[i]);
         }
-        Cursor cursor = database.rawQuery("SELECT NAME, DATE, CATEGORY, RELATION, MONEY, MEMO FROM " + table);
-        if (cursor == null) {
-            return;
-        }
-        try {
-            int rowIndex = 1;
-            while (cursor.moveToNext()) {
-                Row row = sheet.createRow(rowIndex++);
-                row.createCell(0).setCellValue(text(cursor, 0));
-                row.createCell(1).setCellValue(text(cursor, 1));
-                row.createCell(2).setCellValue(text(cursor, 2).trim());
-                row.createCell(3).setCellValue(text(cursor, 3).trim());
-                row.createCell(4).setCellValue((double) MoneyFormat.parse(text(cursor, 4)));
-                row.createCell(5).setCellValue(text(cursor, 5));
+        int rowIndex = 1;
+        for (Entry entry : entries) {
+            if (entry.direction != direction) {
+                continue;
             }
-        } finally {
-            cursor.close();
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(entry.name);
+            row.createCell(1).setCellValue(entry.date);
+            row.createCell(2).setCellValue(entry.categoryLabel());
+            row.createCell(3).setCellValue(entry.relationLabel());
+            row.createCell(4).setCellValue((double) entry.amount());
+            row.createCell(5).setCellValue(entry.memo);
         }
-    }
-
-    private static String text(Cursor cursor, int index) {
-        String value = cursor.getString(index);
-        return value == null ? "" : value;
     }
 }

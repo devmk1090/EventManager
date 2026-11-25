@@ -28,17 +28,6 @@ public class InOutDatabase {
 
     public static int DATABASE_VERSION = 1;
 
-    /** 경조사별·관계별 합계 한 줄 */
-    public static class GroupSum {
-        public final String label;
-        public final long amount;
-
-        GroupSum(String label, long amount) {
-            this.label = label;
-            this.amount = amount;
-        }
-    }
-
     // helper class defined
     private InOutDatabase.DatabaseHelper dbHelper;
 
@@ -261,45 +250,9 @@ public class InOutDatabase {
         }
     }
 
-    /** 합계 금액 */
-    public long sum(Entry.Direction direction) {
-        return queryLong("select SUM(MONEY) from " + table(direction));
-    }
-
-    /** 내역 수 */
+    /** 내역 수. 합계와 경조사별·관계별·사람별 묶음은 selectAll()로 읽어 EntryStats가 계산한다. */
     public long count(Entry.Direction direction) {
         return queryLong("select COUNT(*) from " + table(direction));
-    }
-
-    /** 경조사별 합계, 금액 큰 순 (0원 항목은 뺀다) */
-    public List<GroupSum> sumByCategory(Entry.Direction direction) {
-        return sumBy(direction, "CATEGORY");
-    }
-
-    /** 관계별 합계, 금액 큰 순 (0원 항목은 뺀다) */
-    public List<GroupSum> sumByRelation(Entry.Direction direction) {
-        return sumBy(direction, "RELATION");
-    }
-
-    // 저장값에 앞뒤 공백이 있으므로(" 결혼식 ") trim해서 묶는다. column은 상수만 넘어온다.
-    private List<GroupSum> sumBy(Entry.Direction direction, String column) {
-        List<GroupSum> result = new ArrayList<>();
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery("select trim(" + column + ") as label, SUM(MONEY) as total from " + table(direction)
-                    + " group by label having total > 0 order by total desc", null);
-            while (cursor.moveToNext()) {
-                String label = cursor.isNull(0) || cursor.getString(0).isEmpty() ? "미지정" : cursor.getString(0);
-                result.add(new GroupSum(label, cursor.getLong(1)));
-            }
-        } catch (Exception ex) {
-            Log.e(TAG, "Exception in executing select SQL.", ex);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        return result;
     }
 
     private long queryLong(String sql) {

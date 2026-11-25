@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -75,9 +77,22 @@ public class EntryFormActivity extends AppCompatActivity {
     private ChipGroup relationGroup;
     private View saveButton;
 
+    // 이름이 같은 다른 내역 안내 (이 분과 주고받은 내역)
+    private List<Entry> allEntries = new ArrayList<>();
+    private View personHint;
+    private TextView personHintTitle;
+    private TextView personHintAmounts;
+    private final Handler hintHandler = new Handler(Looper.getMainLooper());
+    private final Runnable hintUpdater = this::updatePersonHint;
+
     public static Intent newEntryIntent(Context context, Entry.Direction direction) {
         return new Intent(context, EntryFormActivity.class)
                 .putExtra(EXTRA_DIRECTION, direction.name());
+    }
+
+    /** 이름을 채운 새 내역 (사람별 화면의 추가 버튼) */
+    public static Intent newEntryIntent(Context context, Entry.Direction direction, String name) {
+        return newEntryIntent(context, direction).putExtra(EXTRA_NAME, name);
     }
 
     public static Intent editIntent(Context context, Entry entry) {
@@ -147,9 +162,70 @@ public class EntryFormActivity extends AppCompatActivity {
             memoInput.setText(orEmpty(intent.getStringExtra(EXTRA_MEMO)));
             long amount = MoneyFormat.parse(intent.getStringExtra(EXTRA_MONEY));
             moneyInput.setText(amount > 0 ? MoneyFormat.digits(amount) : "");
+        } else if (intent.hasExtra(EXTRA_NAME)) {
+            nameInput.setText(orEmpty(intent.getStringExtra(EXTRA_NAME)));
         }
+        setUpPersonHint();
 
         saveButton.setOnClickListener(v -> save());
+    }
+
+    // 사람별 화면에서 내역을 고치고 돌아올 수 있으니 다시 읽는다
+    @Override
+    protected void onResume() {
+        super.onResume();
+        allEntries = database.selectAll();
+        updatePersonHint();
+    }
+
+    @Override
+    protected void onDestroy() {
+        hintHandler.removeCallbacks(hintUpdater);
+        super.onDestroy();
+    }
+
+    /** 이름을 쓰면 잠시 뒤 같은 이름의 다른 내역을 찾아 안내한다 (얼마를 주고받았는지 보고 금액을 정하도록) */
+    private void setUpPersonHint() {
+        personHint = findViewById(R.id.person_hint);
+        personHintTitle = findViewById(R.id.person_hint_title);
+        personHintAmounts = findViewById(R.id.person_hint_amounts);
+        personHint.setOnClickListener(v ->
+                startActivity(PersonActivity.newIntent(this, nameInput.getText().toString())));
+        nameInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                hintHandler.removeCallbacks(hintUpdater);
+                hintHandler.postDelayed(hintUpdater, 250);
+            }
+        });
+    }
+
+    private void updatePersonHint() {
+        if (personHint == null) {
+            return;
+        }
+        List<Entry> others = new ArrayList<>();
+        for (Entry entry : EntryStats.withName(allEntries, nameInput.getText().toString())) {
+            if (editMode && entry.direction == direction && entry.id == entryId) {
+                continue; // 지금 고치고 있는 내역은 빼고
+            }
+            others.add(entry);
+        }
+        if (others.isEmpty()) {
+            personHint.setVisibility(View.GONE);
+            return;
+        }
+        personHintTitle.setText(getString(R.string.person_hint_title, others.size()));
+        personHintAmounts.setText(getString(R.string.person_hint_amounts,
+                MoneyFormat.korean(EntryStats.sum(others, Entry.Direction.RECEIVED)),
+                MoneyFormat.korean(EntryStats.sum(others, Entry.Direction.SENT))));
+        personHint.setVisibility(View.VISIBLE);
     }
 
     private void setUpHeaderAndDirection() {

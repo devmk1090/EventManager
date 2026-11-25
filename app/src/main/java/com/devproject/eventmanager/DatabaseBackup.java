@@ -48,6 +48,13 @@ final class DatabaseBackup {
     private static final String[] TABLES = {InOutDatabase.TABLE_IN_INFO, InOutDatabase.TABLE_OUT_INFO};
     private static final String[] REQUIRED_COLUMNS = {"_ID", "NAME", "DATE", "CATEGORY", "RELATION", "MONEY", "MEMO"};
 
+    /** Google 드라이브 앱. 저장 창에 드라이브가 나오려면 이 앱이 켜져 있어야 한다. */
+    static final String DRIVE_PACKAGE = "com.google.android.apps.docs";
+    /** 드라이브 앱이 시스템 파일 창에 드라이브를 보여 주는 문서 제공자 (매니페스트 queries에 선언) */
+    private static final String DRIVE_DOCUMENTS_AUTHORITY = "com.google.android.apps.docs.storage";
+    /** 다른 앱으로 보낼 백업 파일을 내주는 FileProvider (매니페스트, res/xml/backup_file_paths.xml) */
+    static final String SHARE_AUTHORITY_SUFFIX = ".backupfiles";
+
     private static final Executor IO = Executors.newSingleThreadExecutor();
 
     /** 불러올 수 없는 까닭 */
@@ -123,7 +130,36 @@ final class DatabaseBackup {
         return latest;
     }
 
+    /**
+     * 저장 창에 Google 드라이브가 나올 수 있는지. 드라이브 앱이 없거나 꺼져 있으면 false.
+     * 갤럭시에서 한 번도 열지 않은 기본 드라이브 앱은 "사용할 때까지 꺼 둠" 상태라 저장 창에 나오지 않는다.
+     */
+    static boolean isDriveAvailable(Context context) {
+        return context.getPackageManager().resolveContentProvider(DRIVE_DOCUMENTS_AUTHORITY, 0) != null;
+    }
+
     // ---- 백업 ----
+
+    /**
+     * 다른 앱으로 보낼 백업 파일을 앱 캐시(cache/share)에 만든다. 받는 앱이 나중에 읽을 수 있으므로
+     * 이전에 보낸 파일은 다음에 만들 때 지운다. 메인 스레드에서 부른다.
+     */
+    static File createShareFile(Context context) throws IOException {
+        Context app = context.getApplicationContext();
+        File dir = new File(app.getCacheDir(), "share");
+        if (!dir.isDirectory() && !dir.mkdirs()) {
+            throw new IOException("공유 폴더를 만들 수 없음: " + dir);
+        }
+        File[] old = dir.listFiles();
+        if (old != null) {
+            for (File file : old) {
+                file.delete();
+            }
+        }
+        File file = new File(dir, fileName(Calendar.getInstance()));
+        InOutDatabase.getInstance(app).withClosedConnection(dbFile -> copy(dbFile, file));
+        return file;
+    }
 
     /** 지금 DB를 target에 저장한다. 메인 스레드에서 부르고, 결과도 메인 스레드로 돌려준다. */
     static void save(Context context, Uri target, Callback<Boolean> callback) {
@@ -153,7 +189,8 @@ final class DatabaseBackup {
         });
     }
 
-    private static OutputStream openForWrite(Context context, Uri uri) throws IOException {
+    /** 사용자가 고른 저장 위치(SAF)를 덮어쓰기로 연다. 엑셀 저장도 같이 쓴다. */
+    static OutputStream openForWrite(Context context, Uri uri) throws IOException {
         OutputStream out;
         try {
             out = context.getContentResolver().openOutputStream(uri, "wt");
@@ -374,7 +411,7 @@ final class DatabaseBackup {
         return total;
     }
 
-    private static void postToMain(Runnable runnable) {
+    static void postToMain(Runnable runnable) {
         new Handler(Looper.getMainLooper()).post(runnable);
     }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ‘백업 파일 보내기’로 다른 앱에 넘기는 파일 위치 (DatabaseBackup.createShareFile) -->
+<paths>
+    <cache-path
+        name="backup"
+        path="share/" />
+</paths>

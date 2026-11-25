@@ -13,7 +13,6 @@
     <string name="search_hint">이름으로 검색</string>
     <string name="action_search">이름으로 검색</string>
     <string name="action_close_search">검색 닫기</string>
-    <string name="action_export">엑셀 파일로 저장</string>
     <string name="action_add_entry">내역 추가</string>
     <string name="summary_period">전체 기간</string>
     <string name="received_money">받은 돈</string>
@@ -34,6 +33,7 @@
     <string name="action_close">닫기</string>
     <string name="action_delete">삭제</string>
     <string name="action_cancel">취소</string>
+    <string name="action_back">뒤로</string>
     <string name="label_amount">금액</string>
     <string name="label_name">이름</string>
     <string name="label_date">날짜</string>
@@ -60,13 +60,25 @@
     <string name="delete_confirm_title">이 내역을 삭제할까요?</string>
     <string name="delete_confirm_message">삭제한 내역은 되돌릴 수 없어요.</string>
     <string name="deleted">내역을 삭제했어요</string>
+    <string name="person_hint_title">이 분과 주고받은 내역 %1$d건</string>
+    <string name="person_hint_amounts">받은 돈 %1$s · 나간 돈 %2$s</string>
     <string name="error_delete">삭제하지 못했어요. 다시 시도해 주세요.</string>
 
     <!-- 통계 -->
     <string name="statistics_title">통계</string>
     <string name="by_category">경조사별</string>
     <string name="by_relation">관계별</string>
-    <string name="stats_caption">%1$s · 전체 %2$d건</string>
+    <string name="by_person">사람별</string>
+    <string name="action_see_all">전체 보기</string>
+    <string name="stats_period_all">전체 기간</string>
+    <string name="stats_period_year">%1$d년</string>
+
+    <!-- 사람별 -->
+    <string name="people_caption">%1$s · %2$d명</string>
+    <string name="people_empty_search">‘%1$s’ 이름을 찾지 못했어요.</string>
+    <string name="person_entries_count">주고받은 내역 %1$d건</string>
+    <string name="person_empty">이 분과 주고받은 내역이 없어요.</string>
+    <string name="stats_caption">%1$s · %2$s %3$d건</string>
     <string name="stats_more_than">%1$s보다 %2$s 많아요</string>
     <string name="stats_less_than">%1$s보다 %2$s 적어요</string>
     <string name="stats_same_as">%1$s과 같아요</string>
@@ -77,12 +89,14 @@
     <!-- 설정 -->
     <string name="settings_title">설정</string>
     <string name="settings_export_title">엑셀 파일로 저장</string>
-    <string name="settings_export_desc">모든 내역을 Download 폴더에 저장해요</string>
+    <string name="settings_export_desc">모든 내역을 표로 정리해 엑셀 파일로 저장해요</string>
     <string name="settings_version">앱 버전</string>
     <string name="settings_section_data">데이터</string>
     <string name="settings_section_app">앱 정보</string>
     <string name="settings_backup_title">백업 파일 저장</string>
     <string name="settings_backup_desc">Google 드라이브나 휴대폰에 파일로 저장해요</string>
+    <string name="settings_share_title">백업 파일 보내기</string>
+    <string name="settings_share_desc">카카오톡·메일 등 다른 앱으로 보내 보관해요</string>
     <string name="settings_restore_title">백업 불러오기</string>
     <string name="settings_restore_desc">백업 파일의 내역으로 바꿔요</string>
     <string name="settings_backup_last">마지막 백업: %1$s</string>
@@ -94,15 +108,21 @@
     <string name="guide_title">백업은 이렇게 해요</string>
     <string name="guide_intro">내역은 이 휴대폰 안에만 저장돼요. 앱을 지우거나 휴대폰을 바꾸면 내역이 사라질 수 있으니 백업 파일을 Google 드라이브에 저장해 두세요.</string>
     <string name="guide_step1">설정에서 ‘백업 파일 저장’을 눌러요.</string>
-    <string name="guide_step2">저장 위치를 고르는 창에서 왼쪽 위 메뉴(☰)를 열고 ‘Google 드라이브’를 골라 저장해요.</string>
-    <string name="guide_step3">새 휴대폰에서는 앱을 설치한 뒤 ‘백업 불러오기’에서 그 파일을 고르면 내역이 그대로 돌아와요.</string>
+    <string name="guide_step2">저장 위치를 고르는 창에서 왼쪽 위 메뉴(☰)를 열고 ‘Drive’(Google 드라이브)를 골라 저장해요.</string>
+    <string name="guide_step3">새 휴대폰에서는 앱을 설치한 뒤 ‘백업 불러오기’에서 그 파일을 고르면 내역이 그대로 돌아와요. 카카오톡·메일로 보낸 파일은 먼저 휴대폰에 저장해 두세요.</string>
     <string name="guide_tip">내역을 추가하거나 고쳤다면 다시 저장해 두세요. 백업을 불러오면 지금 내역이 백업 내용으로 바뀌지만, 바로 되돌릴 수도 있어요.</string>
     <string name="action_backup_now">백업 파일 저장하기</string>
+    <string name="action_share_backup">다른 앱으로 보내기</string>
+    <string name="guide_drive_off_title">이 휴대폰은 Google 드라이브가 꺼져 있어요</string>
+    <string name="guide_drive_off_message">드라이브를 켜고 한 번 열면 저장 위치에 나타나요. 드라이브 없이도 아래 ‘다른 앱으로 보내기’로 카카오톡이나 메일에 보관할 수 있어요.</string>
+    <string name="action_enable_drive">Google 드라이브 켜기</string>
 
     <!-- 백업·불러오기 -->
     <string name="backup_working">백업 파일을 저장하고 있어요…</string>
     <string name="backup_done">백업 파일을 저장했어요</string>
     <string name="backup_failed">백업 파일을 저장하지 못했어요</string>
+    <string name="share_backup_chooser">백업 파일 보내기</string>
+    <string name="share_failed">백업 파일을 만들지 못했어요</string>
     <string name="restore_checking">백업 파일을 확인하고 있어요…</string>
     <string name="restore_confirm_title">이 백업으로 바꿀까요?</string>
     <string name="restore_confirm_message">백업 파일: 받은 돈 %1$d건 · 나간 돈 %2$d건\n마지막 내역: %3$s\n\n지금 내역(받은 돈 %4$d건 · 나간 돈 %5$d건)은 모두 백업 내용으로 바뀌어요. 바꾸기 전 내역은 앱 안에 보관해 두어 바로 되돌릴 수 있어요.</string>
@@ -121,11 +141,9 @@
     <string name="restore_error_read">파일을 읽지 못했어요. 다시 시도해 주세요.</string>
 
     <!-- 엑셀 내보내기 -->
-    <string name="export_confirm_title">엑셀 파일로 저장할까요?</string>
-    <string name="export_confirm_message">모든 내역을 Download 폴더에 ‘경조사 엑셀 데이터.xls’로 저장해요. 같은 이름의 파일이 있으면 새로 덮어써요.</string>
-    <string name="action_export_confirm">저장</string>
-    <string name="export_done">Download 폴더에 저장했어요</string>
-    <string name="export_failed">파일을 저장하지 못했어요</string>
+    <string name="export_working">엑셀 파일을 저장하고 있어요…</string>
+    <string name="export_done">엑셀 파일을 저장했어요</string>
+    <string name="export_failed">엑셀 파일을 저장하지 못했어요</string>
 
     <!-- 종료 -->
     <string name="exit_confirm">앱을 종료할까요?</string>
