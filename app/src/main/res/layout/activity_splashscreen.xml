@@ -1,55 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 시작 화면: 청록 바탕(SplashTheme의 windowBackground)에 봉투 아이콘과 앱 이름.
+     Android 12 이상의 시스템 시작 화면은 아이콘 바탕색이 창 바탕색과 같으면 바탕 없이 앞면만 1.2배로,
+     288dp 상자(봉투가 그려지는 영역은 가운데 192dp)에 화면 한가운데로 그린다.
+     아이콘을 같은 크기로 시스템 표시줄까지 포함한 화면 한가운데에 두어야 두 화면이 끊김 없이 이어진다. -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="@color/colorPrimaryDark"
-    android:layout_gravity="center"
-    android:id="@+id/lin_lay"
-    android:gravity="center"
-    android:orientation="vertical" >
+    android:layout_height="match_parent">
+
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/splash"
-        android:background="@drawable/diary" />
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_marginTop="30dp"
-            android:textColor="#54B5FF"
-            android:textStyle="italic|bold"
-            android:textSize="40sp"
-            android:text="@string/simple"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:layout_marginTop="10dp"
-            android:textColor="#ffffff"
-            android:textStyle="italic|bold"
-            android:textSize="40sp"
-            android:text="@string/event"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:layout_marginTop="10dp"
-            android:textColor="#54B5FF"
-            android:textStyle="italic|bold"
-            android:textSize="40sp"
-            android:text="@string/management"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-</LinearLayout>
+        android:id="@+id/splash_icon"
+        android:layout_width="288dp"
+        android:layout_height="288dp"
+        android:layout_centerInParent="true"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_launcher_foreground" />
+
+    <!-- 봉투의 아래 끝은 아이콘 상자 아래에서 약 70dp 위에 있다. 그보다 26dp쯤 아래에 이름을 둔다 -->
     <TextView
-        android:layout_margin="3dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:text="@string/image_ref"
-        android:textSize="10sp"
-        android:textColor="#A2A2A2"
+        android:id="@+id/splash_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_below="@id/splash_icon"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-44dp"
+        android:fontFamily="@font/pretendard_bold"
+        android:letterSpacing="-0.02"
+        android:text="@string/app_name"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:fontFamily="@font/pretendard_bold" />
 </RelativeLayout>
