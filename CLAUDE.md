@@ -29,7 +29,7 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 ```
 
 - 로컬 Gradle이 9.x뿐이면 프로젝트 루트에서는 `gradle wrapper`도 실패한다. 빈 `settings.gradle`만 있는 임시 폴더에서 같은 명령을 실행한 뒤 `gradlew`, `gradlew.bat`, `gradle/wrapper/gradle-wrapper.jar`만 복사한다.
-- 단위 테스트는 화면과 무관한 순수 로직(`EntryDateTest`, `MoneyFormatTest`, `EntryListTest`)만 있다. DB와 화면 동작은 기기나 에뮬레이터에서 직접 확인해야 한다.
+- 단위 테스트는 화면과 무관한 순수 로직(`EntryDateTest`, `MoneyFormatTest`, `EntryListTest`, `EntryStatsTest`, `DatabaseBackupTest`, `ExcelExporterTest`)만 있다. DB와 화면 동작은 기기나 에뮬레이터에서 직접 확인해야 한다.
 - 릴리스할 때는 `app/build.gradle`의 `versionCode`/`versionName`을 올린다. 서명 설정은 build.gradle에 없고 `minifyEnabled false`다.
 - 커밋 메시지는 `Release 2.4 - 레이아웃 수정`처럼 `Release <버전> - <한국어 변경 내용>` 형식이다. 작업은 `feature/...` 브랜치에서 하고 `master`로 병합한다.
 
@@ -42,17 +42,22 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 | 하단 메뉴 | Fragment | 내용 |
 |---|---|---|
 | 내역 | `HistoryFragment` | 합계 카드, 전체/받은 돈/나간 돈 필터, 이름 검색, 월별 목록 |
-| 통계 | `StatisticsFragment` | 나간 돈/받은 돈 합계와 경조사별·관계별 막대 |
-| 설정 | `SettingsFragment` | 백업 파일 저장·불러오기·백업 방법 안내, 엑셀 내보내기, 앱 버전 |
+| 통계 | `StatisticsFragment` | 기간(전체·연도별)을 골라 나간 돈/받은 돈 합계와 경조사별·관계별·사람별 막대 |
+| 설정 | `SettingsFragment` | 백업 파일 저장·보내기·불러오기·백업 방법 안내, 엑셀 파일로 저장, 앱 버전 |
 
-내역의 + 버튼은 `EntryFormActivity`(추가, 보냄/받음 선택), 목록 항목을 누르면 같은 화면이 수정 모드로 열린다(오른쪽 위 휴지통으로 삭제). 엑셀 내보내기는 내역 상단 아이콘과 설정에서 `ExcelExporter.confirmAndExport()`를 부른다.
+내역의 + 버튼은 `EntryFormActivity`(추가, 보냄/받음 선택), 목록 항목을 누르면 같은 화면이 수정 모드로 열린다(오른쪽 위 휴지통으로 삭제). 엑셀 저장은 설정에만 있다(아래 "Excel 내보내기").
+
+사람별 화면:
+- 통계의 사람별 막대(상위 5명)의 "전체 보기"는 `PeopleActivity`(그 기간의 사람 목록, 주고받은 합계 큰 순, 이름 검색)를 연다. 사람을 누르면 `PersonActivity`(그 사람과 주고받은 합계 카드와 월별 내역, 기간 구분 없이 전부)로 가고, 추가 버튼은 이름을 채운 새 내역을 연다. `PersonActivity`는 `EntryAdapter`를 필터 칩 없이(`showFilters = false`) 쓴다.
+- 이름은 앞뒤 공백을 빼고 똑같으면 같은 사람으로 본다(`EntryStats.withName`). 부분 일치나 동명이인은 구분하지 않는다.
+- `EntryFormActivity`는 이름을 쓰면 잠시 뒤(250ms) 같은 이름의 다른 내역을 찾아 "이 분과 주고받은 내역 n건 · 받은 돈 · 나간 돈" 안내를 이름 칸 아래에 보여 준다(수정 중인 내역은 뺀다). 누르면 `PersonActivity`.
 
 ### 데이터 모델과 DB (`Entry`, `InOutDatabase`)
 
 - 받은 돈·나간 돈은 하나의 모델 `Entry`(+ `Entry.Direction.RECEIVED`/`SENT`)로 다룬다. DB는 예전 그대로 두 테이블이다: `IN_INFO`(받은 돈), `OUT_INFO`(나간 돈). 방향과 테이블의 대응은 `InOutDatabase.table()` 한 곳에만 있다.
 - `InOutDatabase`는 싱글톤에 `SQLiteOpenHelper`를 직접 쓴다(Room 없음). 화면마다 `getInstance(ctx)` 다음 `open()`을 부르는데, `open()`은 이미 열려 있으면 그대로 쓴다.
 - 두 테이블의 스키마는 같다: `_id, NAME, DATE, CATEGORY, RELATION, MONEY, MEMO, CREATE_DATE`. `MONEY`도 TEXT다. `DATABASE_VERSION = 1`이고 `onUpgrade()`는 비어 있다. 스키마를 바꾸려면 버전을 올리고 마이그레이션을 직접 써야 한다(사용자 데이터는 기기에만 있다).
-- 쓰기는 `insert`/`update`/`delete(direction, …)` 세 가지이고 값은 `ContentValues`로 넘긴다. 합계는 `sum`/`count`, 통계는 `sumByCategory`/`sumByRelation`(`trim`으로 묶는 `GROUP BY`)이다. 금액 합계는 `long`이다.
+- 쓰기는 `insert`/`update`/`delete(direction, …)` 세 가지이고 값은 `ContentValues`로 넘긴다. DB에서 바로 세는 것은 `count`뿐이다. 합계, 경조사별·관계별·사람별 묶음, 연도로 거르기는 `selectAll()` 결과를 `EntryStats`(순수 로직, 단위 테스트)가 계산한다. 금액은 `MoneyFormat.parse()`로 읽어 `long`으로 더하고, 경조사·관계·이름은 `trim`해서 묶는다(빈 값은 "미지정"). 날짜 없는 내역은 "전체 기간"에만 들어간다.
 
 ### 행 식별과 중복
 
@@ -70,7 +75,7 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 
 ### 화면 갱신과 뒤로가기
 
-- `HistoryFragment`·`StatisticsFragment`는 `onResume`과 `onHiddenChanged(false)`에서 DB를 다시 읽는다. `EntryFormActivity`는 저장·삭제 후 `finish()`만 하고, 돌아온 화면이 다시 읽는다.
+- `HistoryFragment`·`StatisticsFragment`는 `onResume`과 `onHiddenChanged(false)`에서, `PeopleActivity`·`PersonActivity`·`EntryFormActivity`(이름 안내)는 `onResume`에서 DB를 다시 읽는다. `EntryFormActivity`는 저장·삭제 후 `finish()`만 하고, 돌아온 화면이 다시 읽는다.
 - 뒤로가기는 `MainActivity`의 `OnBackPressedCallback`이 처리한다: 다른 탭이면 내역으로, 검색 중이면 검색 닫기, 그 밖에는 광고가 든 종료 확인 창(`ExitAdDialog`, 아래 "광고"). `onBackPressed()`를 오버라이드하지 않는다(targetSdk 36이라 Android 16 기기에서는 호출되지 않는다).
 
 ### 테마·스타일
@@ -98,10 +103,12 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 - 파일 읽기·쓰기는 백그라운드 스레드 하나에서, DB 연결을 닫고 파일을 복사·교체하는 일은 메인 스레드에서 `InOutDatabase.withClosedConnection()`으로 한다. 싱글톤을 비우는 `close()`와 달리 객체를 그대로 두므로 화면들이 들고 있는 참조가 계속 산다. 내역·통계 탭은 다시 보일 때 DB를 새로 읽는다.
 - DB 스키마를 바꿔 `DATABASE_VERSION`을 올리면 예전 백업은 불러온 뒤 `onUpgrade`를 거친다. 마이그레이션은 예전 백업 파일에도 맞아야 한다.
 - 처음 "백업 파일 저장"을 누르면 안내 시트(`sheet_backup_guide.xml`, 단계 줄은 `item_guide_step.xml`)를 먼저 띄우고, 그 뒤로는 바로 저장 창을 연다. 설정의 "백업 방법 보기"로 언제든 다시 볼 수 있다. 안내를 봤는지와 마지막 백업 시각은 SharedPreferences `backup`(`guide_shown`, `last_backup`)에 두고, 마지막 백업 날짜를 백업 항목 설명에 보여 준다.
+- Google 드라이브 앱이 없거나 꺼져 있으면(갤럭시에서 한 번도 열지 않은 기본 앱은 "사용할 때까지 꺼 둠") 저장 창에 드라이브가 나오지 않는다. 안내 시트는 `DatabaseBackup.isDriveAvailable()`(드라이브 문서 제공자 `com.google.android.apps.docs.storage` 조회, manifest `<queries>`에 선언)로 확인해 "Google 드라이브 켜기"(Play 스토어의 드라이브 페이지) 버튼을 보여 준다.
+- "백업 파일 보내기"는 `cache/share`에 백업 파일을 만들어 FileProvider(`${applicationId}.backupfiles`, `res/xml/backup_file_paths.xml`)로 공유 창에 넘긴다(카카오톡 나에게 보내기, 메일 등). 받는 앱이 나중에 읽을 수 있어 이전 공유 파일은 다음에 만들 때 지운다. 보냈는지 알 수 없으므로 마지막 백업 날짜는 바꾸지 않는다.
 
 ### Excel 내보내기 (`ExcelExporter`)
 
-Apache POI(HSSF)로 "나간 돈"/"받은 돈" 두 시트의 `.xls`를 만들고, `java.io.File`로 공용 Download 폴더에 `경조사 엑셀 데이터.xls`로 덮어쓴다. 경조사·관계는 trim, 금액은 숫자 셀로 쓴다. 2.4에서 `WRITE_EXTERNAL_STORAGE` 권한을 뺐으므로 Android 11(API 30) 이상에서만 통한다(아래 "알려진 문제").
+Apache POI(HSSF)로 "나간 돈"/"받은 돈" 두 시트의 `.xls`를 만든다. 설정의 "엑셀 파일로 저장"이 시스템 저장 창(SAF `CreateDocument`, 기본 이름 `경조사 내역 yyyy-MM-dd.xls`)을 열고, 고른 곳에 쓴다. 저장소 권한이 필요 없어 모든 Android 버전에서 된다(2.5까지는 `java.io.File`로 Download 폴더에 써서 Android 10 이하에서 실패했다). DB는 메인 스레드에서 읽고, 엑셀 만들기와 쓰기는 백그라운드에서 한다. 경조사·관계는 trim, 금액은 숫자 셀로 쓴다.
 
 ### 광고
 
@@ -121,4 +128,4 @@ AdMob App ID는 `AndroidManifest.xml`에 있고, 광고 단위 ID는 `@string/ad
 
 코드를 읽고 확인한 내용이며, 고치면 이 목록에서 지운다.
 
-- Excel 내보내기는 API 21~29 기기에서 저장 권한이 없어 실패한다(실패 토스트는 뜬다). 고치려면 MediaStore(API 29+)나 SAF로 저장해야 한다.
+- 현재 없음.
