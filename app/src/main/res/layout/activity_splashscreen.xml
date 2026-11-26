@@ -16,14 +16,14 @@
         android:importantForAccessibility="no"
         android:src="@drawable/ic_launcher_foreground" />
 
-    <!-- 봉투의 아래 끝은 아이콘 상자 아래에서 약 70dp 위에 있다. 그보다 26dp쯤 아래에 이름을 둔다 -->
+    <!-- 봉투의 아래 끝은 아이콘 상자 아래에서 약 66dp 위에 있다. 그보다 27dp쯤 아래에 이름을 둔다 -->
     <TextView
         android:id="@+id/splash_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/splash_icon"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="-44dp"
+        android:layout_marginTop="-39dp"
         android:fontFamily="@font/pretendard_bold"
         android:letterSpacing="-0.02"
         android:text="@string/app_name"

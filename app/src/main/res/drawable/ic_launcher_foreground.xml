@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 앱 아이콘 앞면: 세로로 긴 경조사 봉투(뒷면 덮개)를 살짝 기울인 모양. 바탕은 @color/ic_launcher_background.
-     512×512 스토어 아이콘과 같은 좌표로 그리고, 바깥 그룹이 가운데 72dp 영역에 맞춘다(18 이동, 72/512배). -->
+<!-- 앱 아이콘 앞면: 덮개를 연 세로 경조사 봉투(앞면)에서 오만 원권 두 장이 보이는 모양. 바탕은 @color/ic_launcher_background.
+     512×512 스토어 아이콘과 같은 좌표로 그리고, 바깥 그룹이 가운데 72dp 영역에 맞춘다(18 이동, 72/512배).
+     그리는 순서: 열린 덮개(뒤) → 지폐 두 장 → 봉투 몸통(앞) -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
@@ -15,14 +16,39 @@
             android:pivotX="256"
             android:pivotY="256"
             android:rotation="-8">
-            <!-- 봉투 -->
-            <path
-                android:fillColor="#FFFFFF"
-                android:pathData="M164,72H348A14,14 0,0 1,362 86V426A14,14 0,0 1,348 440H164A14,14 0,0 1,150 426V86A14,14 0,0 1,164 72Z" />
-            <!-- 덮개 -->
+            <!-- 열린 덮개 -->
             <path
                 android:fillColor="#BFE0DA"
-                android:pathData="M154.2,76A14,14 0,0 1,164 72H348A14,14 0,0 1,357.8 76L256,172Z" />
+                android:pathData="M151.36,176.2L251.36,54.2A6,6 0,0 1,260.64 54.2L360.64,176.2A6,6 0,0 1,356 186L156,186A6,6 0,0 1,151.36 176.2Z" />
+            <!-- 뒤 지폐 -->
+            <group
+                android:pivotX="256"
+                android:pivotY="220"
+                android:rotation="8">
+                <path
+                    android:fillColor="#E9AE35"
+                    android:pathData="M204,104H316A8,8 0,0 1,324 112V296A8,8 0,0 1,316 304H204A8,8 0,0 1,196 296V112A8,8 0,0 1,204 104Z" />
+            </group>
+            <!-- 앞 지폐 -->
+            <group
+                android:pivotX="256"
+                android:pivotY="220"
+                android:rotation="-4">
+                <path
+                    android:fillColor="#F7C948"
+                    android:pathData="M194,96H310A8,8 0,0 1,318 104V298A8,8 0,0 1,310 306H194A8,8 0,0 1,186 298V104A8,8 0,0 1,194 96Z" />
+                <path
+                    android:strokeColor="#E2A72E"
+                    android:strokeWidth="5"
+                    android:pathData="M202,108H302A4,4 0,0 1,306 112V290A4,4 0,0 1,302 294H202A4,4 0,0 1,198 290V112A4,4 0,0 1,202 108Z" />
+                <path
+                    android:fillColor="#E9B23B"
+                    android:pathData="M235,144A17,17 0,1 1,269 144A17,17 0,1 1,235 144Z" />
+            </group>
+            <!-- 봉투 몸통 -->
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M164,174H348A14,14 0,0 1,362 188V440A14,14 0,0 1,348 454H164A14,14 0,0 1,150 440V188A14,14 0,0 1,164 174Z" />
         </group>
     </group>
 </vector>

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Android 13+ 테마 아이콘용 단색 레이어. 시스템이 색을 입히므로 투명도만 의미가 있다.
-     봉투는 덮개 부분을 뺀 몸통을 진하게, 덮개를 반투명하게 그려 접힌 모양이 보이게 한다.
+     몸통과 앞 지폐는 진하게, 열린 덮개는 반투명하게 그린다. 지폐는 몸통 위로 나온 부분만 몸통과 틈을 두고
+     잘라 그려(clip-path) 두 도형이 붙어 보이지 않게 한다. 지폐의 동그라미 무늬는 반대 방향으로 그린 원이라
+     구멍이 된다(fillType="evenOdd"는 API 24 기능이라, 쓰면 빌드가 옛 기기용 PNG를 따로 만든다).
      좌표와 변환은 ic_launcher_foreground.xml과 같다. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
@@ -16,14 +18,26 @@
             android:pivotX="256"
             android:pivotY="256"
             android:rotation="-8">
-            <!-- 봉투 몸통 (덮개 부분 제외) -->
-            <path
-                android:fillColor="#FFFFFFFF"
-                android:pathData="M154.2,76L256,172L357.8,76A14,14 0,0 1,362 86V426A14,14 0,0 1,348 440H164A14,14 0,0 1,150 426V86A14,14 0,0 1,154.2 76Z" />
-            <!-- 덮개 -->
+            <!-- 열린 덮개 -->
             <path
                 android:fillColor="#80FFFFFF"
-                android:pathData="M154.2,76A14,14 0,0 1,164 72H348A14,14 0,0 1,357.8 76L256,172Z" />
+                android:pathData="M151.36,176.2L251.36,54.2A6,6 0,0 1,260.64 54.2L360.64,176.2A6,6 0,0 1,356 186L156,186A6,6 0,0 1,151.36 176.2Z" />
+            <!-- 앞 지폐: 몸통 위 10만큼 띄워 자른다 -->
+            <group>
+                <clip-path android:pathData="M0,0H512V164H0Z" />
+                <group
+                    android:pivotX="256"
+                    android:pivotY="220"
+                    android:rotation="-4">
+                    <path
+                        android:fillColor="#FFFFFFFF"
+                        android:pathData="M194,96H310A8,8 0,0 1,318 104V298A8,8 0,0 1,310 306H194A8,8 0,0 1,186 298V104A8,8 0,0 1,194 96ZM235,144A17,17 0,1 0,269 144A17,17 0,1 0,235 144Z" />
+                </group>
+            </group>
+            <!-- 봉투 몸통 -->
+            <path
+                android:fillColor="#FFFFFFFF"
+                android:pathData="M164,174H348A14,14 0,0 1,362 188V440A14,14 0,0 1,348 454H164A14,14 0,0 1,150 440V188A14,14 0,0 1,164 174Z" />
         </group>
     </group>
 </vector>

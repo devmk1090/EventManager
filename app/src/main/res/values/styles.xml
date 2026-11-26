@@ -114,22 +114,23 @@
     <item name="android:fontFamily">@font/pretendard_semibold</item>
   </style>
 
-  <!-- 하단 메뉴: 활성 표시(알약 배경) 없이 색으로만 구분 -->
+  <!-- 하단 메뉴: 활성 표시(알약 배경) 없이 색으로만 구분.
+       높이는 android:minHeight로 정해지고, 아이콘은 위에서 itemPaddingTop만큼, 글자는 아래에서 itemPaddingBottom만큼
+       떨어져 놓인다. Material3 기본값(위 12dp, 아래 16dp, 활성 표시 높이 32dp)은 높이 80dp 기준이라 64dp에서는
+       글자가 아이콘에 붙는다. 그래서 활성 표시를 없애 아이콘 칸을 24dp로 줄이고 위아래 여백을 다시 정했다 -->
   <style name="Widget.App.BottomNav" parent="Widget.Material3.BottomNavigationView">
     <item name="android:background">@color/surface</item>
     <item name="backgroundTint">@color/surface</item>
     <item name="elevation">0dp</item>
     <item name="android:minHeight">64dp</item>
+    <item name="itemPaddingTop">11dp</item>
+    <item name="itemPaddingBottom">15dp</item>
     <item name="itemIconTint">@color/nav_item</item>
     <item name="itemTextColor">@color/nav_item</item>
-    <item name="itemActiveIndicatorStyle">@style/Widget.App.BottomNav.Indicator</item>
+    <item name="itemActiveIndicatorStyle">@null</item>
     <item name="itemTextAppearanceActive">@style/TextAppearance.App.NavLabel.Active</item>
     <item name="itemTextAppearanceInactive">@style/TextAppearance.App.NavLabel</item>
     <item name="labelVisibilityMode">labeled</item>
-  </style>
-
-  <style name="Widget.App.BottomNav.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-    <item name="android:color">@android:color/transparent</item>
   </style>
 
   <style name="TextAppearance.App.NavLabel" parent="TextAppearance.Material3.LabelMedium">
