@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 앱 아이콘 앞면: 덮개를 연 세로 경조사 봉투(앞면)에서 오만 원권 두 장이 보이는 모양. 바탕은 @color/ic_launcher_background.
+<!-- 앱 아이콘 앞면: 세로 경조사 봉투(앞면) 위로 오만 원권 두 장이 나와 있는 모양. 바탕은 @color/ic_launcher_background.
      512×512 스토어 아이콘과 같은 좌표로 그리고, 바깥 그룹이 가운데 72dp 영역에 맞춘다(18 이동, 72/512배).
-     그리는 순서: 열린 덮개(뒤) → 지폐 두 장 → 봉투 몸통(앞) -->
+     그리는 순서: 지폐 두 장(뒤) → 봉투 몸통(앞) -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
@@ -12,14 +12,15 @@
         android:scaleY="0.140625"
         android:translateX="18"
         android:translateY="18">
+        <!-- 봉투 전체: 1.06배, -8도. 지폐가 몸통 위로 나와 있어 그림 전체가 가운데에 오도록 옮긴다 -->
         <group
             android:pivotX="256"
             android:pivotY="256"
-            android:rotation="-8">
-            <!-- 열린 덮개 -->
-            <path
-                android:fillColor="#BFE0DA"
-                android:pathData="M151.36,176.2L251.36,54.2A6,6 0,0 1,260.64 54.2L360.64,176.2A6,6 0,0 1,356 186L156,186A6,6 0,0 1,151.36 176.2Z" />
+            android:rotation="-8"
+            android:scaleX="1.06"
+            android:scaleY="1.06"
+            android:translateX="-8.56"
+            android:translateY="-21.56">
             <!-- 뒤 지폐 -->
             <group
                 android:pivotX="256"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Android 13+ 테마 아이콘용 단색 레이어. 시스템이 색을 입히므로 투명도만 의미가 있다.
-     몸통과 앞 지폐는 진하게, 열린 덮개는 반투명하게 그린다. 지폐는 몸통 위로 나온 부분만 몸통과 틈을 두고
-     잘라 그려(clip-path) 두 도형이 붙어 보이지 않게 한다. 지폐의 동그라미 무늬는 반대 방향으로 그린 원이라
+     봉투 몸통과 앞 지폐만 그린다. 지폐는 몸통 위로 나온 부분만 몸통과 틈을 두고 잘라 그려(clip-path)
+     두 도형이 붙어 보이지 않게 한다. 지폐의 테두리 무늬와 동그라미 무늬는 반대 방향으로 그린 도형이라
      구멍이 된다(fillType="evenOdd"는 API 24 기능이라, 쓰면 빌드가 옛 기기용 PNG를 따로 만든다).
      좌표와 변환은 ic_launcher_foreground.xml과 같다. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
@@ -14,14 +14,15 @@
         android:scaleY="0.140625"
         android:translateX="18"
         android:translateY="18">
+        <!-- 봉투 전체: 1.06배, -8도. 지폐가 몸통 위로 나와 있어 그림 전체가 가운데에 오도록 옮긴다 -->
         <group
             android:pivotX="256"
             android:pivotY="256"
-            android:rotation="-8">
-            <!-- 열린 덮개 -->
-            <path
-                android:fillColor="#80FFFFFF"
-                android:pathData="M151.36,176.2L251.36,54.2A6,6 0,0 1,260.64 54.2L360.64,176.2A6,6 0,0 1,356 186L156,186A6,6 0,0 1,151.36 176.2Z" />
+            android:rotation="-8"
+            android:scaleX="1.06"
+            android:scaleY="1.06"
+            android:translateX="-8.56"
+            android:translateY="-21.56">
             <!-- 앞 지폐: 몸통 위 10만큼 띄워 자른다 -->
             <group>
                 <clip-path android:pathData="M0,0H512V164H0Z" />
@@ -31,7 +32,7 @@
                     android:rotation="-4">
                     <path
                         android:fillColor="#FFFFFFFF"
-                        android:pathData="M194,96H310A8,8 0,0 1,318 104V298A8,8 0,0 1,310 306H194A8,8 0,0 1,186 298V104A8,8 0,0 1,194 96ZM235,144A17,17 0,1 0,269 144A17,17 0,1 0,235 144Z" />
+                        android:pathData="M194,96H310A8,8 0,0 1,318 104V298A8,8 0,0 1,310 306H194A8,8 0,0 1,186 298V104A8,8 0,0 1,194 96ZM199.5,103.5A6,6 0,0 0,193.5 109.5V292.5A6,6 0,0 0,199.5 298.5H304.5A6,6 0,0 0,310.5 292.5V109.5A6,6 0,0 0,304.5 103.5ZM204.5,112.5H299.5A2,2 0,0 1,301.5 114.5V287.5A2,2 0,0 1,299.5 289.5H204.5A2,2 0,0 1,202.5 287.5V114.5A2,2 0,0 1,204.5 112.5ZM235,144A17,17 0,1 0,269 144A17,17 0,1 0,235 144Z" />
                 </group>
             </group>
             <!-- 봉투 몸통 -->
