@@ -92,8 +92,8 @@ gradle wrapper --gradle-version 8.11.1   # 한 번만. Gradle 8.x로 프로젝�
 
 ### 앱 아이콘
 
-- manifest는 `@mipmap/ic_launcher`(`roundIcon`은 `ic_launcher_round`)를 쓴다. 모양은 덮개를 연 세로 경조사 봉투(앞면)에서 오만 원권 두 장이 보이는 것을 살짝 기울인 것이다.
-- API 26 이상은 `mipmap-anydpi-v26`의 적응형 아이콘이다. 바탕은 `@color/ic_launcher_background`, 앞면은 `drawable/ic_launcher_foreground.xml`, Android 13 이상의 테마 아이콘은 `drawable/ic_launcher_monochrome.xml`을 쓴다. 테마 아이콘은 열린 덮개만 반투명하고, 앞 지폐는 몸통 위로 나온 부분만 틈을 두고 잘라(`clip-path`) 그린다. 지폐 무늬 구멍은 `fillType="evenOdd"` 대신 반대 방향으로 그린 원으로 낸다. `fillType` 같은 API 24 기능을 쓰면 minSdk 21이라 빌드가 쓰이지도 않는 옛 기기용 PNG를 따로 만들고 lint가 `VectorRaster` 경고를 낸다. 두 벡터는 512×512 스토어 아이콘과 같은 좌표로 그리고, 바깥 그룹(18 이동, 0.140625배)으로 가운데 72dp 안에 넣는다.
+- manifest는 `@mipmap/ic_launcher`(`roundIcon`은 `ic_launcher_round`)를 쓴다. 모양은 세로 경조사 봉투(앞면) 위로 오만 원권 두 장이 나와 있는 것을 살짝 기울인 것이다(덮개는 그리지 않는다).
+- API 26 이상은 `mipmap-anydpi-v26`의 적응형 아이콘이다. 바탕은 `@color/ic_launcher_background`, 앞면은 `drawable/ic_launcher_foreground.xml`, Android 13 이상의 테마 아이콘은 `drawable/ic_launcher_monochrome.xml`을 쓴다. 테마 아이콘은 몸통과 앞 지폐만 그리고, 앞 지폐는 몸통 위로 나온 부분만 틈을 두고 잘라(`clip-path`) 그린다. 지폐의 테두리·동그라미 무늬 구멍은 `fillType="evenOdd"` 대신 반대 방향으로 그린 도형으로 낸다. `fillType` 같은 API 24 기능을 쓰면 minSdk 21이라 빌드가 쓰이지도 않는 옛 기기용 PNG를 따로 만들고 lint가 `VectorRaster` 경고를 낸다. 두 벡터는 512×512 스토어 아이콘과 같은 좌표로 그리고, 바깥 그룹(18 이동, 0.140625배)으로 가운데 72dp 안에 넣는다. 안쪽 그룹은 그림 전체를 1.06배 키우고 -8도 기울인 뒤, 지폐까지 포함한 그림이 가운데에 오도록 옮긴다.
 - API 21~25는 `mipmap-*dpi`의 PNG(둥근 사각형 `ic_launcher`, 원형 `ic_launcher_round`)를 쓴다. 모양을 바꾸면 벡터 두 개, PNG 10장, Play 스토어 아이콘을 함께 바꾼다.
 
 ### 백업·불러오기 (`DatabaseBackup`)
